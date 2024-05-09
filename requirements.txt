@@ -1,0 +1,6 @@
+gunicorn
+pyopenssl
+flask
+flask-argon2
+flask_login
+python-dotenv
