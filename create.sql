@@ -1,7 +1,6 @@
 CREATE TABLE `users` (
   `id_user` int AUTO_INCREMENT PRIMARY KEY,
-  `name` varchar(255),
-  `surname` varchar(255),
+  `username` varchar(255),
   `email` varchar(255),
   `password` text,
   `role` text,

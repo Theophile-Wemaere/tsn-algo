@@ -32,7 +32,7 @@ def generate_token(id_user):
 
 def generate_hashname(id_user):
     """
-    generate a random access token
+    generate a random hashed name
     """
     db = sqlite3.connect('database.db')
     cursor = db.cursor()

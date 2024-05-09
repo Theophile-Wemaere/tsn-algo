@@ -6,25 +6,6 @@ import os
 from datetime import timedelta
 from dotenv import load_dotenv
 
-
-
-
-# @app.before_request
-# def check_session():
-#     path = request.path
-#     if not path.startswith("/static"):
-#         print(session)
-#         token = session.get('token')
-#         email = session.get('email')
-#         if email is not None and token is not None:
-#             valid = db.check_session(email, token)
-#             if valid and path not in auth_endpoint:
-#                 return flask.redirect("/home")
-#         else:
-#             if path not in no_auth_endpoint:
-#                 return flask.redirect('/login')
-
-
 @app.route("/api/file/upload", methods=["POST"])
 def upload_file():
     if "calendar" not in request.files:

@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 import flask
 import functions.database as db
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,8 +17,8 @@ if not os.path.exists("database.db"):
     print("Not database found, exiting")
     exit(1)
 
-import functions.user
-functions.user.app = app
+from functions.user import user_api
+app.register_blueprint(user_api, url_prefix='/api/user')
 
 @app.route("/home")
 @app.route("/")
@@ -36,7 +37,6 @@ def signin():
 
 if __name__ == '__main__':
     try:
-        routes.init()
         app.run()
     except KeyboardInterrupt:
         print("\nCtrl + C pressed, exiting...")
