@@ -19,6 +19,14 @@ html,body {
     justify-content: center;
 }
 
+.error-match {
+    margin-top: 10px;
+    display: none;
+    color: red;
+    text-align: center;
+    text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
 .top-bar {
     display: flex;
     flex-direction: row;
@@ -108,6 +116,14 @@ html,body {
 .user-info:hover {
     background-color: #FFFFFF;
     cursor: pointer;
+}
+
+.user-info img {
+    height: 80%;
+    border: 1px solid #646464;
+    border-radius: 20px;
+    margin-left: 10px;
+
 }
 
 .menu {

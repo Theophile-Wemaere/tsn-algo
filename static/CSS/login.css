@@ -75,7 +75,7 @@
     background-color: #ffffff;
 }
 
-.square .cell button {
+.square .cell input[type=submit] {
     margin: 10px auto 20px auto;
     width: 200px;
     color: black;
@@ -85,7 +85,7 @@
     border-style: none;
 }
 
-.square .cell button:hover {
+.square .cell input[type=submit]:hover {
     background-color: #FFFFFF;
 }
 

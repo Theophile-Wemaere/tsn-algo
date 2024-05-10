@@ -14,17 +14,20 @@ user_api = Blueprint('user_api', __name__)
 
 def check_session(session):
     token = session.get('token')
-    email = session.get('email')
-    if email is not None and token is not None:
-        return db.check_session(email, token)
+    id_user = session.get('id')
+    if id_user is not None and token is not None:
+        return db.check_session(id_user, token)
     else:
         return False
         
 @user_api.route('/is_logged', methods=['GET'])
 def api_is_logged():
+    user_info = {}
+    user_info["code"] = "session_invalid"
     if check_session(session):
-        return "session_valid"
-    return "session_invalid"
+        user_info = db.get_user_data(session.get('id'))
+        user_info["code"] = "session_valid"
+    return user_info
 
 @user_api.route('/login', methods=['POST'])
 def api_login():
@@ -34,7 +37,7 @@ def api_login():
     if res:
         token = db.start_session(res)
         session["token"] = token
-        session["email"] = email
+        session["id"] = res
         session.permanent = False
         return "redirect_user"
     else:
@@ -62,9 +65,13 @@ def api_logout():
 @user_api.route('/signin', methods=['POST'])
 def api_signin():
     email = request.form["email"]
-    body = request.form["body"]
-    res = db.store_request(email, body)
-    if res:
-        return "success"
-    else:
-        return "bad_email"
+    username = request.form["username"]
+    password = request.form["password"]
+    res = db.create_user(username, email, password)
+    if not str(res).startswith("bad"):
+        token = db.start_session(res)
+        session["token"] = token
+        session["id"] = res
+        session.permanent = False
+        return "redirect_user"
+    return res
