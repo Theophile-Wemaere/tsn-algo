@@ -17,6 +17,9 @@ if not os.path.exists("database.db"):
     print("Not database found, exiting")
     exit(1)
 
+
+print(db.hash("Password123!"))
+
 from functions.user import user_api
 app.register_blueprint(user_api, url_prefix='/api/user')
 

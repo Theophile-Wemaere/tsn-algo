@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title>Log In</title>
+    <link rel="icon" href="/static/images/Y-white.png" type="image/icon type" />
+    <meta charset="utf-8" />
+    <meta name="description" content='the best social network to talk about electronic'>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/static/CSS/styles.css">
+    <link rel="stylesheet" href="/static/CSS/signin.css">
+    <script src="https://kit.fontawesome.com/bc424452bc.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename= 'JS/script.js') }}"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="top-bar">
+        <div id="logo">
+            <a href="/"><img src="/static/images/Y-white.png" height=100%></a>
+        </div>
+    </div>
+    <div class="wrapper">
+        <div class="square">
+            <div class="row">
+              <img src="/static/images/Y-white.png"/>
+              <div class="cell" id="signin">
+                <h2>Welcome to 𝕐 !</h2>
+                <div class="subrow">
+                  <label>Username</label>
+                  <input id="email" name="username" />
+                </div>
+                <div class="subrow">
+                  <label>Email</label>
+                  <input id="email" type="email" name="email" />
+                </div>
+                <div class="subrow">
+                  <label>Password</label>
+                  <input id="password" type="password" name="password" />
+                </div>
+                <div class="subrow">
+                  <label>Confirm Password</label>
+                  <input id="password" type="password" name="cpassword" />
+                </div>
+                <button role="button" id="btn-user" onclick="signIn()">Sign me in</button>
+                </br>Already have an account ?<a href="/login">Login now !</a>
+              </div>
+            </div>
+          </div>
+    </div>
+</body>

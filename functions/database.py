@@ -76,19 +76,18 @@ def check_login(email,password):
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
 
-    id_user = get_id(email)
-
     cursor.execute("""
-        SELECT password
+        SELECT password,id_user
         FROM users
-        WHERE id = ?
-    """, (id_user,))
+        WHERE email = ?
+    """, (email,))
 
     row = cursor.fetchone()
     db.close()
 
     if row is not None:
         db_password = row[0]
+        id_user = row[1]
         if argon2.check_password_hash(db_password, password):
             return id_user
     return False

@@ -34,6 +34,10 @@
     font-size: medium;
 }
 
+.square img {
+    width: 50%;
+}
+
 .square .cell {
     display: flex;
     flex-direction: column;
@@ -43,10 +47,6 @@
     text-align: center;
     color: #ffffff;
     height: 100%;
-}
-
-.square img {
-    width: 50%;
 }
 
 .subrow {

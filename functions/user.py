@@ -1,5 +1,6 @@
 from flask import render_template, session
 from flask import Flask, request, jsonify
+from html import escape
 import flask
 import functions.database as db
 import os
@@ -27,7 +28,7 @@ def api_is_logged():
 
 @user_api.route('/login', methods=['POST'])
 def api_login():
-    email = request.form["email"]
+    email = escape(request.form["email"])
     password = request.form["password"]
     res = db.check_login(email, password)
     if res:
