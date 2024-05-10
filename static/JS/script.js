@@ -13,10 +13,15 @@ function loadRecommandations() {
     .then((res) => res.json())
     .then((res) => {
       console.log(res);
-      if(res.code === "session_valid"){
-        reco = document.getElementById("recommandations");
-        reco.style.display = 'block';
-      }
+      reco = document.getElementById("recommandations");
+      if(res.code === "session_valid") {
+        console.log("valid")
+      } else {
+        reco.innerHTML = `
+        <h2>Login on 𝕐 to see customs recommandations !</h2>
+        <a href="/login" class="user-info">Login now</a>
+        `;
+      } 
     });
 }
 
@@ -149,6 +154,7 @@ function loadUserProfile(id_user) {
     .then((res) => res.json())
     .then((res) => {
       console.log(res);
+      const picture = document.getElementById("picture")
       const name = document.getElementById("name");
       const at = document.getElementById("at");
       const description = document.getElementById("description");
@@ -158,6 +164,7 @@ function loadUserProfile(id_user) {
       const followers = document.getElementById("followers");
       const following = document.getElementById("following");
 
+      picture.src = `/static/pictures/${res.picture}.png`
       name.textContent = res.displayname;
       at.textContent = `@${res.username}`;
       description.textContent = res.description;
