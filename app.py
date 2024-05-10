@@ -1,5 +1,5 @@
 from flask import render_template, session
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 import flask
 import functions.database as db
 import os
@@ -42,7 +42,10 @@ def signin():
 def show_profile():
     id_user = request.args.get("id_user")
     if id_user is None: # if no id is given, show user profile
-        return render_template('profile.html',id_user=session.get('id'))
+        if session.get('id') is not None:
+            return render_template('profile.html',id_user=session.get('id'))
+        else:
+            return redirect('/login',code=301)
     else: # else show the wanted user profile
         return render_template('profile.html',id_user=id_user)
 

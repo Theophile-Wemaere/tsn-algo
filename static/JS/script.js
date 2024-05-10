@@ -164,6 +164,8 @@ function loadUserProfile(id_user) {
       const followers = document.getElementById("followers");
       const following = document.getElementById("following");
 
+      document.title = `${res.displayname}'s profil`
+
       picture.src = `/static/pictures/${res.picture}.png`
       name.textContent = res.displayname;
       at.textContent = `@${res.username}`;
@@ -173,5 +175,21 @@ function loadUserProfile(id_user) {
       location.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${res.localisation}`;
       followers.innerHTML = `<b>${res.followers}</b> Followers`
       following.innerHTML = `<b>${res.following}</b> Following`
+
+      if(res.is_logged === "yes") {
+        const button = document.getElementById("edit");
+        button.style.display = "block";
+      }
+    });
+}
+
+function profileEditor() {
+  fetch('/api/user/editor', {
+    method: "GET",
+  })
+    .then((res) => res.text())
+    .then((res) => {
+      console.log(res);
+      document.body.innerHTML += res;
     });
 }

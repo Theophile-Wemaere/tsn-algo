@@ -32,14 +32,14 @@ def api_is_logged():
 @user_api.route('/info/<int:id_user>')
 def get_user_profile(id_user):
     data = db.get_user_profile(id_user)
+    if id_user == session.get('id'):
+        data["is_logged"] = "yes"
     return data
 
-
-@user_api.route('/update', methods=['POST'])
-def api_user_update():
-    check_session(session)
-    print("ok here")
-    return "ok"
+@user_api.route('/editor', methods=['GET'])
+def api_user_editor():
+    if check_session(session):
+        return render_template("profile-editor.html")
 
 #region authentication
 @user_api.route('/signin', methods=['POST'])

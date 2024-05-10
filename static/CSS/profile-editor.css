@@ -1,0 +1,32 @@
+html,body {
+    background-color: #514D4D;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.layer {
+    background-color: #000000AA;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.square {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 70%;
+    margin: auto;
+    background-color: black;
+    border-radius: 20px;
+}
