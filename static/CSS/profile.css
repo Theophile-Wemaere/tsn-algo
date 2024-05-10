@@ -1,0 +1,57 @@
+.profile {
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile .row {
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    align-items: center;
+    justify-content: space-evenly;
+} 
+
+.profile > #row1 {
+    background-color: #646464;
+    height: auto;
+    width: 1000px;
+    border-radius: 20px;
+    margin: 20px;
+    color: #FFFFFF;
+}
+
+.cell > #description {
+    height: 100px;
+}
+
+.profile .row img {
+    height: 80%;
+    border: 1px solid #646464;
+    border-radius: 20px;
+    margin-left: 20px;
+}
+
+.profile .cell {
+    flex-direction: column;
+    flex-grow: 1;
+    height: 80%;
+    margin: auto 10px auto 10px;
+    align-items: center;
+}
+
+.profile .cell > * {
+    margin: 0;
+}
+
+.profile h2 {
+    font-style: italic;
+    font-weight: light;
+    color: #e2d0d0;
+}
+
+.cell > #description {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}

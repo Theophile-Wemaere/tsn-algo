@@ -9,12 +9,9 @@ CREATE TABLE `users` (
   `created_at` timestamp,
   `last_update` timestamp,
   `gender` char,
-  `notification` char
-);
-
-CREATE TABLE `profil_pictures` (
-  `id_image` varchar(255) PRIMARY KEY,
-  `user` INTEGER
+  `notification` char,
+  `picture` varchar(255),
+  `localisation` varchar(255)
 );
 
 CREATE TABLE `sessions` (
@@ -62,8 +59,6 @@ CREATE TABLE `comments` (
   `like` text,
   `dislike` text
 );
-
-ALTER TABLE `profil_pictures` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id_user`);
 
 ALTER TABLE `sessions` ADD FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`);
 

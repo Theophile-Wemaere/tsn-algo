@@ -29,6 +29,33 @@ def api_is_logged():
         user_info["code"] = "session_valid"
     return user_info
 
+@user_api.route('/info/<int:id_user>')
+def get_user_profile(id_user):
+    data = db.get_user_profile(id_user)
+    return data
+
+
+@user_api.route('/update', methods=['POST'])
+def api_user_update():
+    check_session(session)
+    print("ok here")
+    return "ok"
+
+#region authentication
+@user_api.route('/signin', methods=['POST'])
+def api_signin():
+    email = request.form["email"]
+    username = request.form["username"]
+    password = request.form["password"]
+    res = db.create_user(username, email, password)
+    if not str(res).startswith("bad"):
+        token = db.start_session(res)
+        session["token"] = token
+        session["id"] = res
+        session.permanent = False
+        return "redirect_user"
+    return res
+
 @user_api.route('/login', methods=['POST'])
 def api_login():
     email = escape(request.form["email"])
@@ -43,14 +70,6 @@ def api_login():
     else:
         return "bad_cred"
 
-
-@user_api.route('/update', methods=['POST'])
-def api_user_update():
-    check_session(session)
-    print("ok here")
-    return "ok"
-
-
 @user_api.route('/logout', methods=['GET'])
 def api_logout():
     email = session.get('email')
@@ -60,18 +79,4 @@ def api_logout():
     session.pop('token', None)
     session.clear()
     return flask.redirect('/login')
-
-
-@user_api.route('/signin', methods=['POST'])
-def api_signin():
-    email = request.form["email"]
-    username = request.form["username"]
-    password = request.form["password"]
-    res = db.create_user(username, email, password)
-    if not str(res).startswith("bad"):
-        token = db.start_session(res)
-        session["token"] = token
-        session["id"] = res
-        session.permanent = False
-        return "redirect_user"
-    return res
+#endregion

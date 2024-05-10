@@ -1,5 +1,5 @@
 html,body {
-    background-color: #646464;
+    background-color: #514D4D;
     display: flex;
     height: 100%;
     flex-direction: column;
@@ -131,6 +131,8 @@ html,body {
     height: 100%;
     border-right: 1px solid;
     border-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
 }
 
 .menu hr {
@@ -163,6 +165,51 @@ html,body {
     margin-right: 10px;
 }
 
+.menu #hr-logout {
+    display: none;
+}
+.menu #row-logout {
+    display: none;
+}
+
+.menu .post-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 80%;
+    margin: 0 10% 20px 10%;
+    height: 100px;
+    align-items: center;
+    background-color: #AA2D2D;
+    border-radius: 25px;
+    color: #FFFFFF;   
+    font-size: 30px;
+    padding-left: 10px;
+    font-weight: bold;
+    display: none;
+}
+
+.menu .post-button a {
+    color: inherit;
+    text-decoration: none;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.menu .post-button i {
+    color: #000;
+    font-size: 50px;
+    border: solid 7px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.menu .post-button:hover {
+    background-color: #d84f4f;
+}
+
 .posts {
     flex-grow: 1;
     height: 100%;
@@ -171,6 +218,7 @@ html,body {
 .recommandations {
     width: 20%;
     height: 100%;
+    display: none;
 }
 
 .recommandations hr {

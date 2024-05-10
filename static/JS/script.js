@@ -13,7 +13,7 @@ function loadRecommandations() {
     .then((res) => res.json())
     .then((res) => {
       console.log(res);
-      if(res.code !== "session_invalid"){
+      if(res.code === "session_valid"){
         reco = document.getElementById("recommandations");
         reco.style.display = 'block';
       }
@@ -26,7 +26,7 @@ function loadUserMenu() {
       })
         .then((res) => res.json())
         .then((res) => {
-          if(res.code !== "session_invalid") {
+          if(res.code === "session_valid") {
             // set username and profile picture
             reco = document.getElementById("user-info");
             imageUrl = `/static/pictures/${res.picture}.png`
@@ -43,6 +43,10 @@ function loadUserMenu() {
             hr.style.display = "block";
             row = document.getElementById("row-logout")
             row.style.display = "flex"
+
+            // display post buttons
+            button = document.getElementById("post-button")
+            button.style.display = "flex"
           }
         });
 }
@@ -135,4 +139,32 @@ function signIn() {
   } else {
     alert("Please fill all fileds");
   }
+}
+
+function loadUserProfile(id_user) {
+  console.log(`going to load id ${id_user}`)
+  fetch(`/api/user/info/${id_user}`, {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+      const name = document.getElementById("name");
+      const at = document.getElementById("at");
+      const description = document.getElementById("description");
+      const date = document.getElementById("date");
+      const gender = document.getElementById("gender");
+      const location = document.getElementById("location");
+      const followers = document.getElementById("followers");
+      const following = document.getElementById("following");
+
+      name.textContent = res.displayname;
+      at.textContent = `@${res.username}`;
+      description.textContent = res.description;
+      date.innerHTML = `<i class="fa-solid fa-cake-candles"></i> Joined on ${res.creation}`;
+      gender.innerHTML = `<i class="fa-solid fa-venus-mars"></i> ${res.gender}`;
+      location.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${res.localisation}`;
+      followers.innerHTML = `<b>${res.followers}</b> Followers`
+      following.innerHTML = `<b>${res.following}</b> Following`
+    });
 }

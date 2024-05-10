@@ -8,6 +8,7 @@
     <meta name="description" content='the best social network to talk about electronic'>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/static/CSS/styles.css">
+    <link rel="stylesheet" href="/static/CSS/profile.css">
     <script src="https://kit.fontawesome.com/bc424452bc.js" crossorigin="anonymous"></script>
     <script src="/static/JS/script.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,9 +55,27 @@
                 </a>
             </div>
         </div>
-        <div class="posts">
+        <div class="profile">
+            <div class="row" id="row1">
+                <img id="picture" src="/static/pictures/303349371823601460083524533892550762190.png">
+                <div class="cell">
+                    <h1 id="name">Super Admin</h1>
+                    <h2 id="at">@admin</h2>
+                    <div class="row" id="description">
+                        Curabitur et dictum nulla, et fermentum ante. Etiam sed auctor massa. Vestibulum volutpat tortor nec lobortis consectetur. Vivamus rutrum scelerisque lectus id sagittis. Cras gravida erat est, sit amet tempus lectus tempor nec. Phasellus dapibus augue felis, sed gravida orci sodales at. Sed condimentum egestas lacus porttitor interdum. Aenean sed bibendum ex. Quisque rutrum eu eros nec gravida. Donec et gravida felis. Nunc hendrerit id risus id convallis. 
+                    </div>
+                    <div class="row">
+                        <div id="date"></div>
+                        <div id="gender"></div>
+                        <div id="location"></div>
+                        <div id="followers"><b>234</b> Followers</div>
+                        <div id="following"><b>6</b> Following</div>
+                    </div>
+                </div>
+            </div>
 
         </div>
+        <script>loadUserProfile("{{ id_user }}")</script>
         <div class="recommandations" id="recommandations">
             <div class="users"></div>
             <hr>
