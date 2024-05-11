@@ -2,6 +2,7 @@ from flask import render_template, session
 from flask import Flask, request, jsonify, redirect
 import flask
 import functions.database as db
+from functions.user import check_session
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -42,7 +43,7 @@ def signin():
 def show_profile():
     id_user = request.args.get("id_user")
     if id_user is None: # if no id is given, show user profile
-        if session.get('id') is not None:
+        if check_session(session):
             return render_template('profile.html',id_user=session.get('id'))
         else:
             return redirect('/login',code=301)

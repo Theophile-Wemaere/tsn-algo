@@ -1,6 +1,62 @@
 <body>
     <link rel="stylesheet" href="/static/CSS/profile-editor.css">
-    <div class="layer">
-        <div class="square"></div>
+    <script src="https://kit.fontawesome.com/bc424452bc.js" crossorigin="anonymous"></script>
+    <script src="/static/JS/script.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <div class="layer" id="layer">
+        <div class="square" id="square">
+            <div class="cell">
+                <h2 id="title-edit">Edit your profile</h2>
+                <form onsubmit="event.preventDefault()">
+                    <fieldset>
+                        <legend>Personal Information</legend>
+                        <div class="row">
+                            <label for="firstName"><i class="fa-solid fa-user"></i>Display name :</label>
+                            <input type="text" name="displayname" id="displayname-edit">
+                        </div>
+                        <div class="row">
+                            <label for="firstName"><i class="fa-solid fa-location-dot"></i> Location :</label>
+                            <input type="text" name="location" id="location-edit">
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Gender <i class="fa-solid fa-venus-mars"></i></legend>
+                        <div class="row" id="row-gender">
+                            <div class="row">
+                                    <label for="male">Male</label>
+                                    <input type="radio" name="sex" id="male" value="male">
+                            </div>
+                            <div class="row">
+                                <label for="female">Female</label>
+                                <input type="radio" name="sex" id="female" value="female">
+                            </div>
+                            <div class="row">
+                                <label for="other">Other</label>
+                                <input type="radio" name="sex" id="other" value="other">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Tell us more about you <i class="fa-solid fa-pen-clip"></i></legend>
+                        <textarea id="description-edit" name="description" placeholder="Let the inspiration talk !" maxlength="500"></textarea>
+                    </fieldset>
+                    <input class="input-button" type="submit" value="Save my info">
+                </form>
+            </div>
+            <div class="cell" id="profil-picture">
+                <img id="picture-edit" src="/static/pictures/151769067995067444168425578336917061814.png">
+                <i class="fa-solid fa-file-pen"></i>
+                <img id="advice" src="/static/images/robot-advice.png">
+                <button class="exit-button" onclick="removeProfileEditor()">Cancel</button>
+            </div>
+        </div>
     </div>
+    <script>
+        const layer = document.getElementById("layer")
+        layer.addEventListener("click",removeProfileEditor)
+    </script>
 </body>

@@ -189,7 +189,18 @@ function profileEditor() {
   })
     .then((res) => res.text())
     .then((res) => {
-      console.log(res);
       document.body.innerHTML += res;
+      const onClickOutside = (e) => {
+        if (e.target.className.includes("layer")) {
+          removeProfileEditor();
+          window.removeEventListener("click", onClickOutside);
+        }
+      };
+      window.addEventListener("click",onClickOutside);
     });
+}
+
+function removeProfileEditor() {
+  const layer = document.getElementById("layer");
+  layer.remove();
 }

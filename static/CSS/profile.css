@@ -22,15 +22,12 @@
     color: #FFFFFF;
 }
 
-.cell > #description {
-    height: 100px;
-}
-
 .profile .row img {
-    height: 80%;
-    border: 1px solid #646464;
+    height: 240px;
+    width: 240px;
+    border: 2px solid #FFFFFF;
     border-radius: 20px;
-    margin-left: 20px;
+    margin: 20px 10px 20px 20px;
 }
 
 .profile .cell {
@@ -54,6 +51,7 @@
 .cell > #description {
     margin-top: 30px;
     margin-bottom: 20px;
+    height: 100px;
 }
 
 .row button {
