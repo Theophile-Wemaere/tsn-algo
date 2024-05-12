@@ -12,7 +12,6 @@ function loadRecommandations() {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
       reco = document.getElementById("recommandations");
       if(res.code === "session_valid") {
         console.log("valid")
@@ -152,7 +151,6 @@ function loadUserProfile(id_user) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
       const picture = document.getElementById("picture")
       const name = document.getElementById("name");
       const at = document.getElementById("at");
@@ -201,7 +199,6 @@ function profileEditor() {
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
           const picture = document.getElementById("picture-edit")
           const name = document.getElementById("displayname-edit");
           const description = document.getElementById("description-edit");
@@ -251,7 +248,7 @@ function updateProfile() {
   data.append("location", location);
   data.append("gender",gender);
   fetch("/api/user/profile/update", {
-    method: "POST",
+    method: "PATCH",
     body: data,
   })
     .then((response) => response.text())
@@ -263,4 +260,38 @@ function updateProfile() {
         windows.location.href = '/login';
       }
     });
+}
+
+function updatePicture() {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
+  fileInput.onchange = function(event) {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      const data = new FormData();
+      data.append("picture", selectedFile);
+
+      fetch("/api/user/profile/picture", {
+        method: "PATCH",
+        body: data,
+      })
+      .then(response => response.json())
+      .then(response => {
+        if (response.code == "success") {
+          console.log("Profile picture updated successfully!");
+          picture = document.getElementById("picture-edit")
+          picture.src = `/static/pictures/${response.hash}.png`
+          loadUserMenu();
+          loadUserProfile(0);
+        } else {
+          console.error("Error updating profile picture:", response.code);
+        }
+      })
+      .catch(error => {
+        console.error("Error sending file:", error);
+      });
+    }
+  };
+  fileInput.click();
 }

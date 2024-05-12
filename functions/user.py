@@ -8,6 +8,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 
 from flask import Blueprint
+import functions.toolbox as tools
 
 # prefix : '/api/user'
 user_api = Blueprint('user_api', __name__)
@@ -47,7 +48,7 @@ def api_user_editor():
     if check_session(session):
         return render_template("profile-editor.html")
 
-@user_api.route('/profile/update', methods=['POST'])
+@user_api.route('/profile/update', methods=['PATCH'])
 def api_profile_update():
     if check_session(session):
         displayname = request.form["displayname"]
@@ -61,6 +62,25 @@ def api_profile_update():
             return "bad_gender"
     else:
         return "login"
+
+@user_api.route('/profile/picture', methods=['PATCH'])
+def api_picture_update():
+    if check_session(session):
+        if request.files["picture"]:
+            file = request.files["picture"]
+            if file.filename == "":
+                return {"code":"no_file"}
+            elif tools.allowed_file(file.filename):
+                hash = db.generate_hashname(session.get('id'))
+                file.save(f"static/pictures/{hash}.png")
+                db.update_picture(session.get('id'),hash)
+                return {"code":"success","hash":hash}
+        else:
+            return {"code":"no_file"}
+    else:
+        return redirect("/login",302)
+
+
 #endregion
 
 #region authentication

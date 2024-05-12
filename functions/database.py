@@ -278,4 +278,19 @@ def update_profile(id_user,displayname,description,location,gender):
     db.commit()
     db.close()
 
+def update_picture(id_user,hash):
+    """
+    update the picture hash for a user
+    """
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    sql = """
+    UPDATE users SET
+    picture = ?
+    WHERE id_user = ?
+    """
+    cursor.execute(sql,(hash,id_user))
+    db.commit()
+    db.close()
+
 #endregion
