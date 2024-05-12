@@ -137,4 +137,16 @@ def api_recommandations():
     else:
         return redirect('/login',302)
 
+@user_api.route('/relation',methods=['PATCH'])
+def api_relation():
+    if check_session(session):
+        id_target = request.args.get("id_user")
+        action = request.args.get("action")
+        if id_target is None or action is None:
+            return "bad_parameters"
+        res = db.update_relation(session.get('id'),id_target,action)
+        return res
+    else:
+        return redirect('/login',302)
+
 #endregion

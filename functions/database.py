@@ -54,8 +54,9 @@ def check_existing(column, value):
     """
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE ? = ?",(column,value))
+    cursor.execute(f"SELECT * FROM users WHERE {column} = ?",(value,))
     row = cursor.fetchone()
+    print(row)
     db.close()
     if row is not None:
         return True
@@ -378,11 +379,46 @@ def get_user_recommandations(id_user):
     user_liking_same_posts +
     followers)
 
-    users_info = []
+    # check if we are not already following the user
+    users = []
     for user in potential_users:
+        cursor.execute("SELECT * FROM relations WHERE followed = ? AND follower = ?",(user,id_user))
+        if cursor.fetchone() is None:
+            users.append(user)
+    db.close()
+
+    users_info = []
+    for user in users:
         data = get_user_data(user)
         del data["email"]
         users_info.append(data)
 
-    db.close()
+    
     return users_info
+
+def update_relation(id_user,id_target,action):
+    """
+    update a relation (follow, unfollow)
+    """
+
+    if not check_existing("id_user",id_target):
+        return "target_not_found"
+    if not check_existing("id_user",id_user):
+        return "user_not_found"
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    if action == "follow":
+        cursor.execute("SELECT * FROM relations WHERE followed = ? AND follower = ?",(id_target,id_user))
+        if cursor.fetchone() is None:
+            cursor.execute("INSERT INTO relations(followed,follower) VALUES(?,?)",(id_target,id_user))
+            db.commit()
+    elif action == "unfollow":
+        cursor.execute("SELECT * FROM relations WHERE followed = ? AND follower = ?",(id_target,id_user))
+        if cursor.fetchone() is not None:
+            cursor.execute("DELETE FROM relations WHERE followed = ? and follower = ?",(id_target,id_user))
+    db.close()
+    return "success"
+#endregion
+

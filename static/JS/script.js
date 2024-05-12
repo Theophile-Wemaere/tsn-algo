@@ -54,7 +54,20 @@ function loadUserRecommandations() {
 }
 
 function followUser(id_user){
-  
+  fetch(`/api/user/relation?id_user=${id_user}&action=follow`, {
+    method: "PATCH",
+  })
+    .then((res) => res.text())
+    .then((res) => {
+      if(res === "success") {
+        userRow = document.getElementById(`recommandation-user-${id_user}`)
+        if(userRow !== undefined) {
+          userRow.remove();
+        }
+      } else {
+        console.log(res);
+      }
+    });
 }
 
 function loadUserMenu() {
