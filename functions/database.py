@@ -79,7 +79,6 @@ def create_user(username, email, password):
     if check_existing("username",username):
         return "bad_username"
 
-    # todo : handle already exisiting email
     data = (email, username, username, password)
     sql = """
     INSERT INTO users(email, username, displayname, password, role, created_at, last_update, gender, notification, location) 
@@ -132,6 +131,9 @@ def check_login(input,password):
     if row is not None:
         db_password = row[0]
         id_user = row[1]
+        if db_password == "default":
+            # default users for debug and dev
+            return id_user
         if argon2.check_password_hash(db_password, password):
             return id_user
     return False
@@ -221,7 +223,8 @@ def get_user_data(id_user):
         "email": row[0],
         "username": row[1],
         "displayname": row[2],
-        "picture": row[3]
+        "picture": row[3],
+        "id": id_user
     }
     db.close()
     return user_data
@@ -294,3 +297,92 @@ def update_picture(id_user,hash):
     db.close()
 
 #endregion
+
+#region recommandations
+
+def get_user_recommandations(id_user):
+    """
+    return a dictionnary of users with a profile interesting to the current user
+    """
+    # let John be the current user
+    # how it works -> the users potentially interesting for John are thoses :
+    #    - users who posted something liked by john
+    #    - users friends with friends of john
+    #       (friend is when the follow is in both way)
+    #    - users followed by users that John follow
+    #    - users with the same interests as John (tags)
+    #    - users liking the same posts than John
+    #    - users that follow john
+    # to be modified with a scoring system depending on likes, dislike (pattern matching)
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    # get user tags
+    cursor.execute("SELECT tag FROM user_tags WHERE user = ?",(id_user,))
+    user_tags = [row[0] for row in cursor.fetchall()]
+
+    # get users who posted something liked by current user
+    cursor.execute("""
+    SELECT DISTINCT p.author
+    FROM posts p
+    INNER JOIN posts_interaction pi
+    ON pi.post = p.id_post WHERE pi.user = ? AND pi.action = 'L'
+    """,(id_user,))
+    author_liked = [row[0] for row in cursor.fetchall()]
+
+    # get friends of current user friends
+    cursor.execute("""
+    SELECT r1.follower 
+    FROM relations r1 
+    INNER JOIN relations r2 
+    ON r1.follower = r2.followed WHERE r2.follower=?
+    """, (id_user,))
+    friends_of_friends = [row[0] for row in cursor.fetchall()]
+
+    # get users followed by users that the current users follow
+    cursor.execute("""
+    SELECT followed FROM relations
+    WHERE follower IN (SELECT followed FROM relations WHERE follower = ?)
+    AND followed NOT IN (SELECT followed FROM relations WHERE follower = ?)
+    """,(id_user,id_user))
+    followed_by_followed = [row[0] for row in cursor.fetchall()]
+
+    # get users with the same interets as current user (with tags matching)
+    cursor.execute(f"""
+    SELECT user FROM user_tags 
+    WHERE tag IN ({",".join(["?"]*len(user_tags))})
+    AND user != ?
+    """,user_tags + [id_user])
+    users_same_interets = [row[0] for row in cursor.fetchall()]
+
+    # get users liking the same posts as current user
+    cursor.execute("""
+    SELECT DISTINCT pi.user FROM posts_interaction pi 
+    INNER JOIN posts_interaction pi2 
+    ON pi.post = pi2.post 
+    WHERE pi.user != ? AND pi2.user = ? AND pi2.action = 'L'
+    """,(id_user,id_user))
+    user_liking_same_posts = [row[0] for row in cursor.fetchall()]
+
+    # get users following the current users
+    cursor.execute("""
+    SELECT follower FROM relations WHERE followed = ? 
+    """,(id_user,))
+    followers = [row[0] for row in cursor.fetchall()]
+
+    potential_users = set(author_liked + 
+    friends_of_friends + 
+    followed_by_followed +
+    users_same_interets + 
+    user_liking_same_posts +
+    followers)
+
+    users_info = []
+    for user in potential_users:
+        data = get_user_data(user)
+        del data["email"]
+        users_info.append(data)
+
+    db.close()
+    return users_info

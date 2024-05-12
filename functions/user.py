@@ -30,6 +30,46 @@ def api_is_logged():
         user_info["code"] = "session_valid"
     return user_info
 
+#region authentication
+@user_api.route('/signin', methods=['POST'])
+def api_signin():
+    email = request.form["email"]
+    username = request.form["username"]
+    password = request.form["password"]
+    res = db.create_user(username, email, password)
+    if not str(res).startswith("bad"):
+        token = db.start_session(res)
+        session["token"] = token
+        session["id"] = res
+        session.permanent = False
+        return "redirect_user"
+    return res
+
+@user_api.route('/login', methods=['POST'])
+def api_login():
+    email = escape(request.form["email"])
+    password = request.form["password"]
+    res = db.check_login(email, password)
+    if res:
+        token = db.start_session(res)
+        session["token"] = token
+        session["id"] = res
+        session.permanent = False
+        return "redirect_user"
+    else:
+        return "bad_cred"
+
+@user_api.route('/logout', methods=['GET'])
+def api_logout():
+    email = session.get('email')
+    token = session.get('token')
+    db.annihilate_session(email, token)
+    session.pop('email', None)
+    session.pop('token', None)
+    session.clear()
+    return flask.redirect('/login')
+#endregion
+
 #region user profile
 @user_api.route('/info/<int:id_user>')
 def get_user_profile(id_user):
@@ -80,45 +120,21 @@ def api_picture_update():
     else:
         return redirect("/login",302)
 
-
 #endregion
 
-#region authentication
-@user_api.route('/signin', methods=['POST'])
-def api_signin():
-    email = request.form["email"]
-    username = request.form["username"]
-    password = request.form["password"]
-    res = db.create_user(username, email, password)
-    if not str(res).startswith("bad"):
-        token = db.start_session(res)
-        session["token"] = token
-        session["id"] = res
-        session.permanent = False
-        return "redirect_user"
-    return res
+#region recommandations
 
-@user_api.route('/login', methods=['POST'])
-def api_login():
-    email = escape(request.form["email"])
-    password = request.form["password"]
-    res = db.check_login(email, password)
-    if res:
-        token = db.start_session(res)
-        session["token"] = token
-        session["id"] = res
-        session.permanent = False
-        return "redirect_user"
+@user_api.route('/recommandations',methods=['GET'])
+def api_recommandations():
+    if check_session(session):
+        t = request.args.get('t')
+        if t is None:
+            t = "post"
+        
+        if t == "user":
+            data = db.get_user_recommandations(session.get('id'))
+            return {"code":"success","data":data}
     else:
-        return "bad_cred"
+        return redirect('/login',302)
 
-@user_api.route('/logout', methods=['GET'])
-def api_logout():
-    email = session.get('email')
-    token = session.get('token')
-    db.annihilate_session(email, token)
-    session.pop('email', None)
-    session.pop('token', None)
-    session.clear()
-    return flask.redirect('/login')
 #endregion

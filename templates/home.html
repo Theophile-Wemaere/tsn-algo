@@ -58,13 +58,22 @@
 
         </div>
         <div class="recommandations" id="recommandations">
-            <div class="users"></div>
+            <div class="users-recommandations" id="users">
+                <h3>Users with the same interests as you</h3>
+            </div>
             <hr>
-            <div class="posts"></div>
+            <div class="posts-top" id="posts">
+                <h3>Top posts at the moment</h3>
+            </div>
         </div>
         <script>
             loadUserMenu();
             loadRecommandations();
         </script>
     </div>
+    <script>
+        if("{{ onboarding }}" === "True") {
+            loadOnboarding();
+        }
+    </script>
 </body>

@@ -27,7 +27,10 @@ app.register_blueprint(user_api, url_prefix='/api/user')
 @app.route("/home")
 @app.route("/")
 def home():
-    return render_template('home.html')
+    onboarding = request.args.get('onboarding')
+    if onboarding is not None and onboarding == "true":
+        return render_template('home.html',onboarding=True)
+    return render_template('home.html',onboarding=False)
 
 
 @app.route("/login")

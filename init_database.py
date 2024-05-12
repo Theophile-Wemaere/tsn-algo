@@ -1,12 +1,25 @@
 names = [
-    "Alice", "Bob", "Charlie", "David", "Emily", "Frank", "Grace", "Henry",
+    "admin","Alice", "Bob", "Charlie", "David", "Emily", "Frank", "Grace", "Henry",
     "Isabella", "Jack", "Olivia", "William", "Sophia", "James", "Ava", "Benjamin",
     "Charlotte", "Noah", "Mia", "Lucas", "Evelyn", "Mason", "Abigail", "Elijah",
     "Amelia", "Aiden", "Elizabeth", "Logan", "Ella", "Matthew", "Sofia", "Daniel",
     "Madison", "Michael", "Chloe", "Ethan", "Harper", "Alexander", "Avery",
     "Aaliyah", "Christopher", "Scarlett", "Joseph", "Eleanor", "Andrew", "Luna",
     "Gabriel", "Layla", "Jackson", "Penelope", "Carter", "Riley", "Caleb", "Zoey",
-    "Owen", "Nora", "Liam", "Mila", "Wyatt", "Stella"
+    "Owen", "Nora", "Liam", "Mila", "Wyatt"
+]
+
+surnames = [
+    "3000","Smith", "Johnson", "Williams", "Brown", "Jones",
+    "Miller", "Davis", "Garcia", "Rodriguez", "Wilson",
+    "Moore", "Anderson", "Taylor", "Thomas", "Hernandez",
+    "Walker", "Moore", "Allen", "Young", "King",
+    "Wright", "Lopez", "Scott", "Robinson", "Lewis",
+    "Lee", "Walker", "Hall", "Allen", "Carter",
+    "Nguyen", "Campbell", "Mitchell", "Martin", "Hernandez",
+    "Clark", "Rodriguez", "Lewis", "Robinson", "Walker",
+    "Perez", "Sanchez", "Young", "Moore", "Allen",
+    "Nelson", "Garcia", "Wright", "Lopez"
 ]
 
 words = [
@@ -23,28 +36,45 @@ words = [
     "programming", "debugging", "electronics engineer", "innovation"
 ]
 
+
+
 import sqlite3
 from datetime import datetime
-import random
+import random, requests
 
 db = sqlite3.connect('database.db')
 cursor = db.cursor()
 
-for i in range(49):
-    data = (i,words[i])
-    sql = "INSERT INTO tags VALUES (?,?)"
+# create default tags
+for word in words:
+    data = (word,)
+    sql = "INSERT INTO tags(name) VALUES (?)"
     cursor.execute(sql,data)
     db.commit()
 
+hashs = []
 
 for i in range(50):
     username = names[i]
-    email = username + "@gmail.com" 
-    password = "$argon2id$v=19$m=65536,t=3,p=4$Xnxa1KGOvUOzg31KMxTHKw$NA9ZTeYaNo9kk3NBaXo1V0tNiVdAFlVqyRDlnZG/jaM"
-    # todo : handle already exisiting email
-    data = (i,username, email, password, "user", "X", "Y")
-    sql = """INSERT INTO users (id_user,username, email, password, role, gender, notification) 
-    VALUES (?,?, ?, ?, ?, ?, ?)"""
+    email = username + "@local.com"
+    displayname = f"{names[i]} {surnames[i].upper()}"
+    password = "default"
+    
+    while True:
+        hash = str(random.getrandbits(128))
+        if hash not in hashs:
+            hashs.append(hash)
+            break
+    
+    url = "https://robohash.org/"+hash
+    data = requests.get(url).content
+    with open(f"static/pictures/{hash}.png","wb") as file:
+        file.write(data)
+
+    data = (email, username, displayname, password,hash)
+    sql = """
+    INSERT INTO users(email, username, displayname, password, role, created_at, last_update, gender, notification, location, picture) 
+    VALUES (?, ?, ?, ?, 'user', date(), datetime(), 'X', 'N', 'The Internet',?)"""
     cursor.execute(sql,data)
     db.commit()
 
@@ -53,7 +83,5 @@ for i in range(50):
         sql = "INSERT INTO user_tags VALUES(?,?)"
         cursor.execute(sql,(i,n))
     db.commit()
-
-
 
 db.close()

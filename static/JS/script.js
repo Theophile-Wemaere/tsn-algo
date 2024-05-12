@@ -14,7 +14,7 @@ function loadRecommandations() {
     .then((res) => {
       reco = document.getElementById("recommandations");
       if(res.code === "session_valid") {
-        console.log("valid")
+        loadUserRecommandations();
       } else {
         reco.innerHTML = `
         <h2>Login on 𝕐 to see customs recommandations !</h2>
@@ -22,6 +22,39 @@ function loadRecommandations() {
         `;
       } 
     });
+}
+
+function loadUserRecommandations() {
+  fetch("/api/user/recommandations?t=user", {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.code === "success") {
+        console.log(res)
+        reco = document.getElementById("users");
+        res.data.forEach(function(user) {
+          row = `
+          <a href="/profile?id_user=${user.id}">
+            <div class="user-row" id="recommandation-user-${user.id}">
+              <img src="/static/pictures/${user.picture}.png">
+              <div class="user-names">
+                <b>${user.displayname}</b>
+                <i>@${user.username}</i>
+              </div>
+              <div style="flex-grow:1"></div>
+              <button onclick="event.preventDefault();followUser(${user.id})">Follow</button>
+            </div>
+          </a>
+          `
+          reco.innerHTML += row;
+        });
+      }
+    });
+}
+
+function followUser(id_user){
+  
 }
 
 function loadUserMenu() {
@@ -130,7 +163,7 @@ function signIn() {
       .then((data) => {
         switch (data.trim()) {
           case "redirect_user":
-            window.location.href = "/home";
+            window.location.href = "/home?onboarding=true";
             break;
           case "bad_email":
             alert("Error, this email is already used, please use another one");
@@ -225,6 +258,53 @@ function profileEditor() {
     });
 }
 
+function loadOnboarding() {
+  fetch('/api/user/editor', {
+    method: "GET",
+  })
+    .then((res) => res.text())
+    .then((res) => {
+      document.body.innerHTML += res;
+      const title = document.getElementById("title-edit");
+      title.textContent = "Welcome on 𝕐 !"
+      const button = document.getElementById("exit-button");
+      button.setAttribute('onclick','loadPreferences()')
+      button.textContent = "Continue";
+      fetch(`/api/user/info/0`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          const picture = document.getElementById("picture-edit")
+          const name = document.getElementById("displayname-edit");
+          const description = document.getElementById("description-edit");
+          const location = document.getElementById("location-edit");
+
+          picture.src = `/static/pictures/${res.picture}.png`
+          name.value = res.displayname;
+          description.textContent = res.description;
+          location.value = res.location;
+          switch(res.gender) {
+            case "M":
+              const M = document.getElementById("male");
+              M.checked = true;
+              break;
+            case "F":
+              const F = document.getElementById("female");
+              F.checked = true;
+              break;
+            default:
+              const X = document.getElementById("other");
+              X.checked = true;
+          }
+        });
+    });
+}
+
+function loadPreferences() {
+  console.log("hellow");
+}
+
 function removeProfileEditor() {
   const layer = document.getElementById("layer");
   layer.remove();
@@ -286,6 +366,7 @@ function updatePicture() {
           loadUserProfile(0);
         } else {
           console.error("Error updating profile picture:", response.code);
+          alert("Error updating profile picture:" + response.code)
         }
       })
       .catch(error => {

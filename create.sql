@@ -24,6 +24,11 @@ CREATE TABLE `user_tags` (
   `tag` INTEGER
 );
 
+CREATE TABLE `post_tags` (
+  `post` INTEGER,
+  `tag` INTEGER
+);
+
 CREATE TABLE `tags` (
   `id_tag` INTEGER PRIMARY KEY,
   `name` text
@@ -38,6 +43,7 @@ CREATE TABLE `relations` (
 CREATE TABLE `posts` (
   `id_post` INTEGER PRIMARY KEY,
   `author` INTEGER,
+  `visibility` INTEGER,
   `title` text,
   `content` text,
   `like` INTEGER,
