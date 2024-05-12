@@ -11,15 +11,15 @@
         <div class="square" id="square">
             <div class="cell">
                 <h2 id="title-edit">Edit your profile</h2>
-                <form onsubmit="event.preventDefault()">
+                <form onsubmit="event.preventDefault();updateProfile()">
                     <fieldset>
                         <legend>Personal Information</legend>
                         <div class="row">
-                            <label for="firstName"><i class="fa-solid fa-user"></i>Display name :</label>
+                            <label for="displayname"><i class="fa-solid fa-user"></i>Display name :</label>
                             <input type="text" name="displayname" id="displayname-edit">
                         </div>
                         <div class="row">
-                            <label for="firstName"><i class="fa-solid fa-location-dot"></i> Location :</label>
+                            <label for="location"><i class="fa-solid fa-location-dot"></i> Location :</label>
                             <input type="text" name="location" id="location-edit">
                         </div>
                     </fieldset>
@@ -48,15 +48,11 @@
                 </form>
             </div>
             <div class="cell" id="profil-picture">
-                <img id="picture-edit" src="/static/pictures/151769067995067444168425578336917061814.png">
+                <img id="picture-edit" src="">
                 <i class="fa-solid fa-file-pen"></i>
                 <img id="advice" src="/static/images/robot-advice.png">
                 <button class="exit-button" onclick="removeProfileEditor()">Cancel</button>
             </div>
         </div>
     </div>
-    <script>
-        const layer = document.getElementById("layer")
-        layer.addEventListener("click",removeProfileEditor)
-    </script>
 </body>

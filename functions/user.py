@@ -1,5 +1,5 @@
 from flask import render_template, session
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 from html import escape
 import flask
 import functions.database as db
@@ -29,8 +29,14 @@ def api_is_logged():
         user_info["code"] = "session_valid"
     return user_info
 
+#region user profile
 @user_api.route('/info/<int:id_user>')
 def get_user_profile(id_user):
+    if id_user is 0:
+        if check_session(session):
+            id_user = session.get('id')
+        else:
+            return redirect("/login",302)
     data = db.get_user_profile(id_user)
     if id_user == session.get('id'):
         data["is_logged"] = "yes"
@@ -40,6 +46,22 @@ def get_user_profile(id_user):
 def api_user_editor():
     if check_session(session):
         return render_template("profile-editor.html")
+
+@user_api.route('/profile/update', methods=['POST'])
+def api_profile_update():
+    if check_session(session):
+        displayname = request.form["displayname"]
+        description = request.form["description"]
+        location = request.form["location"]
+        gender = request.form["gender"]
+        if len(gender) == 1:
+            db.update_profile(session.get('id'),displayname,description,location,gender)
+            return "success"
+        else:
+            return "bad_gender"
+    else:
+        return "login"
+#endregion
 
 #region authentication
 @user_api.route('/signin', methods=['POST'])

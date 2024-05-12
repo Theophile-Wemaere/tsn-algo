@@ -147,7 +147,6 @@ function signIn() {
 }
 
 function loadUserProfile(id_user) {
-  console.log(`going to load id ${id_user}`)
   fetch(`/api/user/info/${id_user}`, {
     method: "GET",
   })
@@ -172,7 +171,7 @@ function loadUserProfile(id_user) {
       description.textContent = res.description;
       date.innerHTML = `<i class="fa-solid fa-cake-candles"></i> Joined on ${res.creation}`;
       gender.innerHTML = `<i class="fa-solid fa-venus-mars"></i> ${res.gender}`;
-      location.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${res.localisation}`;
+      location.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${res.location}`;
       followers.innerHTML = `<b>${res.followers}</b> Followers`
       following.innerHTML = `<b>${res.following}</b> Following`
 
@@ -197,10 +196,71 @@ function profileEditor() {
         }
       };
       window.addEventListener("click",onClickOutside);
+      fetch(`/api/user/info/0`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+          const picture = document.getElementById("picture-edit")
+          const name = document.getElementById("displayname-edit");
+          const description = document.getElementById("description-edit");
+          const location = document.getElementById("location-edit");
+
+          picture.src = `/static/pictures/${res.picture}.png`
+          name.value = res.displayname;
+          description.textContent = res.description;
+          location.value = res.location;
+          switch(res.gender) {
+            case "M":
+              const M = document.getElementById("male");
+              M.checked = true;
+              break;
+            case "F":
+              const F = document.getElementById("female");
+              F.checked = true;
+              break;
+            default:
+              const X = document.getElementById("other");
+              X.checked = true;
+          }
+        });
     });
 }
 
 function removeProfileEditor() {
   const layer = document.getElementById("layer");
   layer.remove();
+}
+
+function updateProfile() {
+  const name = document.getElementById("displayname-edit").value;
+  const description = document.getElementById("description-edit").value;
+  const location = document.getElementById("location-edit").value;
+  const M = document.getElementById("male").checked;
+  const F = document.getElementById("female").checked;
+  var gender = "X";
+  if(M) {
+    gender = "M";
+  } else if(F) {
+    gender = "F";
+  }
+  const data = new FormData();
+  data.append("displayname", name);
+  data.append("description", description);
+  data.append("location", location);
+  data.append("gender",gender);
+  fetch("/api/user/profile/update", {
+    method: "POST",
+    body: data,
+  })
+    .then((response) => response.text())
+    .then((data) => {
+      if(data.trim() === "success") {
+        removeProfileEditor();
+        loadUserProfile(0);
+      } else {
+        windows.location.href = '/login';
+      }
+    });
 }

@@ -82,7 +82,7 @@ def create_user(username, email, password):
     # todo : handle already exisiting email
     data = (email, username, username, password)
     sql = """
-    INSERT INTO users(email, username, displayname, password, role, created_at, last_update, gender, notification, localisation) 
+    INSERT INTO users(email, username, displayname, password, role, created_at, last_update, gender, notification, location) 
     VALUES (?, ?, ?, ?, 'user', date(), datetime(), 'X', 'N', 'The Internet')"""
     cursor.execute(sql,data)
     db.commit()
@@ -233,7 +233,7 @@ def get_user_profile(id_user):
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
     sql = """
-    SELECT username, displayname, gender, created_at, description, localisation, picture
+    SELECT username, displayname, gender, created_at, description, location, picture
     FROM users WHERE id_user = ?"""
     cursor.execute(sql,(id_user,))
     row = cursor.fetchone()
@@ -243,7 +243,7 @@ def get_user_profile(id_user):
         "gender": row[2],
         "creation": row[3],
         "description": row[4],
-        "localisation": row[5],
+        "location": row[5],
         "picture": row[6]
     }
 
@@ -254,5 +254,28 @@ def get_user_profile(id_user):
     
     return data
 
+#endregion
+
+#region update user info
+
+def update_profile(id_user,displayname,description,location,gender):
+    """
+    update a user profile
+    """
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    sql = """
+    UPDATE users SET 
+    displayname = ?,
+    description = ?,
+    location = ?,
+    gender = ?,
+    last_update = datetime()
+    WHERE id_user = ?
+    """
+    data = (displayname,description,location,gender,id_user)
+    cursor.execute(sql,data)
+    db.commit()
+    db.close()
 
 #endregion

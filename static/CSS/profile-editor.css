@@ -43,14 +43,11 @@ html,body {
     color: #FFFFFF;
 }
 
-.layer > .row {
+fieldset .row {
+    margin-bottom: 10px;
     display: flex;
     flex-direction: row;
     align-items: center;
-}
-
-fieldset .row {
-    margin-bottom: 10px;
 }
 
 #row-gender .row {
@@ -58,6 +55,8 @@ fieldset .row {
 }
 
 .row#row-gender {
+    display: flex;
+    flex-direction: row;
     justify-content: space-evenly;
 }
 

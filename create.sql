@@ -11,7 +11,7 @@ CREATE TABLE `users` (
   `gender` char,
   `notification` char,
   `picture` varchar(255),
-  `localisation` varchar(255)
+  `location` varchar(255)
 );
 
 CREATE TABLE `sessions` (

@@ -30,6 +30,11 @@
     margin: 20px 10px 20px 20px;
 }
 
+.profile .row#description {
+    justify-content: left;
+    align-items: start;
+}
+
 .profile .cell {
     flex-direction: column;
     flex-grow: 1;
