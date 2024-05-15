@@ -420,5 +420,46 @@ def update_relation(id_user,id_target,action):
             cursor.execute("DELETE FROM relations WHERE followed = ? and follower = ?",(id_target,id_user))
     db.close()
     return "success"
+
+def get_tags(id_user=None):
+    """
+    return all available tags from the database
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    if id_user is None:
+        cursor.execute("SELECT * FROM tags")
+    else:
+        cursor.execute("""
+        SELECT t.id_tag, t.name
+        FROM tags t
+        INNER JOIN user_tags ut 
+        ON ut.tag = t.id_tag
+        WHERE ut.user = ?
+        """,(id_user,))
+    data = {}
+    data["tags"] = {}
+    for row in cursor.fetchall():
+        data["tags"][row[1]] = row[0]
+    db.close()
+    return data
+
+def update_tags(id_user,tags):
+    """
+    set a user tags
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM user_tags WHERE user = ?",(id_user,))
+    db.commit()
+    for tag in tags:
+        cursor.execute("SELECT * FROM tags WHERE id_tag = ?",(tag,))
+        if cursor.fetchone() is not None:
+            cursor.execute("INSERT INTO user_tags VALUES(?,?)",(id_user,tag))
+            db.commit()
+    db.close()
+
 #endregion
 

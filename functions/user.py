@@ -149,4 +149,32 @@ def api_relation():
     else:
         return redirect('/login',302)
 
+@user_api.route('/preferences', methods=['GET'])
+def api_preferences():
+    if check_session(session):
+        return render_template("preferences.html")
+
+@user_api.route('/tags',methods=['GET'])
+def api_tags():
+    if check_session(session):
+        user = request.args.get("user")
+        data = None
+        print("user : ",user)
+        if user is not None and user == "true":
+            data = db.get_tags(session.get('id'))
+        else:
+            data = db.get_tags()
+        data["code"] = "success"
+        return data
+    else:
+        return redirect('/login',302)
+
+@user_api.route('/tags/update',methods=['PATCH'])
+def api_tags_update():
+    if check_session(session):
+        tags = request.form["tags"].replace("tag-","").split(',')
+        db.update_tags(session.get('id'),tags)
+        return "success"
+    else:
+        return redirect('/login',302)
 #endregion

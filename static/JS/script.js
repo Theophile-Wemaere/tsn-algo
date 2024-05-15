@@ -31,7 +31,6 @@ function loadUserRecommandations() {
     .then((res) => res.json())
     .then((res) => {
       if(res.code === "success") {
-        console.log(res)
         reco = document.getElementById("users");
         res.data.forEach(function(user) {
           row = `
@@ -235,7 +234,8 @@ function profileEditor() {
       document.body.innerHTML += res;
       const onClickOutside = (e) => {
         if (e.target.className.includes("layer")) {
-          removeProfileEditor();
+          removeEditor
+        ();
           window.removeEventListener("click", onClickOutside);
         }
       };
@@ -314,11 +314,97 @@ function loadOnboarding() {
     });
 }
 
-function loadPreferences() {
-  console.log("hellow");
+function loadUserPreference() {
+  fetch('/api/user/tags?user=true', {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.code === "success") {
+        const divTags = document.getElementById("selected-tags")
+        divTags.innerHTML = "";
+        for(var key in res.tags) {
+          divTags.innerHTML += `
+          <span class="subject-tag" id="tag-${res.tags[key]}">
+          <i class="fa-solid fa-hashtag"></i>
+          ${key}
+          <div id="e"></div>
+          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${res.tags[key]})"></i>
+        </span>`
+        }
+      }
+    });
 }
 
-function removeProfileEditor() {
+function loadPreferences() {
+  const layer = document.getElementById("layer")
+  layer.remove()
+  fetch('/api/user/preferences', {
+    method: "GET",
+  })
+    .then((res) => res.text())
+    .then((res) => {
+      document.body.innerHTML += res;
+      loadUserPreference()
+      fetch('/api/user/tags', {
+        method: "GET",
+        })
+        .then((res) => res.json())
+        .then((res) => {
+            console.log(res)
+            var tags = [];
+            for(var key in res.tags) tags.push(key);
+            if(res.code === "success") {
+                $( function() {
+                  $("#subject-input").autocomplete({
+                    source: tags,
+                    select: function(event, ui) {
+                        ui.item.value = ui.item.label; 
+                        $(".cell").append(`
+                        <span class="subject-tag" id="tag-${res.tags[ui.item.label]}">
+                          <i class="fa-solid fa-hashtag"></i>
+                          ${ui.item.label}
+                          <div id="e"></div>
+                          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${res.tags[ui.item.label]})"></i>
+                        </span>`);
+                        $(this).val(""); 
+                      
+                      return false; 
+                    }
+                  });
+                } );
+            }
+        });
+    });
+}
+
+function removeTag(id_tag) {
+  document.getElementById(`tag-${id_tag}`).remove() 
+}
+
+function savePreferences() {
+  const tagsDiv = document.getElementById("selected-tags");
+  const tags = [];
+  for(let i = 0;i<tagsDiv.children.length; i++) {
+    tags.push(tagsDiv.children[i].id)
+  }
+  console.log(tags)
+  const data = new FormData();
+  data.append("tags",tags) 
+  fetch('/api/user/tags/update', {
+    method: "PATCH",
+    body: data
+    })
+    .then((res) => res.text())
+    .then((res) => {
+        console.log(res)
+        if(res === "success") {
+          removeEditor();
+        }
+    });
+}
+
+function removeEditor() {
   const layer = document.getElementById("layer");
   layer.remove();
 }
@@ -347,7 +433,10 @@ function updateProfile() {
     .then((response) => response.text())
     .then((data) => {
       if(data.trim() === "success") {
-        removeProfileEditor();
+        if(window.location.pathname.startsWith("/profile")) {
+          removeEditor
+        ();
+        }
         loadUserProfile(0);
       } else {
         windows.location.href = '/login';

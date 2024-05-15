@@ -1,0 +1,23 @@
+<body>
+    <link rel="stylesheet" href="/static/CSS/preferences.css">
+    <script src="https://kit.fontawesome.com/bc424452bc.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="/static/JS/script.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <div class="layer" id="layer">
+        <div class="square" id="square">
+            <h2 id="title-edit">Chooses your favorite subjects</h2>
+            <input type="text" id="subject-input" class="subject-input" placeholder="search a tag here">
+            <div class="cell" id="selected-tags">
+            </div>
+            <button class="exit-button" onclick="savePreferences()">Save preferences</button>
+        </div>
+    </div>
+</body>
