@@ -218,9 +218,22 @@ function loadUserProfile(id_user) {
       followers.innerHTML = `<b>${res.followers}</b> Followers`
       following.innerHTML = `<b>${res.following}</b> Following`
 
+      const tagsDiv = document.getElementById("preference-tags")
+      tagsDiv.innerHTML = "";
+      res.tags.forEach(tag => {
+        tagsDiv.innerHTML += `
+        <div class="row">
+        <i class="fa-solid fa-hashtag"></i>
+        ${tag}
+        </div>
+        `  
+      });
+
       if(res.is_logged === "yes") {
-        const button = document.getElementById("edit");
-        button.style.display = "block";
+        const buttons = document.querySelectorAll("#edit");
+        buttons.forEach(button => {
+          button.style.display = "block";
+        });
       }
     });
 }
@@ -281,7 +294,7 @@ function loadOnboarding() {
       const title = document.getElementById("title-edit");
       title.textContent = "Welcome on 𝕐 !"
       const button = document.getElementById("exit-button");
-      button.setAttribute('onclick','loadPreferences()')
+      button.setAttribute('onclick','loadPreferencesEditor()')
       button.textContent = "Continue";
       fetch(`/api/user/info/0`, {
         method: "GET",
@@ -314,7 +327,7 @@ function loadOnboarding() {
     });
 }
 
-function loadUserPreference() {
+function loadUserPreferenceEditor() {
   fetch('/api/user/tags?user=true', {
     method: "GET",
   })
@@ -336,16 +349,15 @@ function loadUserPreference() {
     });
 }
 
-function loadPreferences() {
-  const layer = document.getElementById("layer")
-  layer.remove()
+function loadPreferencesEditor() {
+  removeEditor();
   fetch('/api/user/preferences', {
     method: "GET",
   })
     .then((res) => res.text())
     .then((res) => {
       document.body.innerHTML += res;
-      loadUserPreference()
+      loadUserPreferenceEditor()
       fetch('/api/user/tags', {
         method: "GET",
         })
@@ -360,7 +372,7 @@ function loadPreferences() {
                     source: tags,
                     select: function(event, ui) {
                         ui.item.value = ui.item.label; 
-                        $(".cell").append(`
+                        $("#selected-tags").append(`
                         <span class="subject-tag" id="tag-${res.tags[ui.item.label]}">
                           <i class="fa-solid fa-hashtag"></i>
                           ${ui.item.label}
@@ -400,13 +412,16 @@ function savePreferences() {
         console.log(res)
         if(res === "success") {
           removeEditor();
+          loadUserProfile(0);
         }
     });
 }
 
 function removeEditor() {
   const layer = document.getElementById("layer");
-  layer.remove();
+  if(layer) {
+    layer.remove();
+  }
 }
 
 function updateProfile() {
@@ -434,8 +449,7 @@ function updateProfile() {
     .then((data) => {
       if(data.trim() === "success") {
         if(window.location.pathname.startsWith("/profile")) {
-          removeEditor
-        ();
+          removeEditor();
         }
         loadUserProfile(0);
       } else {

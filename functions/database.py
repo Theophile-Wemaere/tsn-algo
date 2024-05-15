@@ -255,7 +255,16 @@ def get_user_profile(id_user):
     data["followers"] = cursor.fetchone()[0]
     cursor.execute("SELECT count(*) FROM relations WHERE follower = ?",(id_user,))
     data["following"] = cursor.fetchone()[0]
-    
+
+    cursor.execute("""
+        SELECT t.name
+        FROM tags t
+        INNER JOIN user_tags ut 
+        ON ut.tag = t.id_tag
+        WHERE ut.user = ?
+        """,(id_user,))
+    data["tags"] = [row[0] for row in cursor.fetchall()]
+
     return data
 
 #endregion
