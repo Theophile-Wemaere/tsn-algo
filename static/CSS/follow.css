@@ -1,0 +1,85 @@
+.cell#row1 {
+    background-color: transparent;
+}
+
+.cell#follows {
+    background-color: #646464;
+    border-radius: 20px;
+}
+
+.cell#follows {
+    width: 100%;
+    overflow-y: scroll;
+    height: 90%;
+}
+
+.cell#follows hr {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    color: #FFFFFF;
+    font-size: large;
+}
+
+.cell#follows .user-row {
+    display: flex;
+    flex-direction: row;
+    height: 100px;
+    align-items: center;
+    margin: 5px 0 5px 0;
+}
+
+.cell#follows .user-row button {
+    height: 60%;
+    border-radius: 10px;
+    background-color: #D9D9D9;
+    font-size: medium;
+    margin-right: 10px;
+    padding: 0 10px 0 10px;
+}
+
+.cell#follows .user-row button:hover {
+    background-color: red;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.cell#follows .user-row img {
+    height: 90%;
+    width: auto;
+    margin-left: 50px;
+    margin-right: 5px;
+    border: solid 1px #FFFFFF;
+    border-radius: 20px;
+}
+
+.cell#follows .user-row .user-names {
+    display: flex;
+    flex-direction: column;
+    color: #FFFFFF;
+    justify-content: center;
+}
+
+.row#description {
+    margin-top: 5px;
+}
+
+.profile .row .current-tab {
+    background-color: #646464;
+    border-radius: 20px 20px 0 0;
+    width: 40%;
+}
+
+.profile .row .other-tab {
+    background-color: transparent;
+    border-radius: 20px 20px 0 0;
+    width: 40%;
+}
+
+.profile .row .other-tab:hover {
+    cursor: pointer;
+    background-color: #D9D9D9;
+    h2 {
+        color: black;
+    }
+}

@@ -69,6 +69,25 @@ function followUser(id_user){
     });
 }
 
+function unfollowUser(id_user) {
+  fetch(`/api/user/relation?id_user=${id_user}&action=unfollow`, {
+    method: "PATCH",
+  })
+    .then((res) => res.text())
+    .then((res) => {
+      if(res === "success") {
+        userRow = document.getElementById(`following-user-${id_user}`)
+        hr = document.getElementById(`hr-${id_user}`)
+        if(userRow !== undefined && hr !== undefined ) {
+          userRow.remove();
+          hr.remove();
+        }
+      } else {
+        console.log(res);
+      }
+    });
+}
+
 function loadUserMenu() {
     fetch("/api/user/is_logged", {
         method: "GET",
@@ -215,8 +234,8 @@ function loadUserProfile(id_user) {
       date.innerHTML = `<i class="fa-solid fa-cake-candles"></i> Joined on ${res.creation}`;
       gender.innerHTML = `<i class="fa-solid fa-venus-mars"></i> ${res.gender}`;
       location.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${res.location}`;
-      followers.innerHTML = `<b>${res.followers}</b> Followers`
-      following.innerHTML = `<b>${res.following}</b> Following`
+      followers.innerHTML = `<a href="/followers?id_user=${id_user}"><b>${res.followers}</b> Followers</a>`
+      following.innerHTML = `<a href="/following?id_user=${id_user}"><b>${res.following}</b> Following</a>`
 
       const tagsDiv = document.getElementById("preference-tags")
       tagsDiv.innerHTML = "";
@@ -496,4 +515,128 @@ function updatePicture() {
     }
   };
   fileInput.click();
+}
+
+function loadUserFollowers(id_user) {
+  fetch(`/api/user/followers/${id_user}`, {
+    method: "GET",
+  })
+    .then((response) => response.json())
+    .then((res) => {
+      console.log(res)
+      if(res.code === "success") {
+        row2 = document.getElementById("row2");
+        row2.remove();
+        let row1 = document.getElementById("row1");
+        row1.innerHTML = `
+        <div class="row">
+          <div class="row"><h2>Followers</h2></div>
+          <div class="row"><a href="/following"><h2>Following</h2></a></div>
+        <div>
+        `; 
+        res.data.forEach(function(user) {
+          console.log(user);
+          row = `
+          <a href="/profile?id_user=${user.id}">
+            <div class="user-row" id="recommandation-user-${user.id}">
+              <img src="/static/pictures/${user.picture}.png">
+              <div class="user-names">
+                <b>${user.displayname}</b>
+                <i>@${user.username}</i>
+              </div>
+              <div style="flex-grow:1"></div>
+              <button onclick="event.preventDefault();followUser(${user.id})">Follow</button>
+            </div>
+          </a>
+          `
+          row1.innerHTML += row;
+        });
+      }
+    });
+}
+
+function loadUserFollowers(id_user) {
+  fetch(`/api/user/followers/${id_user}`, {
+    method: "GET",
+  })
+    .then((response) => response.json())
+    .then((res) => {
+      if(res.code === "success") {
+        let row1 = document.getElementById("row1");
+        let row2 = document.getElementById("row2");
+        row2.remove();
+        row1.setAttribute("class","cell")
+        row1.innerHTML = `
+        <div class="row">
+        <div class="row current-tab"><a href="/followers?id_user=${id_user}"><h2>Followers</h2></a></div>
+          <div class="row other-tab"><a href="/following?id_user=${id_user}"><h2>Following</h2></a></div>
+        </div>`;
+        row1.innerHTML += `<div class="cell" id="follows"></div>`
+        follows = document.getElementById("follows")
+        res.data.forEach(function(user) {
+          row = `
+          <a href="/profile?id_user=${user.id}">
+            <div class="user-row" id="follower-user-${user.id}">
+              <img src="/static/pictures/${user.picture}.png">
+              <div class="user-names">
+                <b>${user.displayname}</b>
+                <i>@${user.username}</i>
+                <div class="row" id="description">
+                ${user.description}
+                </div>
+              </div>
+              <div style="flex-grow:1"></div>
+            </div>
+          </a>
+          <hr id="hr-${user.id}">
+          `
+          follows.innerHTML += row;
+        });
+      }
+    });
+}
+
+function loadUserFollowing(id_user) {
+  fetch(`/api/user/following/${id_user}`, {
+    method: "GET",
+  })
+    .then((response) => response.json())
+    .then((res) => {
+      if(res.code === "success") {
+        let row1 = document.getElementById("row1");
+        let row2 = document.getElementById("row2");
+        row2.remove();
+        row1.setAttribute("class","cell")
+        row1.innerHTML = `
+        <div class="row">
+        <div class="row other-tab"><a href="/followers?id_user=${id_user}"><h2>Followers</h2></a></div>
+          <div class="row current-tab"><a href="/following?id_user=${id_user}"><h2>Following</h2></a></div>
+        </div>`;
+        row1.innerHTML += `<div class="cell" id="follows"></div>`
+        follows = document.getElementById("follows")
+        res.data.forEach(function(user) {
+          row = `
+          <a href="/profile?id_user=${user.id}">
+            <div class="user-row" id="following-user-${user.id}">
+              <img src="/static/pictures/${user.picture}.png">
+              <div class="user-names">
+                <b>${user.displayname}</b>
+                <i>@${user.username}</i>
+                <div class="row" id="description">
+                ${user.description}
+                </div>
+              </div>
+              <div style="flex-grow:1"></div>`;
+              if(res.is_logged == "yes") {
+                row += `<button onclick="event.preventDefault();unfollowUser(${user.id})">Unfollow</button>`;
+              }
+              row += `
+            </div>
+          </a>
+          <hr id="hr-${user.id}">
+          `;
+          follows.innerHTML += row;
+        });
+      }
+    });
 }

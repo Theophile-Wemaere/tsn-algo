@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/static/CSS/styles.css">
     <link rel="stylesheet" href="/static/CSS/profile.css">
+    <link rel="stylesheet" href="/static/CSS/follow.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -107,7 +108,20 @@
                 </script>
             </div>
         </div>
-        <script>loadUserProfile("{{ id_user }}")</script>
+        <script>
+            switch("{{ action }}") {
+                case "load_profile":
+                    loadUserProfile("{{ id_user }}")
+                    break;
+                case "load_followers":
+                    loadUserFollowers("{{ id_user }}")
+                    break;
+                case "load_following":
+                    loadUserFollowing("{{ id_user }}")
+                    break;
+            }
+            
+        </script>
         <div class="recommandations" id="recommandations">
             <div class="users-recommandations" id="users">
                 <h3>Users with the same interests as you</h3>

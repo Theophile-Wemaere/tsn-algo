@@ -56,7 +56,6 @@ def check_existing(column, value):
     cursor = db.cursor()
     cursor.execute(f"SELECT * FROM users WHERE {column} = ?",(value,))
     row = cursor.fetchone()
-    print(row)
     db.close()
     if row is not None:
         return True
@@ -215,7 +214,7 @@ def get_user_data(id_user):
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
     sql = """
-    SELECT email, username, displayname, picture 
+    SELECT email, username, displayname, picture, description 
     FROM users WHERE id_user = ?
     """
     cursor.execute(sql,(id_user,))
@@ -225,6 +224,7 @@ def get_user_data(id_user):
         "username": row[1],
         "displayname": row[2],
         "picture": row[3],
+        "description": row[4],
         "id": id_user
     }
     db.close()
@@ -266,6 +266,40 @@ def get_user_profile(id_user):
     data["tags"] = [row[0] for row in cursor.fetchall()]
 
     return data
+
+def get_user_followers(id_user):
+    """"
+    return followers of a user
+    """
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    cursor.execute("SELECT DISTINCT follower FROM relations WHERE followed = ?",(id_user,))
+    followers = [row[0] for row in cursor.fetchall()]
+    users_info = []
+    for user in followers:
+        data = get_user_data(user)
+        del data["email"]
+        users_info.append(data)
+
+    return users_info
+
+def get_user_following(id_user):
+    """"
+    return follows of a user
+    """
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    cursor.execute("SELECT DISTINCT followed FROM relations WHERE follower = ?",(id_user,))
+    followers = [row[0] for row in cursor.fetchall()]
+    users_info = []
+    for user in followers:
+        data = get_user_data(user)
+        del data["email"]
+        users_info.append(data)
+
+    return users_info
 
 #endregion
 
@@ -427,6 +461,7 @@ def update_relation(id_user,id_target,action):
         cursor.execute("SELECT * FROM relations WHERE followed = ? AND follower = ?",(id_target,id_user))
         if cursor.fetchone() is not None:
             cursor.execute("DELETE FROM relations WHERE followed = ? and follower = ?",(id_target,id_user))
+            db.commit()
     db.close()
     return "success"
 

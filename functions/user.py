@@ -120,6 +120,31 @@ def api_picture_update():
     else:
         return redirect("/login",302)
 
+@user_api.route('/followers/<int:id_user>')
+def get_user_followers(id_user):
+    if id_user is 0:
+        if check_session(session):
+            id_user = session.get('id')
+        else:
+            return redirect("/login",302)
+    data = db.get_user_followers(id_user)
+    res = {"code":"success","data":data}
+    if id_user == session.get('id'):
+        res["is_logged"] = "yes"
+    return res
+
+@user_api.route('/following/<int:id_user>')
+def get_user_following(id_user):
+    if id_user is 0:
+        if check_session(session):
+            id_user = session.get('id')
+        else:
+            return redirect("/login",302)
+    data = db.get_user_following(id_user)
+    res = {"code":"success","data":data}
+    if id_user == session.get('id'):
+        res["is_logged"] = "yes"
+    return res
 #endregion
 
 #region recommandations

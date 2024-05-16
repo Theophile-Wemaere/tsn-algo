@@ -47,11 +47,33 @@ def show_profile():
     id_user = request.args.get("id_user")
     if id_user is None: # if no id is given, show user profile
         if check_session(session):
-            return render_template('profile.html',id_user=session.get('id'))
+            return render_template('profile.html',action="load_profile",id_user=session.get('id'))
         else:
             return redirect('/login',code=301)
     else: # else show the wanted user profile
-        return render_template('profile.html',id_user=id_user)
+        return render_template('profile.html',action="load_profile",id_user=id_user)
+
+@app.route("/followers")
+def show_followers():
+    id_user = request.args.get("id_user")
+    if id_user is None:
+        if check_session(session):
+            return render_template('profile.html',action="load_followers",id_user=session.get('id'))
+        else:
+            return redirect('/login',code=301)
+    else: 
+        return render_template('profile.html',action="load_followers",id_user=id_user)
+
+@app.route("/following")
+def show_following():
+    id_user = request.args.get("id_user")
+    if id_user is None:
+        if check_session(session):
+            return render_template('profile.html',action="load_following",id_user=session.get('id'))
+        else:
+            return redirect('/login',code=301)
+    else: 
+        return render_template('profile.html',action="load_following",id_user=id_user)
 
 if __name__ == '__main__':
     try:
