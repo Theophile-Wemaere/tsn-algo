@@ -234,6 +234,11 @@ function loadUserProfile(id_user) {
         buttons.forEach(button => {
           button.style.display = "block";
         });
+        const button = document.getElementById("edit-preferences");
+        button.setAttribute("self","yes");
+      } else {
+        const button = document.getElementById("edit-preferences");
+        button.setAttribute("self","no");
       }
     });
 }

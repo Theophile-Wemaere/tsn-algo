@@ -1,4 +1,5 @@
-html,body {
+html,
+body {
     background-color: #514D4D;
     display: flex;
     height: 100%;
@@ -41,18 +42,18 @@ a {
     height: 100px;
 }
 
-.top-bar > #logo {
+.top-bar>#logo {
     width: 20%;
 }
 
-.top-bar > #user {
+.top-bar>#user {
     width: 20%;
     display: flex;
     flex-direction: row;
     justify-content: right;
 }
 
-.top-bar > #search {
+.top-bar>#search {
     flex-grow: 1;
     display: flex;
     align-items: center;
@@ -72,6 +73,7 @@ a {
 .search-bar:hover {
     background-color: #FFFFFF;
 }
+
 .search-bar:focus {
     background-color: #FFFFFF;
 }
@@ -127,7 +129,7 @@ a {
 }
 
 .menu {
-    width:250px;
+    width: 250px;
     height: 100%;
     border-right: 1px solid;
     border-color: #FFFFFF;
@@ -146,7 +148,7 @@ a {
     width: 100%;
     height: 80px;
     align-items: center;
-    color: #FFFFFF;   
+    color: #FFFFFF;
     font-size: 30px;
 }
 
@@ -168,6 +170,7 @@ a {
 .menu #hr-logout {
     display: none;
 }
+
 .menu #row-logout {
     display: none;
 }
@@ -182,7 +185,7 @@ a {
     align-items: center;
     background-color: #AA2D2D;
     border-radius: 25px;
-    color: #FFFFFF;   
+    color: #FFFFFF;
     font-size: 30px;
     font-weight: bold;
     display: none;

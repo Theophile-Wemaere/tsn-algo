@@ -65,7 +65,7 @@
                     <h1 id="name"></h1>
                     <h2 id="at"></h2>
                     <div class="row" id="description">
-                        
+
                     </div>
                     <div class="row">
                         <div id="date"></div>
@@ -78,11 +78,33 @@
                 </div>
             </div>
             <div class="row" id="row2">
-                <h2>Interests :</h2>
+                <div class="row">
+                    <h2>Interests :</h2>
+                    <div style="flex-grow: 1;"></div>
+                    <i id="preference-show" class="fa-solid fa-circle-chevron-down"></i>
+                </div>
                 <div class="row" id="preference-tags">
 
                 </div>
-                <button id="edit" onclick="loadPreferencesEditor()">Edit your preferences</button>
+                <button id="edit-preferences" onclick="loadPreferencesEditor()">Edit your preferences</button>
+                <script>
+                    const buttonShow = document.getElementById("preference-show");
+                    const rowPref = document.getElementById("preference-tags");
+                    const editPref = document.getElementById("edit-preferences");
+                    buttonShow.addEventListener("click", function () {
+                        this.classList.toggle("rotated");
+                        console.log(rowPref.style.display);
+                        if (rowPref.style.display === "flex") {
+                            rowPref.style.display = "none";
+                            editPref.style.display = "none";
+                        } else {
+                            rowPref.style.display = "flex";
+                            if(editPref.getAttribute("self") === "yes") {
+                                editPref.style.display = "block";
+                            }
+                        }
+                    });
+                </script>
             </div>
         </div>
         <script>loadUserProfile("{{ id_user }}")</script>

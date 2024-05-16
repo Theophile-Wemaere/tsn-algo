@@ -70,6 +70,10 @@
     background-color: #FFFFFF;
 }
 
+button#edit {
+    display: none;
+}
+
 .row#row2 {
     background-color: #646464;
     height: auto;
@@ -79,6 +83,7 @@
     flex-direction: column;
     justify-content: left;
     align-items:baseline;
+    padding-left: 10px;
 }
 
 .row#row2 h2 {
@@ -92,6 +97,7 @@
 .row#preference-tags {
     margin-bottom: 10px;
     justify-content: unset;
+    display: none;
 }
 
 .row#preference-tags .row {
@@ -104,4 +110,19 @@
     border-radius: 10px;
     font-size: large;
     font-weight: bold;
+}
+
+.row i#preference-show {
+    color: #e2d0d0;
+    margin-right: 30px;
+    font-size: 40px;
+}
+
+.row i#preference-show:hover {
+    cursor: pointer;
+    color: #FFFFFF;
+}
+
+.row i#preference-show.rotated {
+    transform: rotate(180deg);
 }
