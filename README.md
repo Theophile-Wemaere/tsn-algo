@@ -6,7 +6,7 @@ todo :
 - post creation
 - post edition (optional)
 - comments
-- following, unfollowing
+- "follows you" tag
 - account deletion
 - recommandations algorithm
 - admin panel
