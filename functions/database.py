@@ -211,6 +211,9 @@ def get_user_data(id_user):
     return a dico object
     """
 
+    if not check_existing("id_user",id_user):
+        return -1
+
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
     sql = """
@@ -432,10 +435,11 @@ def get_user_recommandations(id_user):
 
     users_info = []
     for user in users:
+        print("user",user)
         data = get_user_data(user)
-        del data["email"]
-        users_info.append(data)
-
+        if data != -1:
+            del data["email"]
+            users_info.append(data)
     
     return users_info
 

@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.secret_key = os.getenv("FLASK_SECRET")
 app.permanent_session_lifetime = timedelta(weeks=4)
 db.init(app)
@@ -23,6 +24,8 @@ print(db.hash("Password123!"))
 
 from functions.user import user_api
 app.register_blueprint(user_api, url_prefix='/api/user')
+from functions.posts import post_api
+app.register_blueprint(post_api, url_prefix='/api/post')
 
 @app.route("/home")
 @app.route("/")
@@ -74,6 +77,13 @@ def show_following():
             return redirect('/login',code=301)
     else: 
         return render_template('profile.html',action="load_following",id_user=id_user)
+
+@app.route("/post/new")
+def create_post():
+    if check_session(session):
+        return render_template("post-editor.html")
+    else:
+        return redirect("/login",302)
 
 if __name__ == '__main__':
     try:

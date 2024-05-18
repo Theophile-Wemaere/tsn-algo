@@ -6,6 +6,11 @@ function logout() {
   window.location.href = "/api/user/logout";
 }
 
+function autoGrow(element) {
+  element.style.height = "5px";
+  element.style.height = (element.scrollHeight) + "px";
+}
+
 function loadRecommandations() {
   fetch("/api/user/is_logged", {
     method: "GET",
@@ -113,8 +118,10 @@ function loadUserMenu() {
         row.style.display = "flex"
 
         // display post buttons
-        button = document.getElementById("post-button")
-        button.style.display = "flex"
+        if (!window.location.pathname.startsWith("/post")) {
+          button = document.getElementById("post-button")
+          button.style.display = "flex"
+        }
       }
     });
 }
@@ -381,6 +388,16 @@ function loadPreferencesEditor() {
     .then((res) => res.text())
     .then((res) => {
       document.body.innerHTML += res;
+      if (window.location.pathname.startsWith("/profile")) {
+        const onClickOutside = (e) => {
+          if (e.target.className.includes("layer")) {
+            removeEditor
+              ();
+            window.removeEventListener("click", onClickOutside);
+          }
+        };
+        window.addEventListener("click", onClickOutside);
+      }
       loadUserPreferenceEditor()
       fetch('/api/user/tags', {
         method: "GET",
@@ -415,7 +432,81 @@ function loadPreferencesEditor() {
 }
 
 function removeTag(id_tag) {
-  document.getElementById(`tag-${id_tag}`).remove()
+  var tag;
+  if(id_tag.startsWith("tag-")) {
+    tag = `${id_tag}`
+  } else {
+    tag = `tag-${id_tag}`
+  }
+  document.getElementById(tag).remove()
+}
+
+function selectTag() {
+  fetch('/api/user/preferences', {
+    method: "GET",
+  })
+    .then((res) => res.text())
+    .then((res) => {
+      document.body.innerHTML += res;
+      const onClickOutside = (e) => {
+        if (e.target.className.includes("layer")) {
+          removeEditor
+            ();
+          window.removeEventListener("click", onClickOutside);
+        }
+      };
+      window.addEventListener("click", onClickOutside);
+
+      document.getElementById("title-edit").textContent = "Choose tags to identify your post"
+      button = document.getElementById("exit-button")
+      button.textContent = "Save tags"
+      button.setAttribute("onclick","updateSelectedTags()")
+
+
+      fetch('/api/user/tags', {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res)
+          var tags = [];
+          for (var key in res.tags) tags.push(key);
+          if (res.code === "success") {
+            $(function () {
+              $("#subject-input").autocomplete({
+                source: tags,
+                select: function (event, ui) {
+                  ui.item.value = ui.item.label;
+                  $("#selected-tags").append(`
+                        <span class="subject-tag" id="tag-${res.tags[ui.item.label]}">
+                          <i class="fa-solid fa-hashtag"></i>
+                          ${ui.item.label}
+                          <div id="e"></div>
+                          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${res.tags[ui.item.label]})"></i>
+                        </span>`);
+                  $(this).val("");
+
+                  return false;
+                }
+              });
+            });
+          }
+        });
+    });
+}
+
+function updateSelectedTags() {
+  const tagsDiv = document.getElementById("selected-tags");
+  tagsRow = document.getElementById("tag-list")
+  for (let i = 0; i < tagsDiv.children.length; i++) {
+    tagsRow.innerHTML += `
+    <div class="row" id="${tagsDiv.children[i].id}">
+        <i class="fa-solid fa-hashtag"></i>
+        ${tagsDiv.children[i].textContent}
+        <i id="trash-remove" onclick="removeTag('${tagsDiv.children[i].id}')" class="fa-solid fa-trash"></i>
+    </div>`
+  }
+  removeEditor();
 }
 
 function savePreferences() {

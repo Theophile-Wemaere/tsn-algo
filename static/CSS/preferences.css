@@ -67,7 +67,7 @@ html,body {
     cursor: pointer;
 }
 
-.cell span {
+.cell#selected-tags span {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -80,22 +80,22 @@ html,body {
     font-size: 20px;
 }
 
-.cell span i {
+.cell#selected-tags span i {
     margin-left: 5px;   
     margin-right: 5px;
 }
 
-.cell span i#trash-remove {
+.cell#selected-tags span i#trash-remove {
     color: #AA2D2D;
     margin-right: 10px;
 }
 
-.cell span i#trash-remove:hover {
+.cell#selected-tags span i#trash-remove:hover {
     color: #d65151;
     cursor: pointer;
 }
 
-.cell span #e {
+.cell#selected-tags span #e {
     flex-grow: 1;
 }
 
