@@ -1,4 +1,9 @@
-.cell#row1 {
+.row#row1 {
+    width:95%;
+    margin: 20px auto 20px auto;
+}
+
+.cell#row2 {
     background-color: transparent;
 }
 
@@ -10,7 +15,8 @@
 .cell#follows {
     width: 100%;
     overflow-y: scroll;
-    height: 90%;
+    height: 60%;
+    max-height: 60%;
 }
 
 .cell#follows hr {
@@ -64,16 +70,20 @@
     margin-top: 5px;
 }
 
+.cell#row2 .row a {
+    width: 40%;
+}
+
 .profile .row .current-tab {
     background-color: #646464;
     border-radius: 20px 20px 0 0;
-    width: 40%;
+    width: 100%;
 }
 
 .profile .row .other-tab {
     background-color: transparent;
     border-radius: 20px 20px 0 0;
-    width: 40%;
+    width: 100%;
 }
 
 .profile .row .other-tab:hover {

@@ -115,12 +115,13 @@
                     break;
                 case "load_followers":
                     loadUserFollowers("{{ id_user }}")
+                    loadUserProfile("{{ id_user }}")
                     break;
                 case "load_following":
                     loadUserFollowing("{{ id_user }}")
+                    loadUserProfile("{{ id_user }}")
                     break;
             }
-            
         </script>
         <div class="recommandations" id="recommandations">
             <div class="users-recommandations" id="users">

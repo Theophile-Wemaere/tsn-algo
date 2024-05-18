@@ -1,5 +1,5 @@
 function redirect(path) {
-    window.location.href = path;
+  window.location.href = path;
 }
 
 function logout() {
@@ -13,14 +13,14 @@ function loadRecommandations() {
     .then((res) => res.json())
     .then((res) => {
       reco = document.getElementById("recommandations");
-      if(res.code === "session_valid") {
+      if (res.code === "session_valid") {
         loadUserRecommandations();
       } else {
         reco.innerHTML = `
         <h2>Login on 𝕐 to see customs recommandations !</h2>
         <a href="/login" class="user-info">Login now</a>
         `;
-      } 
+      }
     });
 }
 
@@ -30,9 +30,9 @@ function loadUserRecommandations() {
   })
     .then((res) => res.json())
     .then((res) => {
-      if(res.code === "success") {
+      if (res.code === "success") {
         reco = document.getElementById("users");
-        res.data.forEach(function(user) {
+        res.data.forEach(function (user) {
           row = `
           <a href="/profile?id_user=${user.id}">
             <div class="user-row" id="recommandation-user-${user.id}">
@@ -52,15 +52,15 @@ function loadUserRecommandations() {
     });
 }
 
-function followUser(id_user){
+function followUser(id_user) {
   fetch(`/api/user/relation?id_user=${id_user}&action=follow`, {
     method: "PATCH",
   })
     .then((res) => res.text())
     .then((res) => {
-      if(res === "success") {
+      if (res === "success") {
         userRow = document.getElementById(`recommandation-user-${id_user}`)
-        if(userRow !== undefined) {
+        if (userRow !== undefined) {
           userRow.remove();
         }
       } else {
@@ -75,10 +75,10 @@ function unfollowUser(id_user) {
   })
     .then((res) => res.text())
     .then((res) => {
-      if(res === "success") {
+      if (res === "success") {
         userRow = document.getElementById(`following-user-${id_user}`)
         hr = document.getElementById(`hr-${id_user}`)
-        if(userRow !== undefined && hr !== undefined ) {
+        if (userRow !== undefined && hr !== undefined) {
           userRow.remove();
           hr.remove();
         }
@@ -89,67 +89,67 @@ function unfollowUser(id_user) {
 }
 
 function loadUserMenu() {
-    fetch("/api/user/is_logged", {
-        method: "GET",
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if(res.code === "session_valid") {
-            // set username and profile picture
-            reco = document.getElementById("user-info");
-            imageUrl = `/static/pictures/${res.picture}.png`
-            content = `@${res.username} <img src="${imageUrl}" alt="${res.username}'s profile picture">`
-            reco.innerHTML = content;
-            reco.style.paddingLeft = "10px";
+  fetch("/api/user/is_logged", {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.code === "session_valid") {
+        // set username and profile picture
+        reco = document.getElementById("user-info");
+        imageUrl = `/static/pictures/${res.picture}.png`
+        content = `@${res.username} <img src="${imageUrl}" alt="${res.username}'s profile picture">`
+        reco.innerHTML = content;
+        reco.style.paddingLeft = "10px";
 
-            // set redirect to profile
-            link = document.getElementById("login-link")
-            link.href = "/profile"
+        // set redirect to profile
+        link = document.getElementById("login-link")
+        link.href = "/profile"
 
-            // display logout button
-            hr = document.getElementById("hr-logout")
-            hr.style.display = "block";
-            row = document.getElementById("row-logout")
-            row.style.display = "flex"
+        // display logout button
+        hr = document.getElementById("hr-logout")
+        hr.style.display = "block";
+        row = document.getElementById("row-logout")
+        row.style.display = "flex"
 
-            // display post buttons
-            button = document.getElementById("post-button")
-            button.style.display = "flex"
-          }
-        });
+        // display post buttons
+        button = document.getElementById("post-button")
+        button.style.display = "flex"
+      }
+    });
 }
 
 function checkLogin() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-  
-    if (email !== "" && password !== "") {
-      const data = new FormData();
-      data.append("email", email);
-      data.append("password", password);
-  
-      fetch("/api/user/login", {
-        method: "POST",
-        body: data,
-      })
-        .then((response) => response.text())
-        .then((data) => {
-          switch (data.trim()) {
-            case "redirect_admin":
-              window.location.href = "/index.php/admin-users";
-              break;
-            case "redirect_user":
-              window.location.href = "/home";
-              break;
-            case "bad_cred":
-              alert("Bad credentials, please check your email and/or password");
-              break;
-          }
-        });
-    } else {
-      alert("Please fill all fields");
-    }
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  if (email !== "" && password !== "") {
+    const data = new FormData();
+    data.append("email", email);
+    data.append("password", password);
+
+    fetch("/api/user/login", {
+      method: "POST",
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        switch (data.trim()) {
+          case "redirect_admin":
+            window.location.href = "/index.php/admin-users";
+            break;
+          case "redirect_user":
+            window.location.href = "/home";
+            break;
+          case "bad_cred":
+            alert("Bad credentials, please check your email and/or password");
+            break;
+        }
+      });
+  } else {
+    alert("Please fill all fields");
   }
+}
 
 function passwordCheck() {
   const error = document.getElementById("error-password")
@@ -245,19 +245,19 @@ function loadUserProfile(id_user) {
         <i class="fa-solid fa-hashtag"></i>
         ${tag}
         </div>
-        `  
+        `
       });
 
-      if(res.is_logged === "yes") {
+      if (res.is_logged === "yes" && window.location.pathname.startsWith("/profile")) {
         const buttons = document.querySelectorAll("#edit");
         buttons.forEach(button => {
           button.style.display = "block";
         });
         const button = document.getElementById("edit-preferences");
-        button.setAttribute("self","yes");
+        button.setAttribute("self", "yes");
       } else {
         const button = document.getElementById("edit-preferences");
-        button.setAttribute("self","no");
+        button.setAttribute("self", "no");
       }
     });
 }
@@ -272,11 +272,11 @@ function profileEditor() {
       const onClickOutside = (e) => {
         if (e.target.className.includes("layer")) {
           removeEditor
-        ();
+            ();
           window.removeEventListener("click", onClickOutside);
         }
       };
-      window.addEventListener("click",onClickOutside);
+      window.addEventListener("click", onClickOutside);
       fetch(`/api/user/info/0`, {
         method: "GET",
       })
@@ -291,7 +291,7 @@ function profileEditor() {
           name.value = res.displayname;
           description.textContent = res.description;
           location.value = res.location;
-          switch(res.gender) {
+          switch (res.gender) {
             case "M":
               const M = document.getElementById("male");
               M.checked = true;
@@ -318,7 +318,7 @@ function loadOnboarding() {
       const title = document.getElementById("title-edit");
       title.textContent = "Welcome on 𝕐 !"
       const button = document.getElementById("exit-button");
-      button.setAttribute('onclick','loadPreferencesEditor()')
+      button.setAttribute('onclick', 'loadPreferencesEditor()')
       button.textContent = "Continue";
       fetch(`/api/user/info/0`, {
         method: "GET",
@@ -334,7 +334,7 @@ function loadOnboarding() {
           name.value = res.displayname;
           description.textContent = res.description;
           location.value = res.location;
-          switch(res.gender) {
+          switch (res.gender) {
             case "M":
               const M = document.getElementById("male");
               M.checked = true;
@@ -357,10 +357,10 @@ function loadUserPreferenceEditor() {
   })
     .then((res) => res.json())
     .then((res) => {
-      if(res.code === "success") {
+      if (res.code === "success") {
         const divTags = document.getElementById("selected-tags")
         divTags.innerHTML = "";
-        for(var key in res.tags) {
+        for (var key in res.tags) {
           divTags.innerHTML += `
           <span class="subject-tag" id="tag-${res.tags[key]}">
           <i class="fa-solid fa-hashtag"></i>
@@ -384,66 +384,66 @@ function loadPreferencesEditor() {
       loadUserPreferenceEditor()
       fetch('/api/user/tags', {
         method: "GET",
-        })
+      })
         .then((res) => res.json())
         .then((res) => {
-            console.log(res)
-            var tags = [];
-            for(var key in res.tags) tags.push(key);
-            if(res.code === "success") {
-                $( function() {
-                  $("#subject-input").autocomplete({
-                    source: tags,
-                    select: function(event, ui) {
-                        ui.item.value = ui.item.label; 
-                        $("#selected-tags").append(`
+          console.log(res)
+          var tags = [];
+          for (var key in res.tags) tags.push(key);
+          if (res.code === "success") {
+            $(function () {
+              $("#subject-input").autocomplete({
+                source: tags,
+                select: function (event, ui) {
+                  ui.item.value = ui.item.label;
+                  $("#selected-tags").append(`
                         <span class="subject-tag" id="tag-${res.tags[ui.item.label]}">
                           <i class="fa-solid fa-hashtag"></i>
                           ${ui.item.label}
                           <div id="e"></div>
                           <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${res.tags[ui.item.label]})"></i>
                         </span>`);
-                        $(this).val(""); 
-                      
-                      return false; 
-                    }
-                  });
-                } );
-            }
+                  $(this).val("");
+
+                  return false;
+                }
+              });
+            });
+          }
         });
     });
 }
 
 function removeTag(id_tag) {
-  document.getElementById(`tag-${id_tag}`).remove() 
+  document.getElementById(`tag-${id_tag}`).remove()
 }
 
 function savePreferences() {
   const tagsDiv = document.getElementById("selected-tags");
   const tags = [];
-  for(let i = 0;i<tagsDiv.children.length; i++) {
+  for (let i = 0; i < tagsDiv.children.length; i++) {
     tags.push(tagsDiv.children[i].id)
   }
   console.log(tags)
   const data = new FormData();
-  data.append("tags",tags) 
+  data.append("tags", tags)
   fetch('/api/user/tags/update', {
     method: "PATCH",
     body: data
-    })
+  })
     .then((res) => res.text())
     .then((res) => {
-        console.log(res)
-        if(res === "success") {
-          removeEditor();
-          loadUserProfile(0);
-        }
+      console.log(res)
+      if (res === "success") {
+        removeEditor();
+        loadUserProfile(0);
+      }
     });
 }
 
 function removeEditor() {
   const layer = document.getElementById("layer");
-  if(layer) {
+  if (layer) {
     layer.remove();
   }
 }
@@ -455,24 +455,24 @@ function updateProfile() {
   const M = document.getElementById("male").checked;
   const F = document.getElementById("female").checked;
   var gender = "X";
-  if(M) {
+  if (M) {
     gender = "M";
-  } else if(F) {
+  } else if (F) {
     gender = "F";
   }
   const data = new FormData();
   data.append("displayname", name);
   data.append("description", description);
   data.append("location", location);
-  data.append("gender",gender);
+  data.append("gender", gender);
   fetch("/api/user/profile/update", {
     method: "PATCH",
     body: data,
   })
     .then((response) => response.text())
     .then((data) => {
-      if(data.trim() === "success") {
-        if(window.location.pathname.startsWith("/profile")) {
+      if (data.trim() === "success") {
+        if (window.location.pathname.startsWith("/profile")) {
           removeEditor();
         }
         loadUserProfile(0);
@@ -486,7 +486,7 @@ function updatePicture() {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept = "image/*";
-  fileInput.onchange = function(event) {
+  fileInput.onchange = function (event) {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       const data = new FormData();
@@ -496,22 +496,22 @@ function updatePicture() {
         method: "PATCH",
         body: data,
       })
-      .then(response => response.json())
-      .then(response => {
-        if (response.code == "success") {
-          console.log("Profile picture updated successfully!");
-          picture = document.getElementById("picture-edit")
-          picture.src = `/static/pictures/${response.hash}.png`
-          loadUserMenu();
-          loadUserProfile(0);
-        } else {
-          console.error("Error updating profile picture:", response.code);
-          alert("Error updating profile picture:" + response.code)
-        }
-      })
-      .catch(error => {
-        console.error("Error sending file:", error);
-      });
+        .then(response => response.json())
+        .then(response => {
+          if (response.code == "success") {
+            console.log("Profile picture updated successfully!");
+            picture = document.getElementById("picture-edit")
+            picture.src = `/static/pictures/${response.hash}.png`
+            loadUserMenu();
+            loadUserProfile(0);
+          } else {
+            console.error("Error updating profile picture:", response.code);
+            alert("Error updating profile picture:" + response.code)
+          }
+        })
+        .catch(error => {
+          console.error("Error sending file:", error);
+        });
     }
   };
   fileInput.click();
@@ -523,57 +523,32 @@ function loadUserFollowers(id_user) {
   })
     .then((response) => response.json())
     .then((res) => {
-      console.log(res)
-      if(res.code === "success") {
-        row2 = document.getElementById("row2");
-        row2.remove();
+      if (res.code === "success") {
         let row1 = document.getElementById("row1");
-        row1.innerHTML = `
-        <div class="row">
-          <div class="row"><h2>Followers</h2></div>
-          <div class="row"><a href="/following"><h2>Following</h2></a></div>
-        <div>
-        `; 
-        res.data.forEach(function(user) {
-          console.log(user);
-          row = `
-          <a href="/profile?id_user=${user.id}">
-            <div class="user-row" id="recommandation-user-${user.id}">
-              <img src="/static/pictures/${user.picture}.png">
-              <div class="user-names">
-                <b>${user.displayname}</b>
-                <i>@${user.username}</i>
-              </div>
-              <div style="flex-grow:1"></div>
-              <button onclick="event.preventDefault();followUser(${user.id})">Follow</button>
-            </div>
-          </a>
-          `
-          row1.innerHTML += row;
-        });
-      }
-    });
-}
-
-function loadUserFollowers(id_user) {
-  fetch(`/api/user/followers/${id_user}`, {
-    method: "GET",
-  })
-    .then((response) => response.json())
-    .then((res) => {
-      if(res.code === "success") {
-        let row1 = document.getElementById("row1");
+        row1.setAttribute("onClick", `redirect("/profile?id_user=${id_user}")`)
+        var css = `
+        .row#row1:hover {
+          background-color: #FFFFFF;
+          cursor:pointer;
+          color: black;
+        }`
+        var style = document.createElement('style')
+        if (style.styleSheet) {
+          style.styleSheet.cssText = css;
+        } else {
+          style.appendChild(document.createTextNode(css));
+        }
+        document.getElementsByTagName('head')[0].appendChild(style);
         let row2 = document.getElementById("row2");
-        row2.remove();
-        row1.setAttribute("class","cell")
-        row1.innerHTML = `
+        row2.setAttribute("class", "cell")
+        row2.innerHTML = `
         <div class="row">
-        <div class="row current-tab"><a href="/followers?id_user=${id_user}"><h2>Followers</h2></a></div>
-          <div class="row other-tab"><a href="/following?id_user=${id_user}"><h2>Following</h2></a></div>
+        <a href="/followers?id_user=${id_user}"><div class="row current-tab"><h2>Followers</h2></div></a>
+        <a href="/following?id_user=${id_user}"><div class="row other-tab"><h2>Following</h2></div></a>
         </div>`;
-        row1.innerHTML += `<div class="cell" id="follows"></div>`
+        row2.innerHTML += `<div class="cell" id="follows"></div>`
         follows = document.getElementById("follows")
-        res.data.forEach(function(user) {
+        res.data.forEach(function (user) {
           row = `
           <a href="/profile?id_user=${user.id}">
             <div class="user-row" id="follower-user-${user.id}">
@@ -602,19 +577,32 @@ function loadUserFollowing(id_user) {
   })
     .then((response) => response.json())
     .then((res) => {
-      if(res.code === "success") {
+      if (res.code === "success") {
         let row1 = document.getElementById("row1");
+        row1.setAttribute("onClick", `redirect("/profile?id_user=${id_user}")`)
+        var css = `
+        .row#row1:hover {
+          background-color: #FFFFFF;
+          cursor:pointer;
+          color: black;
+        }`
+        var style = document.createElement('style')
+        if (style.styleSheet) {
+          style.styleSheet.cssText = css;
+        } else {
+          style.appendChild(document.createTextNode(css));
+        }
+        document.getElementsByTagName('head')[0].appendChild(style);
         let row2 = document.getElementById("row2");
-        row2.remove();
-        row1.setAttribute("class","cell")
-        row1.innerHTML = `
+        row2.setAttribute("class", "cell")
+        row2.innerHTML = `
         <div class="row">
-        <div class="row other-tab"><a href="/followers?id_user=${id_user}"><h2>Followers</h2></a></div>
-          <div class="row current-tab"><a href="/following?id_user=${id_user}"><h2>Following</h2></a></div>
+        <a href="/followers?id_user=${id_user}"><div class="row other-tab"><h2>Followers</h2></div></a>
+        <a href="/following?id_user=${id_user}"><div class="row current-tab"><h2>Following</h2></div></a>
         </div>`;
-        row1.innerHTML += `<div class="cell" id="follows"></div>`
+        row2.innerHTML += `<div class="cell" id="follows"></div>`
         follows = document.getElementById("follows")
-        res.data.forEach(function(user) {
+        res.data.forEach(function (user) {
           row = `
           <a href="/profile?id_user=${user.id}">
             <div class="user-row" id="following-user-${user.id}">
@@ -627,10 +615,10 @@ function loadUserFollowing(id_user) {
                 </div>
               </div>
               <div style="flex-grow:1"></div>`;
-              if(res.is_logged == "yes") {
-                row += `<button onclick="event.preventDefault();unfollowUser(${user.id})">Unfollow</button>`;
-              }
-              row += `
+          if (res.is_logged == "yes") {
+            row += `<button onclick="event.preventDefault();unfollowUser(${user.id})">Unfollow</button>`;
+          }
+          row += `
             </div>
           </a>
           <hr id="hr-${user.id}">
