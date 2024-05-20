@@ -442,7 +442,7 @@ function removeTag(id_tag) {
 }
 
 function selectTag() {
-  if(document.getElementById("post-title")) {
+  if (document.getElementById("post-title")) {
     t = document.getElementById("post-title")
     stitle = t.value
   }
@@ -452,7 +452,7 @@ function selectTag() {
     .then((res) => res.text())
     .then((res) => {
       document.body.innerHTML += res;
-      if(document.getElementById("post-title")) {
+      if (document.getElementById("post-title")) {
         t = document.getElementById("post-title")
         t.value = stitle
       }
@@ -739,7 +739,7 @@ function sendNewPost() {
     }
   });
   const data = new FormData();
-  data.append("title",title)
+  data.append("title", title)
   data.append("tags", tags)
   data.append("post", postContent)
   fetch('/api/post/create', {
@@ -752,5 +752,113 @@ function sendNewPost() {
       if (res.code === "success") {
         window.location.href = "/post/view/" + res.post
       }
-  });
+    });
+}
+
+function loadPost(id_post) {
+  fetch(`/api/post/get/${id_post}`, {
+    method: "GET"
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.code === "success") {
+        document.title = res.title
+        document.getElementById("post-title").textContent = res.title
+        document.getElementById("post-content").innerHTML = res.content
+        stats = document.getElementById("stats")
+
+        // likes
+        likes = '<div class="row">'
+        if (res.is_liked === true) {
+          likes += `<i id="like-button" onclick="actionPost(${id_post},'L-')" class="fa-solid fa-thumbs-up" style="color:green"></i>`
+        }
+        else {
+          likes += `<i id="like-button" onclick="actionPost(${id_post},'L+')" class="fa-solid fa-thumbs-up"></i>`
+        }
+        likes += `${res.like}</div>`
+
+        // dislikes
+        dislikes = '<div class="row">'
+        if (res.is_disliked === true) {
+          dislikes += `<i id="dislike-button" onclick="actionPost(${id_post},'D-')" class="fa-solid fa-thumbs-down" style="color:red"></i>`
+        }
+        else {
+          dislikes += `<i id="dislike-button" onclick="actionPost(${id_post},'D+')" class="fa-solid fa-thumbs-down"></i> `
+        }
+        dislikes += `${res.dislike}</div>`
+
+        // saved
+        saved = '<div class="row">'
+        if (res.is_saved === true) {
+          saved += `<i id="save-button" onclick="actionPost(${id_post},'S-')" class="fa-solid fa-bookmark" style="color:blue"></i>`
+        }
+        else {
+          saved += `<i id="save-button" onclick="actionPost(${id_post},'S+')" class="fa-solid fa-bookmark"></i> `
+        }
+        saved += `${res.saved}</div>
+        <div style="flex-grow:1;"></div>`
+
+        stats.innerHTML = likes + dislikes + saved
+
+
+        console.log(stats.innerHTML);
+
+
+        tagsDiv = document.getElementById("tag-list")
+        tagsDiv.innerHTML = "";
+        res.tags.forEach(tag => {
+          tagsDiv.innerHTML += `
+        <div class="row">
+        <i class="fa-solid fa-hashtag"></i>
+        ${tag}
+        </div>
+        `
+        });
+      }
+    });
+}
+
+function actionPost(id_post, action) {
+  fetch(`/api/post/action?id_post=${id_post}&action=${encodeURIComponent(action)}`, {
+    method: "PATCH",
+  })
+    .then((res) => res.text())
+    .then((res) => {
+      if (res === "success") {
+        switch (action) {
+          case "L+":
+            element = document.getElementById("like-button");
+            element.style.color = "green";
+            element.setAttribute("onclick",`actionPost(${id_post},"L-")`)
+            break;
+          case "L-":
+            element = document.getElementById("like-button");
+            element.style.color = "white";
+            element.setAttribute("onclick",`actionPost(${id_post},"L+")`)
+            break;
+          case "D+":
+            element = document.getElementById("dislike-button");
+            element.style.color = "red";
+            element.setAttribute("onclick",`actionPost(${id_post},"D-")`)
+            break;
+          case "D-":
+            element = document.getElementById("dislike-button");
+            element.style.color = "white";
+            element.setAttribute("onclick",`actionPost(${id_post},"D+")`)
+            break;
+          case "S+":
+            element = document.getElementById("save-button");
+            element.style.color = "blue";
+            element.setAttribute("onclick",`actionPost(${id_post},"S-")`)
+            break;
+          case "S-":
+            element = document.getElementById("save-button");
+            element.style.color = "white";
+            element.setAttribute("onclick",`actionPost(${id_post},"S+")`)
+            break;
+        }
+      } else {
+        console.log(res);
+      }
+    });
 }

@@ -435,7 +435,6 @@ def get_user_recommandations(id_user):
 
     users_info = []
     for user in users:
-        print("user",user)
         data = get_user_data(user)
         if data != -1:
             del data["email"]
@@ -537,6 +536,109 @@ def save_post(id_user,visibility,title,content,tags):
 
     db.close()
     return id_post
+
+def get_post_info(id_post,id_user = None):
+    """
+    return the post data as a dict
+    """
+
+    data = {}
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("""
+    SELECT title, content, author, created_at
+    FROM posts WHERE id_post = ?""",(id_post,))
+    row = cursor.fetchone()
+    if row is not None:
+        data= {
+            "title": row[0],
+            "content": row[1],
+            "author": row[2],
+            "created_at": row[3],
+            "is_liked": False,
+            "is_disliked": False,
+            "is_saved": False
+        }
+
+        like = cursor.execute("""
+        SELECT count(*) FROM posts_interaction 
+        WHERE action = 'L' AND post = ?""",(id_post,)).fetchone()[0]
+        data["like"] = 0 if like is None else like
+
+        dislike = cursor.execute("""
+        SELECT count(*) FROM posts_interaction 
+        WHERE action = 'D' AND post = ?""",(id_post,)).fetchone()[0]
+        data["dislike"] = 0 if dislike is None else dislike
+
+        saved = cursor.execute("""
+        SELECT count(*) FROM posts_interaction 
+        WHERE action = 'S' AND post = ?""",(id_post,)).fetchone()[0]
+        data["saved"] = 0 if saved is None else saved
+        
+        cursor.execute("""
+        SELECT t.name FROM tags t
+        INNER JOIN post_tags pt
+        ON pt.tag = t.id_tag
+        WHERE pt.post = ?""",(id_post,))
+        tags = [row[0] for row in cursor.fetchall()]
+        data["tags"] = tags
+    else:
+        data = -1
+
+    if id_user is not None:
+        is_liked = cursor.execute("""
+        SELECT count(*) FROM posts_interaction
+        WHERE action = 'L' AND post = ? AND user = ?""",(id_post,id_user)).fetchone()[0]
+        print("is liked",is_liked)
+        data["is_liked"] = True if is_liked > 0 else False
+
+        is_disliked = cursor.execute("""
+        SELECT count(*) FROM posts_interaction
+        WHERE action = 'D' AND post = ? AND user = ?""",(id_post,id_user)).fetchone()[0]
+        data["is_disliked"] = True if is_disliked > 0 else False
+
+        is_saved = cursor.execute("""
+        SELECT count(*) FROM posts_interaction
+        WHERE action = 'S' AND post = ? AND user = ?""",(id_post,id_user)).fetchone()[0]
+        data["is_saved"] = True if is_saved > 0 else False
+
+    db.close()
+    return data
+
+def update_post_interaction(id_user,id_post,action):
+    """
+    update interaction from a user for a post
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM posts WHERE id_post = ?",(id_post,))
+    if cursor.fetchone() is None: # post doesn't exist
+        return -1
+    
+    action_type = action[0] # get L (like), D(dislike) or S(saved)
+    action = action[1] # get + or -
+    cursor.execute(""" 
+    SELECT * FROM posts_interaction
+    WHERE post = ? AND action = ? AND user = ?""",(id_post,action_type,id_user))
+    if cursor.fetchone() is not None:
+        if action == "+":
+            return # cannot add to something already added
+        elif action == "-":
+            cursor.execute("""
+            DELETE FROM posts_interaction 
+            WHERE post = ? AND action = ? AND user = ?""",(id_post,action_type,id_user))
+            db.commit()
+    else:
+        if action == "-":
+            return # cannot remove something not existing
+        elif action == "+":
+            cursor.execute("""
+            INSERT INTO posts_interaction VALUES(?,?,?)""",(id_post,id_user,action_type))
+            db.commit()
+
+    db.close()
 
 #endregion
 

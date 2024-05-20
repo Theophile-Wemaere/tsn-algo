@@ -178,3 +178,39 @@ div#tag-list {
     cursor: pointer;
 }
 
+div#post-content img {
+    max-width: 300px;
+}
+
+div#stats {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    max-width: 50%;
+    border-top: solid 2px #FFFFFF;
+}
+
+div#stats .row {
+    margin-top: 10px;
+    margin-right: 20px;
+    font-size: 20px;
+}
+
+div#stats .row i {
+    margin-right: 10px;
+}
+
+div#stats .fa-thumbs-up:hover {
+    color: green;
+    cursor: pointer;
+}
+
+div#stats .fa-thumbs-down:hover {
+    color: red;
+    cursor: pointer;
+}
+
+div#stats .fa-bookmark:hover {
+    color: blue;
+    cursor: pointer;
+}

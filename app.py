@@ -20,8 +20,6 @@ if not os.path.exists("database.db"):
     exit(1)
 
 
-print(db.hash("Password123!"))
-
 from functions.user import user_api
 app.register_blueprint(user_api, url_prefix='/api/user')
 from functions.posts import post_api
@@ -84,6 +82,11 @@ def create_post():
         return render_template("post-editor.html")
     else:
         return redirect("/login",302)
+
+@app.route("/post/view/<int:id_post>")
+def view_post(id_post):
+    if id_post is not None:
+        return render_template("post-view.html",id_post=id_post)
 
 if __name__ == '__main__':
     try:
