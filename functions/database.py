@@ -511,3 +511,34 @@ def update_tags(id_user,tags):
 
 #endregion
 
+#region posts
+
+def save_post(id_user,visibility,title,content,tags):
+    """
+    create a new post in the database
+    visibility : 0 is public, 1 is private
+    return post id
+    """
+
+    title = escape(title)
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("""
+    INSERT INTO posts(author,visibility,title,content,created_at)
+    VALUES (?,?,?,?,datetime())""",(id_user,visibility,title,content))    
+    id_post = cursor.lastrowid
+    db.commit()
+    for tag in tags:
+        cursor.execute("SELECT * FROM tags WHERE id_tag = ?",(tag,))
+        if cursor.fetchone() is not None:
+            cursor.execute("INSERT INTO post_tags VALUES(?,?)",(id_post,tag))
+            db.commit()
+
+    db.close()
+    return id_post
+
+#endregion
+
+
+

@@ -433,7 +433,7 @@ function loadPreferencesEditor() {
 
 function removeTag(id_tag) {
   var tag;
-  if(id_tag.startsWith("tag-")) {
+  if (id_tag.startsWith("tag-")) {
     tag = `${id_tag}`
   } else {
     tag = `tag-${id_tag}`
@@ -442,16 +442,23 @@ function removeTag(id_tag) {
 }
 
 function selectTag() {
+  if(document.getElementById("post-title")) {
+    t = document.getElementById("post-title")
+    stitle = t.value
+  }
   fetch('/api/user/preferences', {
     method: "GET",
   })
     .then((res) => res.text())
     .then((res) => {
       document.body.innerHTML += res;
+      if(document.getElementById("post-title")) {
+        t = document.getElementById("post-title")
+        t.value = stitle
+      }
       const onClickOutside = (e) => {
         if (e.target.className.includes("layer")) {
-          removeEditor
-            ();
+          removeEditor();
           window.removeEventListener("click", onClickOutside);
         }
       };
@@ -460,7 +467,7 @@ function selectTag() {
       document.getElementById("title-edit").textContent = "Choose tags to identify your post"
       button = document.getElementById("exit-button")
       button.textContent = "Save tags"
-      button.setAttribute("onclick","updateSelectedTags()")
+      button.setAttribute("onclick", "updateSelectedTags()")
 
 
       fetch('/api/user/tags', {
@@ -718,4 +725,32 @@ function loadUserFollowing(id_user) {
         });
       }
     });
+}
+
+function sendNewPost() {
+  postContent = getPostContent()
+  title = document.getElementById("post-title").value
+  console.log(title);
+  tagsElement = document.querySelectorAll('[id^="tag-"]');
+  tags = []
+  tagsElement.forEach(tag => {
+    if (/^\d+$/.test(tag.id.slice(4))) {
+      tags.push(tag.id)
+    }
+  });
+  const data = new FormData();
+  data.append("title",title)
+  data.append("tags", tags)
+  data.append("post", postContent)
+  fetch('/api/post/create', {
+    method: "POST",
+    body: data
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res)
+      if (res.code === "success") {
+        window.location.href = "/post/view/" + res.post
+      }
+  });
 }

@@ -14,6 +14,10 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://kit.fontawesome.com/bc424452bc.js" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+        rel="stylesheet">
+    <!-- Include the highlight.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="/static/JS/script.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,15 +60,60 @@
         </div>
         <div class="post">
             <h1>Create a Post</h1>
-            <form>
+            <form onsubmit="event.preventDefault();sendNewPost()">
                 <label for="title"><i class="fa-solid fa-star-of-life"></i> Title</label>
-                <textarea name="title" oninput="autoGrow(this)" maxlength="240" id="title" required></textarea>
+                <textarea name="title" oninput="autoGrow(this)" maxlength="240" id="post-title" required></textarea>
                 <label><i class="fa-solid fa-star-of-life"></i> Body</label>
                 <div class="cell">
+                    <div id="toolbar-container">
+                        <span class="ql-formats">
+                            <select class="ql-font"></select>
+                            <select class="ql-size"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-color"></select>
+                            <select class="ql-background"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-script" value="sub"></button>
+                            <button class="ql-script" value="super"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-header" value="1"></button>
+                            <button class="ql-header" value="2"></button>
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-direction" value="rtl"></button>
+                            <select class="ql-align"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                            <button class="ql-video"></button>
+                            <button class="ql-formula"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
                     <div id="post-content">
                         <div id="editor">
                         </div>
-
+                        <p id="quill-size">Size: 0/500</p>
                         <!-- Include the Quill library -->
                         <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 
@@ -72,30 +121,32 @@
                         <script>
                             const quill = new Quill('#editor', {
                                 modules: {
-                                    toolbar: [
-                                        [{ header: [1, 2, false] }],
-                                        ['bold', 'italic', 'underline', 'strike'],
-                                        ['image', 'video', 'code-block', 'link'],
-                                    ],
+                                    syntax: true,
+                                    toolbar: "#toolbar-container"
                                 },
                                 placeholder: 'Let the world know your toughts...',
                                 theme: 'snow', // or 'bubble'
                             });
+                            var limit = 1500;
+                            const sizeIndicator = document.getElementById("quill-size")
+                            quill.on('text-change', function (delta, old, source) {
+                                sizeIndicator.textContent = `Size: ${quill.getLength()}/${limit}`
+                                if (quill.getLength() >= limit) {
+                                    quill.deleteText(limit-1, quill.getLength());
+                                }
+                            });
+                            function getPostContent() {
+                                return quill.getSemanticHTML();
+                            }
                         </script>
                     </div>
                 </div>
                 <label><i class="fa-solid fa-star-of-life"></i> Tags (3 minimum)</label>
                 <div class="row" id="tag-list">
                     <div id="tag-button" onclick="selectTag()"><i class="fa-solid fa-plus"></i> Add Tag</div>
-                    <div class="row" id="tag-1"><i class="fa-solid fa-hashtag" aria-hidden="true"></i>computer<i id="trash-remove" onclick="removeTag('tag-1')" class="fa-solid fa-trash" aria-hidden="true"></i></div>
-                    <div class="row" id="tag-1"><i class="fa-solid fa-hashtag" aria-hidden="true"></i>computer<i id="trash-remove" onclick="removeTag('tag-1')" class="fa-solid fa-trash" aria-hidden="true"></i></div>
-                    <div class="row" id="tag-1"><i class="fa-solid fa-hashtag" aria-hidden="true"></i>computer<i id="trash-remove" onclick="removeTag('tag-1')" class="fa-solid fa-trash" aria-hidden="true"></i></div>
-                    <div class="row" id="tag-1"><i class="fa-solid fa-hashtag" aria-hidden="true"></i>computer<i id="trash-remove" onclick="removeTag('tag-1')" class="fa-solid fa-trash" aria-hidden="true"></i></div>
-                    <div class="row" id="tag-1"><i class="fa-solid fa-hashtag" aria-hidden="true"></i>computer<i id="trash-remove" onclick="removeTag('tag-1')" class="fa-solid fa-trash" aria-hidden="true"></i></div>
-                    <div class="row" id="tag-1"><i class="fa-solid fa-hashtag" aria-hidden="true"></i>computer<i id="trash-remove" onclick="removeTag('tag-1')" class="fa-solid fa-trash" aria-hidden="true"></i></div>
-                    <div class="row" id="tag-1"><i class="fa-solid fa-hashtag" aria-hidden="true"></i>computer<i id="trash-remove" onclick="removeTag('tag-1')" class="fa-solid fa-trash" aria-hidden="true"></i></div>
-                    <div class="row" id="tag-1"><i class="fa-solid fa-hashtag" aria-hidden="true"></i>computer<i id="trash-remove" onclick="removeTag('tag-1')" class="fa-solid fa-trash" aria-hidden="true"></i></div>
                 </div>
+                <div style="flex-grow: 1;"></div>
+                <input type="submit" value="Create post">
             </form>
         </div>
         <div class="recommandations" id="recommandations">

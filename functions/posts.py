@@ -14,22 +14,16 @@ from functions.user import check_session
 # prefix : '/api/post'
 post_api = Blueprint('post_api', __name__)
 
-@post_api.route("/link-preview", methods=['POST'])
-def preview_link():
-  # Simulate fetching data (replace with actual link fetching logic)
-  title = "Example Title"
-  description = "Example Description"
-  image_url = "https://via.placeholder.com/150"
-
-  # Build HTML response (replace with your desired HTML structure)
-  preview_html = f"""
-  <h2>{title}</h2>
-  <p>{description}</p>
-  <img src="{image_url}" alt="{title}">
-  """
-
-  # Return JSON response with preview HTML
-  return jsonify({'preview_html': preview_html})
-
-if __name__ == '__main__':
-  app.run(debug=True)
+@post_api.route("/create", methods=['POST'])
+def create_post():
+  if check_session(session):
+    title = request.form["title"]
+    tags = request.form["tags"]
+    post = request.form["post"]
+    new_tags = []
+    for tag in tags.split(','):
+      new_tags.append(tag.replace('tag-',''))
+    id_post = db.save_post(session.get('id'),0,title,post,new_tags)
+    return {"code":"success","post":id_post}
+  else:
+    return redirect("/login",302)

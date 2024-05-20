@@ -48,7 +48,8 @@ CREATE TABLE `posts` (
   `content` text,
   `like` INTEGER,
   `dislike` INTEGER,
-  `comments` INTEGER
+  `comments` INTEGER,
+  `created_at` timestamp
 );
 
 CREATE TABLE `posts_interaction` (
@@ -71,6 +72,10 @@ ALTER TABLE `sessions` ADD FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`
 ALTER TABLE `user_tags` ADD FOREIGN KEY (`tag`) REFERENCES `tags` (`id_tag`);
 
 ALTER TABLE `user_tags` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id_user`);
+
+ALTER TABLE `post_tags` ADD FOREIGN KEY (`post`) REFERENCES `posts` (`id_post`);
+
+ALTER TABLE `post_tags` ADD FOREIGN KEY (`tag`) REFERENCES `tags` (`id_tag`);
 
 ALTER TABLE `relations` ADD FOREIGN KEY (`followed`) REFERENCES `users` (`id_user`);
 
