@@ -537,6 +537,52 @@ def save_post(id_user,visibility,title,content,tags):
     db.close()
     return id_post
 
+def check_post_owner(id_user,id_post):
+    """
+    check if a user is the given post owner
+    """
+    
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    author = cursor.execute("SELECT author FROM posts WHERE id_post = ?",(id_post,)).fetchone()
+    db.close()
+    if author is not None:
+        if author[0] != id_user:
+            return False
+        else:
+            print("User is owner")
+            return True
+    return False
+
+def edit_post(id_user,id_post,title,content,tags):
+    """
+    edit post in database
+    """
+
+    title = escape(title)
+
+    # check if user is owner
+    if not check_post_owner(id_user,id_post):
+        return "not_post_owner"
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    cursor.execute("""
+    UPDATE posts 
+    SET title = ?, content = ?
+    WHERE id_post = ?""",(title,content,id_post))    
+    db.commit()
+
+    for tag in tags:
+        cursor.execute("SELECT * FROM tags WHERE id_tag = ?",(tag,))
+        if cursor.fetchone() is not None:
+            cursor.execute("INSERT INTO post_tags VALUES(?,?)",(id_post,tag))
+            db.commit()
+
+    db.close()
+    return "success"
+
 def get_post_info(id_post,id_user = None):
     """
     return the post data as a dict
@@ -547,15 +593,20 @@ def get_post_info(id_post,id_user = None):
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
     cursor.execute("""
-    SELECT title, content, author, created_at
-    FROM posts WHERE id_post = ?""",(id_post,))
+    SELECT p.title, p.content, p.author, u.displayname, p.created_at
+    FROM posts p
+    INNER JOIN users u
+    ON u.id_user = p.author
+    WHERE p.id_post = ?""",(id_post,))
+
     row = cursor.fetchone()
     if row is not None:
         data= {
             "title": row[0],
             "content": row[1],
-            "author": row[2],
-            "created_at": row[3],
+            "id_author": row[2],
+            "author": row[3],
+            "created_at": row[4],
             "is_liked": False,
             "is_disliked": False,
             "is_saved": False
@@ -577,12 +628,14 @@ def get_post_info(id_post,id_user = None):
         data["saved"] = 0 if saved is None else saved
         
         cursor.execute("""
-        SELECT t.name FROM tags t
+        SELECT t.name, t.id_tag FROM tags t
         INNER JOIN post_tags pt
         ON pt.tag = t.id_tag
         WHERE pt.post = ?""",(id_post,))
         tags = [row[0] for row in cursor.fetchall()]
+        id_tags = [row[1] for row in cursor.fetchall()]
         data["tags"] = tags
+        data["id_tags"] = id_tags
     else:
         data = -1
 
@@ -615,7 +668,7 @@ def update_post_interaction(id_user,id_post,action):
     cursor = db.cursor()
     cursor.execute("SELECT * FROM posts WHERE id_post = ?",(id_post,))
     if cursor.fetchone() is None: # post doesn't exist
-        return -1
+        return "post_not_found"
     
     action_type = action[0] # get L (like), D(dislike) or S(saved)
     action = action[1] # get + or -
@@ -639,6 +692,23 @@ def update_post_interaction(id_user,id_post,action):
             db.commit()
 
     db.close()
+    return "success"
+
+def delete_post(id_user,id_post):
+    """
+    delete a post from the database
+    """
+
+    if not check_post_owner(id_user,id_post):
+        return "not_post_owner"
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    author = cursor.execute("SELECT author FROM posts WHERE id_post = ?",(id_post,)).fetchone()[0]
+    cursor.execute("DELETE FROM posts WHERE id_post = ?",(id_post,))
+    db.commit()
+    db.close()
+    return "success"
 
 #endregion
 

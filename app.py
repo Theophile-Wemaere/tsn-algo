@@ -79,7 +79,21 @@ def show_following():
 @app.route("/post/new")
 def create_post():
     if check_session(session):
-        return render_template("post-editor.html")
+        return render_template("post-editor.html",title="Create a post", button="Create post")
+    else:
+        return redirect("/login",302)
+
+@app.route("/post/edit")
+def edit_post():
+    if check_session(session):
+        post = request.args.get('id_post')
+        if post is not None:
+            if not db.check_post_owner(session.get('id'),post):
+                return redirect('/post/view/'+post,302)
+            return render_template("post-editor.html",
+            title="Edit your post",button="Edit post", edit="yes",id_post=post)
+        else:
+            return redirect('/home',302)
     else:
         return redirect("/login",302)
 

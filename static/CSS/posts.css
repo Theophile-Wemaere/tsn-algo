@@ -185,6 +185,7 @@ div#post-content img {
 div#stats {
     display: flex;
     flex-direction: row;
+    align-items: center;
     margin-bottom: 20px;
     max-width: 50%;
     border-top: solid 2px #FFFFFF;
@@ -213,4 +214,29 @@ div#stats .fa-thumbs-down:hover {
 div#stats .fa-bookmark:hover {
     color: blue;
     cursor: pointer;
+}
+
+div#stats button {
+    border-radius: 20px;
+    margin-right: 10px;
+    height: 80%;
+    padding: 0 10px 0 10px;
+    margin-top: 10px;
+    outline: none;
+}
+
+div#stats button:hover {
+    cursor: pointer;
+    background-color: #FFFFFF;
+    font-weight: bolder;
+}
+
+div#stats button#remove-post:hover {
+    background-color: #AA2D2D;
+    color: #FFFFFF;
+}
+
+div#post-author h3 {
+    margin-top: -10px;
+    color: #d9d9d9;
 }

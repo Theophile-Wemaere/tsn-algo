@@ -3,9 +3,8 @@ todo :
 
 - search bar
 - user settings
-- post creation
-- post edition (optional)
 - comments
+- picture on post author
 - "follows you" tag
 - account deletion
 - recommandations algorithm

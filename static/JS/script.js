@@ -118,7 +118,7 @@ function loadUserMenu() {
         row.style.display = "flex"
 
         // display post buttons
-        if (!window.location.pathname.startsWith("/post")) {
+        if (!window.location.pathname.startsWith("/post/create") && !window.location.pathname.startsWith("/post/edit")) {
           button = document.getElementById("post-button")
           button.style.display = "flex"
         }
@@ -727,10 +727,9 @@ function loadUserFollowing(id_user) {
     });
 }
 
-function sendNewPost() {
+function sendNewPost(id_post) {
   postContent = getPostContent()
   title = document.getElementById("post-title").value
-  console.log(title);
   tagsElement = document.querySelectorAll('[id^="tag-"]');
   tags = []
   tagsElement.forEach(tag => {
@@ -742,7 +741,16 @@ function sendNewPost() {
   data.append("title", title)
   data.append("tags", tags)
   data.append("post", postContent)
-  fetch('/api/post/create', {
+  data.append("id_post", id_post)
+
+  url = null
+  if(window.location.pathname.startsWith("/post/new")) {
+    url = '/api/post/create';
+  } else {
+    url = `/api/post/edit?id_post=${id_post}`
+  }
+
+  fetch(url, {
     method: "POST",
     body: data
   })
@@ -755,16 +763,43 @@ function sendNewPost() {
     });
 }
 
-function loadPost(id_post) {
+function loadPostEdition(id_post) {
   fetch(`/api/post/get/${id_post}`, {
     method: "GET"
   })
     .then((res) => res.json())
     .then((res) => {
       if (res.code === "success") {
+        document.getElementById("post-title").value = res.title
+        setPostContent(res.content)
+        tagsRow = document.getElementById("tag-list")
+        for (let i = 0; i < res.tags.length; i++) {
+          tagsRow.innerHTML += `
+          <div class="row" id="${res.id_tags[i]}">
+              <i class="fa-solid fa-hashtag"></i>
+              ${res.tags[i]}
+              <i id="trash-remove" onclick="removeTag('${res.id_tags[i]}')" class="fa-solid fa-trash"></i>
+          </div>`
+        }
+      }
+    });
+}
+
+function loadPost(id_post) {
+  fetch(`/api/post/get/${id_post}`, {
+    method: "GET"
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res)
+      if (res.code === "success") {
         document.title = res.title
         document.getElementById("post-title").textContent = res.title
-        document.getElementById("post-content").innerHTML = res.content
+        document.getElementById("post-author").innerHTML = `
+        <a href="/profile?id_user=${res.id_author}">
+          <h3>By ${res.author}</h3>
+        </a>`
+        document.getElementById("post-content").innerHTML = res.content;
         stats = document.getElementById("stats")
 
         // likes
@@ -799,11 +834,6 @@ function loadPost(id_post) {
         <div style="flex-grow:1;"></div>`
 
         stats.innerHTML = likes + dislikes + saved
-
-
-        console.log(stats.innerHTML);
-
-
         tagsDiv = document.getElementById("tag-list")
         tagsDiv.innerHTML = "";
         res.tags.forEach(tag => {
@@ -811,9 +841,15 @@ function loadPost(id_post) {
         <div class="row">
         <i class="fa-solid fa-hashtag"></i>
         ${tag}
-        </div>
-        `
-        });
+        </div>`});
+
+        if(res.is_logged == "yes" && window.location.pathname.startsWith("/post/view")) {
+          stats.innerHTML += `
+          <button class="edit-post-button" onclick="redirect('/post/edit?id_post=${id_post}')">Edit your post</button>
+          <button id="remove-post" class="edit-post-button" onclick="deletePost('${id_post}')">Delete your post</button>
+          `
+        }
+
       }
     });
 }
@@ -825,40 +861,25 @@ function actionPost(id_post, action) {
     .then((res) => res.text())
     .then((res) => {
       if (res === "success") {
-        switch (action) {
-          case "L+":
-            element = document.getElementById("like-button");
-            element.style.color = "green";
-            element.setAttribute("onclick",`actionPost(${id_post},"L-")`)
-            break;
-          case "L-":
-            element = document.getElementById("like-button");
-            element.style.color = "white";
-            element.setAttribute("onclick",`actionPost(${id_post},"L+")`)
-            break;
-          case "D+":
-            element = document.getElementById("dislike-button");
-            element.style.color = "red";
-            element.setAttribute("onclick",`actionPost(${id_post},"D-")`)
-            break;
-          case "D-":
-            element = document.getElementById("dislike-button");
-            element.style.color = "white";
-            element.setAttribute("onclick",`actionPost(${id_post},"D+")`)
-            break;
-          case "S+":
-            element = document.getElementById("save-button");
-            element.style.color = "blue";
-            element.setAttribute("onclick",`actionPost(${id_post},"S-")`)
-            break;
-          case "S-":
-            element = document.getElementById("save-button");
-            element.style.color = "white";
-            element.setAttribute("onclick",`actionPost(${id_post},"S+")`)
-            break;
-        }
+        loadPost(id_post)
       } else {
         console.log(res);
       }
     });
+}
+
+function deletePost(id_post) {
+  if(confirm("Are you sure you want to delete your post ?\nThis action cannot be undone")) {
+    fetch(`/api/post/delete?id_post=${id_post}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.text())
+      .then((res) => {
+        if (res === "success") {
+          redirect("/home")
+        } else {
+          console.log(res);
+        }
+      });
+  }
 }

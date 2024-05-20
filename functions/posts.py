@@ -29,8 +29,24 @@ def create_post():
   else:
     return redirect("/login",302)
 
+@post_api.route("/edit", methods=['POST'])
+def edit_post():
+  if check_session(session):
+    title = request.form["title"]
+    tags = request.form["tags"]
+    post = request.form["post"]
+    id_post = request.form["id_post"]
+    new_tags = []
+    for tag in tags.split(','):
+      new_tags.append(tag.replace('tag-',''))
+    code = db.edit_post(session.get('id'),id_post,title,post,new_tags)
+    return {"code":code,"post":id_post}
+  else:
+    return redirect("/login",302)
+
 @post_api.route("/get/<int:id_post>", methods=['GET'])
 def get_post_info(id_post):
+
   if id_post is not None:
     id_user = None
 
@@ -41,7 +57,10 @@ def get_post_info(id_post):
 
     if data == -1:
       return {"code":"tag_not_found"}
+
     data["code"] = "success"
+    if id_user == data["id_author"]:
+      data["is_logged"] = "yes"
     return data
   else:
     return redirect('/home',302)
@@ -54,12 +73,21 @@ def post_action():
     print(post,action)
     if post is not None and action in ['L+','L-','D+','D-','S+','S-'] :
       res = db.update_post_interaction(session.get('id'),post,action)
-      if res == -1:
-        return "post_not_found"
-      else:
-        return "success"
+      return res
     else:
       return "bad_action_or_post"
   else:
     # TODO : return to login
     return "not_loggedin"
+
+@post_api.route("/delete",methods=["DELETE"])
+def delete_post():
+  if check_session(session):
+    post = request.args.get("id_post")
+    if post is not None:
+      res = db.delete_post(session.get('id'),post)
+      return res
+    else:
+      return "no_post_specified"
+  else:
+    return redirect('/login',302)

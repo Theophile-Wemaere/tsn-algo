@@ -59,8 +59,8 @@
             <div style="flex-grow: 1;"></div>
         </div>
         <div class="post">
-            <h1>Create a Post</h1>
-            <form onsubmit="event.preventDefault();sendNewPost()">
+            <h1>{{ title }}</h1>
+            <form onsubmit="event.preventDefault();sendNewPost('{{ id_post}}')">
                 <label for="title"><i class="fa-solid fa-star-of-life"></i> Title</label>
                 <textarea name="title" oninput="autoGrow(this)" maxlength="240" id="post-title" required></textarea>
                 <label><i class="fa-solid fa-star-of-life"></i> Body</label>
@@ -132,11 +132,14 @@
                             quill.on('text-change', function (delta, old, source) {
                                 sizeIndicator.textContent = `Size: ${quill.getLength()}/${limit}`
                                 if (quill.getLength() >= limit) {
-                                    quill.deleteText(limit-1, quill.getLength());
+                                    quill.deleteText(limit - 1, quill.getLength());
                                 }
                             });
                             function getPostContent() {
                                 return quill.getSemanticHTML();
+                            }
+                            function setPostContent(content) {
+                                quill.container.firstChild.innerHTML = content;
                             }
                         </script>
                     </div>
@@ -146,8 +149,13 @@
                     <div id="tag-button" onclick="selectTag()"><i class="fa-solid fa-plus"></i> Add Tag</div>
                 </div>
                 <div style="flex-grow: 1;"></div>
-                <input type="submit" value="Create post">
+                <input type="submit" value="{{ button }}">
             </form>
+            <script>
+                if ("{{ edit }}" == "yes") {
+                    loadPostEdition("{{ id_post }}");
+                }
+            </script>
         </div>
         <div class="recommandations" id="recommandations">
             <div class="users-recommandations" id="users">
