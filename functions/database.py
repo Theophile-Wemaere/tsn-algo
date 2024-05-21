@@ -469,6 +469,39 @@ def get_user_recommandations(id_user):
     return users_info
 
 
+def get_post_recommandations():
+    """
+    return the top post of the current week
+    """
+
+    db = sqlite3.connect("database.db")
+    cursor = db.cursor()
+
+    cursor.execute("""
+    SELECT p.id_post
+    FROM posts p
+    LEFT JOIN (
+        SELECT post, COUNT(*) AS like_count
+        FROM posts_interaction
+        WHERE action = 'L'
+        GROUP BY post
+    ) pi ON p.id_post = pi.post
+    WHERE p.created_at >= DATE('now', '-7 days')
+    ORDER BY pi.like_count DESC, p.created_at DESC
+    LIMIT 10""")
+    posts = [row[0] for row in cursor.fetchall()]
+
+    data = {
+        "posts":[]
+    }
+    for post in posts:
+        post_info = get_post_info(post)
+        data["posts"].append(post_info)
+
+    db.close()
+    return data
+
+
 def update_relation(id_user, id_target, action):
     """
     update a relation (follow, unfollow)

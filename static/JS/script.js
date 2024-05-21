@@ -20,6 +20,7 @@ function loadRecommandations() {
       reco = document.getElementById("recommandations");
       if (res.code === "session_valid") {
         loadUserRecommandations();
+        loadPostRecommandations();
       } else {
         reco.innerHTML = `
         <h2>Login on 𝕐 to see customs recommandations !</h2>
@@ -48,6 +49,33 @@ function loadUserRecommandations() {
               </div>
               <div style="flex-grow:1"></div>
               <button onclick="event.preventDefault();followUser(${user.id})">Follow</button>
+            </div>
+          </a>
+          `
+          reco.innerHTML += row;
+        });
+      }
+    });
+}
+
+function loadPostRecommandations() {
+  fetch("/api/user/recommandations?t=post", {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.code === "success") {
+        
+        reco = document.getElementById("posts");
+        res.posts.forEach(function (post) {
+          row = `
+          <a href="/post/view/${post.id_post}">
+              <b>${post.title}</b>
+              <i>By ${post.author},</br>on ${post.created_at}</i>
+              <div id="post-reco-content">${post.content}</div>
+              <div class="row">
+              <i class="fa-solid fa-thumbs-up"></i>${post.like}
+              </div>
             </div>
           </a>
           `

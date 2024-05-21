@@ -159,6 +159,10 @@ def api_recommandations():
         if t == "user":
             data = db.get_user_recommandations(session.get('id'))
             return {"code":"success","data":data}
+        elif t == "post":
+            data = db.get_post_recommandations()
+            data["code"] = "success"
+            return data
     else:
         return redirect('/login',302)
 
