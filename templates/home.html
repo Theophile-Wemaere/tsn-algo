@@ -58,8 +58,20 @@
             </div>
         </div>
         <div class="feed">
-
+            <div class="row" id="filters">
+                Show posts with the following filter :  
+                <select name="filter" id="filter">
+                    <option value="new">New</option>
+                    <option value="best">Best</option>
+                </select>
+            </div>
+            <hr id="hr-filter">
+            <div id="posts-feed">
+            </div>
         </div>
+        <script>
+            loadFeed(0)
+        </script>
         <div class="recommandations" id="recommandations">
             <div class="users-recommandations" id="users">
                 <h3>Users with the same interests as you</h3>
@@ -75,7 +87,7 @@
         </script>
     </div>
     <script>
-        if("{{ onboarding }}" === "True") {
+        if ("{{ onboarding }}" === "True") {
             loadOnboarding();
         }
     </script>

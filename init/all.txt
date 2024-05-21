@@ -1,0 +1,61 @@
+Today I saw that you can use DRAM as a camera sensor![;]https://preview.redd.it/uufgvm7au8k61.jpg?width=640&crop=smart&auto=webp&s=7044bdd8fd537598123b83a29e2789eb7ead6df6
+This is a discreet component Nixie Tube Clock[;]https://preview.redd.it/kzvqs8rlvkh61.jpg?width=640&crop=smart&auto=webp&s=faf819c0f5773f30a86d3ca43ec656ad84579a42
+My dad worked for micron, he gave me a framed wafer that they gave him.[;]https://preview.redd.it/p9zf4x2kofr81.jpg?width=640&crop=smart&auto=webp&s=8b3ace887258bea387e671a1a93727d11e42a04b
+Thank god someone provided pinout for this nope specimen[;]https://external-preview.redd.it/VZx-V6wukJehRFJYASyjpD49eQtGoHL7EI-DM9537rQ.jpg?width=640&crop=smart&auto=webp&s=7ad5338ccff98c39ee5b77e13ca66e668347f2db
+capacitor bank 😳[;]https://preview.redd.it/capacitor-bank-v0-acthm0u8j9wa1.jpg?width=640&crop=smart&auto=webp&s=8f09513924250f1487d8548f0000a93784f09d60
+I repair farming equipment for a living. This is Opti-5, a $6000 onboard computer for a Ponsse logging harvester running an embedded version of Windows XP (small board to the right). The culprit: a dead 5V/10A regulator (worth $75).[;]https://preview.redd.it/13yie4xg0mj51.jpg?width=640&crop=smart&auto=webp&s=9f6c59518598813d2af3483e4e28701410f758e8
+They named this buzzer "BEEP"[;]https://preview.redd.it/en0fagvr2bw41.jpg?width=640&crop=smart&auto=webp&s=6e59ae6d434aa4afee8d28d6c82aa334a3f61321
+Very easy but really cool digital clock with Moon Phase. https://flux.ai/jharwinbarrozo/astronomical-clock-gps-based-with-lunar-phase[;]https://preview.redd.it/isx6yosg6pa61.png?width=640&crop=smart&auto=webp&s=f6d2f75ce18b7ce2c14fb43a3719cdc71630be6a
+Breadboard Video Card progress[;]https://preview.redd.it/vgsooj554mx61.jpg?width=640&crop=smart&auto=webp&s=66c6198ea10a15bf31aad9b2a366864906491155
+Challenging myself to make a new PCB every week, Week 2: A game of Tic-Tac-Toe![;]https://preview.redd.it/t6gna5gyl8z51.jpg?width=640&crop=smart&auto=webp&s=f57d9b6ea4aa0c055fe170f26331b5e21d2bb100
+A little trick I use to hold small parts[;]https://external-preview.redd.it/xGMai5MEiYpd32GBzsqrLbvMymdQeAHju_YdkOV_4X8.jpg?width=640&crop=smart&auto=webp&s=5b5fcf8b4d28a5539a6eb4bc2a453325fb9b6aef
+I repair farming equipment for a living. This is Opti-5, an onboard computer for a Ponsse logging harvester. EOL, no spare parts. Ponsse wants you to upgrade to Opti-7 which cost $9k. I made it live by replacing two dead 50W regulators and saved the customer about $7k.[;]https://preview.redd.it/5aomjqax5dd61.jpg?width=640&crop=smart&auto=webp&s=6654aaa2da8548d4bd6cd372bcffcb25865612d3
+It took almost 2 Months but I finally reorganized my Lab[;]https://preview.redd.it/othg1yzc4vc31.jpg?width=640&crop=smart&auto=webp&s=7cffad462856ba1be113071669d5257c2107da18
+After 7 years, I finally used up my first roll of solder![;]https://preview.redd.it/v78xxquk01161.jpg?width=640&crop=smart&auto=webp&s=e4f514b485ac66abf1817665fa9f33d2acf6a561
+Improvising under Quarantine[;]https://preview.redd.it/xiws9l7l4vo41.jpg?width=640&crop=smart&auto=webp&s=91128bfa298a4b96c87db64e441dbb931a7323f8
+F for me in the comments[;]https://preview.redd.it/f-for-me-in-the-comments-v0-zhbwuahbmkv91.jpg?width=640&crop=smart&auto=webp&s=9ddf24c6898ed5aff6dea4b8dafc20951cff1b74
+My Breadboard Calculator now has a Breadboard Video Card[;]https://preview.redd.it/rhfbw92kfkv61.jpg?width=640&crop=smart&auto=webp&s=ecdcaf323e437f03724978a53b83f93f180cdb9b
+My trusty ol' LED still going strong after 5 years of inconsiderate debugging actions[;]https://preview.redd.it/q59v15vtvnu61.jpg?width=640&crop=smart&auto=webp&s=c6e2c6a6d86477cbd478f259c461f88874aa8aa4
+I think studying instead of soldering is better but....[;]https://preview.redd.it/rbwc3v3ya2m91.jpg?width=640&crop=smart&auto=webp&s=56a8eff25c6dd82f6706a34e34a874c4555851b7
+Ethernet prototype, Robert Metcalf, 1973[;]https://external-preview.redd.it/oaY4tVtk6sEKCaTHz4SBTZ12GCZzjJzrX09U73AbcJM.png?width=640&crop=smart&auto=webp&s=7ebccbead0a1d0db37d1f125425f074076b55d47
+I finally figured out what a capacitor exactly was. As a proof of concept I made two homemade ones.[;]https://preview.redd.it/6ynnq1or98b61.jpg?width=640&crop=smart&auto=webp&s=7c68db497403b13c7d7bb84c9643f88380bae95b
+The olden days when test gear was still made out of gold[;]https://preview.redd.it/p7zxl2pp0xj51.jpg?width=640&crop=smart&auto=webp&s=5ce2dc5be678d3938b237b03c4cc61fadd6a7135
+I’m ashamed to admit that I searched for this cap for several minutes before seeing it on my magnetic watch strap.[;]https://preview.redd.it/k9k94rff20051.jpg?width=640&crop=smart&auto=webp&s=4646926c5db1c8cf0bbc8b55776f8937e2fa1364
+Re-wired my “wireless” Bluetooth PS2 controller today and I got it right on the first try. 20+ individual wires needed to replace the original faulty traces I sanded off.[;]https://preview.redd.it/3i8goqzuoh561.jpg?width=640&crop=smart&auto=webp&s=cda6ab64e91306ff08d18b8478e296500ae1a3f6
+All Logic Gates drawn with manual switches rather than transistors in order to better understand their functionality.[;]https://preview.redd.it/e163ai5b6ol41.png?auto=webp&s=a39c2df4c7ac4aa16bb6ede9a25e9033160dff27
+My grandpa build a radiation counter after Chernobyl exploded[;]https://preview.redd.it/beie97k6yke31.jpg?width=640&crop=smart&auto=webp&s=3cf52d63fade1d159efa885a906c77054d2324e9
+Current state of chaos[;]https://external-preview.redd.it/PPppVvaRwQXsMEjQp5g_Vjny9VMCjCoS2ilvEFNhoIk.jpg?width=640&crop=smart&auto=webp&s=864738912dc056a6e10862b8f91b9101e342c6c8
+From board to fully reverse engineered schematic in several hours.[;]https://preview.redd.it/08ojvurfdyt51.jpg?width=640&crop=smart&auto=webp&s=896171a7314f7e8f66bf9416807067d799bb37f8
+DIY smd package breakout[;]https://preview.redd.it/9kzv32n906a61.jpg?width=640&crop=smart&auto=webp&s=473ee460111bb1d55c0f5572290873305f6610fd
+Why be normal?[;]https://preview.redd.it/q3apte70urw41.jpg?width=640&crop=smart&auto=webp&s=3893d645502b3f7f59aac21b31d15de4bfe13768
+The first chip I ever design back in 2014 for my undergrad thesis. It’s a 14-bit SAR ADC.[;]https://preview.redd.it/uuwucbtpyad61.jpg?auto=webp&s=f6e25b3bbe6891ca83048dec663eb772e7422e4c
+Finally got the chips we ordered in January 2021.[;]https://preview.redd.it/finally-got-the-chips-we-ordered-in-january-2021-v0-36zzpv25h3c81.jpg?width=640&crop=smart&auto=webp&s=d11bb61c4f2eebf9ebe2630faf5f01d4d792c4fd
+Custom 3D printed jumper wire organizer[;]https://preview.redd.it/6nogi5witcs41.jpg?width=640&crop=smart&auto=webp&s=cdca70e014d44f457bc7cb15e79de7e4677c691a
+LED with an internal short[;]https://preview.redd.it/led-with-an-internal-short-v0-6mnxjyektqqa1.jpg?width=640&crop=smart&auto=webp&s=40a18b2aa24c800b27a325be1cc5dfcb17d08bb9
+Testing your eyesight[;]https://preview.redd.it/v5fg54awq1f61.jpg?width=640&crop=smart&auto=webp&s=3f0673ccc3d09e8f422c886ea81db1b23d4e0d72
+My son (13) and I just finished our first clock[;]https://preview.redd.it/1jvcfb192mv41.jpg?width=640&crop=smart&auto=webp&s=4810abffb1567500a7bf6c5993a40311c10feb98
+and ofcoarse i only noticed it on the second to last board.[;]https://preview.redd.it/9unc7yrz8r561.jpg?width=640&crop=smart&auto=webp&s=24de44cf6fedbde78977e63243cb042d44ffb7d2
+The little christmas tree i made[;]https://preview.redd.it/4u7du0dglg541.jpg?width=640&crop=smart&auto=webp&s=655cd17ec46f4d8140346de92d86189a69739d0b
+Arduino Freeform Circuit Clock[;]https://preview.redd.it/m5ahg9oufb151.jpg?width=640&crop=smart&auto=webp&s=e42bdf3d1494f4e9cab2f76852fb36b39cfe51d5
+Pile of resistors (and some capacitors) that needs sorting in the lab at my University[;]https://preview.redd.it/pile-of-resistors-and-some-capacitors-that-needs-sorting-in-v0-c9weuyy67wu81.jpg?width=640&crop=smart&auto=webp&s=97084e13f9a4f0ab3495b94f724a485ae67ddf7d
+Few things are as satisfying as the pristine unbent leads of fresh parts in the static bags[;]https://preview.redd.it/zndstn2qlkt61.jpg?width=640&crop=smart&auto=webp&s=70a188ef6877c4d42f901e2262058c28fcdc1f22
+When you don't have a 40M resistor and it can't wait until Monday![;]https://preview.redd.it/8393yjjhe51y.jpg?width=640&crop=smart&auto=webp&s=c049fd1d654821b4474a8c812d3ab3d462102519
+Fortune Cookie Today Says[;]https://preview.redd.it/fortune-cookie-today-says-v0-fgdtnsgtyc7c1.png?width=640&crop=smart&auto=webp&s=d6cfe484f33a7eee839fa8adbeba495f57658d58
+Internet-connected freeform display by Mohit Bhoite[;]https://preview.redd.it/942oewyma7d61.png?width=640&crop=smart&auto=webp&s=6ad17447711e2dbf85ae931bd5de4fb1b218029a
+Was told to post here. Exposed pedestrian crossing box[;]https://external-preview.redd.it/NyjYRYlkTRtUtlftj38L0HGMAGEiHS40GJa0gmL8tA4.jpg?width=640&crop=smart&auto=webp&s=e9f6665fe8acae35ca88fd3a08a817ddeb0f1fa5
+My school was sorting out old lab-stuff and one of my teachers asked me if i wanted an oscilloscope and now I am a proud owner of this beautiful scope[;]https://preview.redd.it/td07j82ws3f21.jpg?width=640&crop=smart&auto=webp&s=89ea81bdf9e82ee7e190be0a6fd264fa8714ad03
+After not touching a circuit for 3 years, I built my in-8-2 nixie clock. So proud of it![;]https://preview.redd.it/8zecbfc13tb41.jpg?width=640&crop=smart&auto=webp&s=d89c4100fe09542a2fd87a161a988e617b01cece
+My new crazy PCBs just arrived from factory! Its analog synth with envelope generator and filter. Had a blast designing.[;]https://preview.redd.it/idxv68jcpww41.jpg?width=640&crop=smart&auto=webp&s=c5327080ffcfffa09d31dd6b83739f39878db882
+found someone made a bracelet using resistances[;]https://preview.redd.it/zv3cz0qfqu951.jpg?width=640&crop=smart&auto=webp&s=0fc48d16378dac74fd4d1bf0bd10b9b7edcd0b6e
+I hacked a PC USB keyboard and its PCB (green), and made myself a handheld keyboard with 6mm buttons (black).[;]https://preview.redd.it/0wxyyofckqq31.jpg?width=640&crop=smart&auto=webp&s=5d83f1f7da875923698e6331d3a38ea7bc3f5e73
+Took apart a fishfinder and found this[;]https://external-preview.redd.it/UjmyAZqBTnj-Ukvd_UZ568t8OWpnvmnO7bTpPXx7qWI.jpg?width=640&crop=smart&auto=webp&s=2157b7096608bea57e18c4c11455e10bfb3c05ac
+My first ever electronic circuit[;]https://preview.redd.it/dlb54ax3r6e41.jpg?width=640&crop=smart&auto=webp&s=275a7dfe3a0f2432be7aca6fd9b7aefaf509bd00
+I did a fuckup[;]https://preview.redd.it/cbapb13biz781.jpg?width=640&crop=smart&auto=webp&s=ad00d40e3763daa9ee86f12a71daed232518d0b4
+This is where the term „having a bug“ comes from. Washing mashine malfunction caused by a spider[;]https://preview.redd.it/7d86lo9a1z641.jpg?width=640&crop=smart&auto=webp&s=a7e972d9d1f9f5c5fe1ec7c655b06574139cab3b
+Mildly infuriating.[;]https://preview.redd.it/tis27tu8u0x51.jpg?width=640&crop=smart&auto=webp&s=abeeda38a5615d358d61c589ede8e8de2dfa94b2
+Custom made soldering station made out of an antique British Army Artillery case. WIP.[;]https://preview.redd.it/y5h62hsp4em51.jpg?width=640&crop=smart&auto=webp&s=00ffaaec1273d34395de9f552268f216760f9980
+I think every workshop needs one of these....[;]https://preview.redd.it/9pov4nfv59541.jpg?width=640&crop=smart&auto=webp&s=d6876f58bd9e672efdd7fae698dc550553a43a83
+managed to solder this by hand last week.[;]https://preview.redd.it/managed-to-solder-this-by-hand-last-week-v0-t7liu4167qwb1.jpg?width=640&crop=smart&auto=webp&s=b4c569771a61ea4fd2b592a1753b9ecdf22e4b80
+Fortune cookie[;]https://preview.redd.it/79f89sg3vgmy.jpg?width=640&crop=smart&auto=webp&s=6c877e45a70e85e43f73b96412c85cbb08f84b22
+I didn’t have a suitable breakout board[;]https://preview.redd.it/59sbsvwwni161.jpg?width=640&crop=smart&auto=webp&s=22a1e0b222c92618f5743a15e8a03cd20467bccd
+Decided to finally start learning Verilog and FPGAs. It took a couple of days, but I got a VGA text display.[;]https://preview.redd.it/31eda9m42ol51.jpg?width=640&crop=smart&auto=webp&s=5d4e39b07caafc2443151dd1255b6166275b4923

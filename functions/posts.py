@@ -65,6 +65,30 @@ def get_post_info(id_post):
   else:
     return redirect('/home',302)
 
+@post_api.route("/feed",methods=['GET'])
+def get_post_feed():
+
+  feed_filter = request.args.get('f')
+  offset = request.args.get('offset')
+  if feed_filter is None or feed_filter not in ['new','best']:
+    feed_filter = "new"
+
+  if not tools.is_int(offset):
+    offset = 0
+    
+  id_user = None
+  if check_session(session):
+    id_user = session.get('id')
+
+  data = None
+  if feed_filter == "new":
+    data = db.get_feed_new(id_user,offset)
+  elif feed_filter == "best":
+    data = db.get_feed_best(id_user,offset) # add filter in time (best week, best month, best year,...)
+  
+  data["code"] = "success"
+  return data
+
 @post_api.route("/action",methods=["PATCH"])
 def post_action():
   if check_session(session):

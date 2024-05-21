@@ -785,6 +785,51 @@ function loadPostEdition(id_post) {
     });
 }
 
+function loadFeed(offset) {
+
+  button = document.getElementById("load-more");
+  if(button !== null) {
+    button.remove()
+  }
+
+  filter = document.getElementById("filter").value
+  fetch(`/api/post/feed?f=${filter}&offset=${offset}`, {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.code == "success") {
+        feed = document.getElementById("posts-feed");
+        res.posts.forEach( post => {
+          feed.innerHTML += `
+          <a href="/post/view/${post.id_post}">
+              <div class="post-block">
+                  <h2 id="post-title">${post.title}</h2>
+                  <div id="post-author" onclick="event.preventDefault();redirect('/profile?id_user=${post.id_author}')">
+                      <img src="/static/pictures/${post.author_picture}.png">
+                      <h3>${post.author}, on ${post.created_at}</h3>
+                  </div>
+                  <div class="post-content">
+                  ${post.content}
+                  </div>
+                <div id="stats">
+                  <div class="row"><i class="fa-solid fa-thumbs-up"></i>${post.like}</div>
+                  <div class="row"><i class="fa-solid fa-thumbs-down"></i>${post.dislike}</div>
+                  <div class="row"><i class="fa-solid fa-bookmark"></i>${post.saved}</div>
+                </div>
+              </div>
+          </a>
+          `
+        });
+        feed.innerHTML += `
+        <button id="load-more" onclick="loadFeed(${offset + 10})">See more</button>
+        `
+      } else {
+        console.log(res);
+      }
+    });
+}
+
 function loadPost(id_post) {
   fetch(`/api/post/get/${id_post}`, {
     method: "GET"
@@ -797,7 +842,8 @@ function loadPost(id_post) {
         document.getElementById("post-title").textContent = res.title
         document.getElementById("post-author").innerHTML = `
         <a href="/profile?id_user=${res.id_author}">
-          <h3>By ${res.author}</h3>
+          <img src="/static/pictures/${res.author_picture}.png">
+          <h3>By ${res.author}, on ${res.created_at}</h3>
         </a>`
         document.getElementById("post-content").innerHTML = res.content;
         stats = document.getElementById("stats")
