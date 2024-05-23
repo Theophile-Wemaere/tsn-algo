@@ -58,7 +58,7 @@
             <div style="flex-grow: 1;"></div>
             <div class="post-button" id="post-button">
                 <a href="/post/new">
-                    <i class="fa-solid fa-plus"></i> Add post
+                    <i class="fa-solid fa-plus"></i> Create
                 </a>
             </div>
         </div>
@@ -71,12 +71,37 @@
             </div>
             <hr>
             <div class="stats" id="stats-{{ id_post }}"></div>
-            <div class="row" id="tag-list">
-
+            <div class="cell" id="tags">
+                <div class="row">
+                    <h3>Tags for this post :</h3>
+                    <div style="flex-grow: 1;"></div>
+                    <i id="preference-show" class="fa-solid fa-circle-chevron-down"></i>
+                </div>
+                <div class="row" id="tag-list"></div>
+                <script>
+                    const buttonShow = document.getElementById("preference-show");
+                    const rowTag = document.getElementById("tag-list");
+                    buttonShow.addEventListener("click", function () {
+                        this.classList.toggle("rotated");
+                        if (rowTag.style.display === "flex") {
+                            rowTag.style.display = "none";
+                        } else {
+                            rowTag.style.display = "flex";
+                        }
+                    });
+                </script>
+            </div>
+            <h3>Comment about this post :</h3>
+            <form id="comment-form" onsubmit="event.preventDefault();sendComment('{{ id_post }}')">
+                <textarea name="comment" placeholder="Comment on this post" oninput="autoGrow(this)" maxlength="240" id="comment-input" required></textarea>
+                <input type="submit" value="post">
+            </form> 
+            <div class="cell" id="comments">
             </div>
         </div>
         <script>
             loadPost("{{ id_post }}");
+            loadComments("{{ id_post }}");
         </script>
         <div class="recommandations" id="recommandations">
             <h3>Users with the same interests as you</h3>

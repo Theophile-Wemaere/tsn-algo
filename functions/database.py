@@ -219,7 +219,6 @@ def annihilate_session(id_user, token):
 
 # region get users info
 
-
 def get_user_data(id_user):
     """
     return user's data to display on the dashboard
@@ -578,7 +577,6 @@ def update_tags(id_user, tags):
 
 # region posts
 
-
 def save_post(id_user, visibility, title, content, tags):
     """
     create a new post in the database
@@ -622,6 +620,25 @@ def check_post_owner(id_user, id_post):
             print("User is owner")
             return True
     return False
+
+def check_comment_owner(id_user, id_comment):
+    """
+    check if a user is the given comment owner
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    author = cursor.execute(
+        "SELECT author FROM comments WHERE id_comment = ?", (id_comment,)).fetchone()
+    db.close()
+    if author is not None:
+        if author[0] != id_user:
+            return False
+        else:
+            print("User is owner")
+            return True
+    return False
+
 
 
 def edit_post(id_user, id_post, title, content, tags):
@@ -885,5 +902,77 @@ def get_feed_new(id_user=None, offset=0):
     db.close()
     return data
 
-
 # endregion
+
+#region comments
+
+def create_comment(id_user,id_post,content):
+    """
+    add a comment to a post in a database
+    """
+
+    db = sqlite3.connect("database.db")
+    cursor = db.cursor()
+    cursor.execute("""
+    INSERT INTO comments(parent,author,content,created_at)
+    VALUES(?,?,?,datetime())""",(id_post,id_user,content))
+    db.commit()
+    db.close()
+
+def get_comments(id_post,id_user):
+    """
+    get all comments for a post
+    """
+
+    db = sqlite3.connect("database.db")
+    cursor = db.cursor()
+
+    cursor.execute("""
+    SELECT id_comment,author,content,created_at
+    FROM comments
+    WHERE parent = ?
+    ORDER BY created_at""",(id_post,))
+    rows = cursor.fetchall()
+    data = {
+        "comments": []
+    }
+    if rows is not None:
+        for row in rows:
+            comment_info = {
+                "id_post": id_post,
+                "id_comment": row[0],
+                "id_author": row[1],
+                "content": row[2],
+                "created_at": row[3],
+                "is_author": False
+            }
+
+            author_info = get_user_data(comment_info["id_author"])
+            comment_info["author"] = author_info["displayname"]
+            comment_info["author_picture"] = author_info["picture"]
+
+            if id_user is not None and id_user == comment_info['id_author']:
+                comment_info["is_author"] = "yes"
+
+            data["comments"].append(comment_info)
+
+    db.close()
+    return data
+
+def delete_comment(id_user, id_comment):
+    """
+    delete a comment from the database
+    """
+
+    if not check_comment_owner(id_user, id_comment):
+        return "not_comment_owner"
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM comments WHERE id_comment = ?", (id_comment,))
+    db.commit()
+    db.close()
+    return "success"
+
+#endregion
+

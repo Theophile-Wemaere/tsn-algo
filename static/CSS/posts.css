@@ -4,7 +4,7 @@
     flex-direction: column;
     padding-left: 30px;
     color: #FFFFFF;
-    max-width: 70%;
+    width: 70%;
     max-height: 100%;
 }
 
@@ -62,7 +62,7 @@
     display: flex;
     flex-direction: column;
     max-width: 90%;
-    max-height: 600px;
+    max-height: 400px;
 }
 
 .post .cell .row {
@@ -284,4 +284,107 @@ div.stats .saved {
 pre {
     padding: 5px;
     border-radius: 5px;
+}
+
+.cell#tags .row h3 {
+    text-align: left;
+}
+
+.row i#preference-show {
+    color: #e2d0d0;
+    margin-right: 30px;
+    font-size: 40px;
+}
+
+.row i#preference-show:hover {
+    cursor: pointer;
+    color: #FFFFFF;
+}
+
+.row i#preference-show.rotated {
+    transform: rotate(180deg);
+}
+
+.row#tag-list {
+    height: fit-content;
+    display: none;
+}
+
+.cell#tags {
+    background-color: #646464;
+    border-radius: 10px;
+}
+
+.cell#comments {
+    background-color: transparent;
+    border-top: solid 1px white;
+    border-radius: 0;
+}
+
+form#comment-form {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    margin-bottom: 10px;
+}
+
+form#comment-form textarea {
+    background-color: #D9D9D9;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    width: 500px;
+    resize: none;
+    overflow: hidden;
+    min-height: 20px;
+    height: 20px;
+    max-height: 140px;
+    font-size: large;
+    padding: 10px;
+}
+
+form#comment-form textarea:hover {
+    background-color: #FFFFFF;
+}
+
+form#comment-form textarea:focus {
+    background-color: #FFFFFF;
+}
+
+form#comment-form input[type=submit] {
+    margin: 5px 0 0 0;
+    width: 60px;
+    height: 30px;
+    font-size: small;
+}
+
+div.cell#comments {
+    margin-bottom: 20px;
+}
+
+div#comment-author {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+}
+
+div#comment-author img {
+    height: 40px;
+    width: auto;
+    border: solid 1px #d9d8d8;
+    border-radius: 10px;
+    margin-right: 5px;
+}
+
+button#remove-comment {
+    border: 0;
+    border-radius: 5px;
+    background-color: #AA2D2D;
+}
+
+button#remove-comment:hover {
+    background-color: #d65151;
+    cursor: pointer;
+    color: white;
 }

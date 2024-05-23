@@ -46,8 +46,6 @@ CREATE TABLE `posts` (
   `visibility` INTEGER,
   `title` text,
   `content` text,
-  `like` INTEGER,
-  `dislike` INTEGER,
   `comments` INTEGER,
   `created_at` timestamp
 );
@@ -63,6 +61,7 @@ CREATE TABLE `comments` (
   `parent` INTEGER,
   `author` INTEGER,
   `content` text,
+  `created_at` timestamp,
   `like` text,
   `dislike` text
 );

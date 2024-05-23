@@ -115,3 +115,38 @@ def delete_post():
       return "no_post_specified"
   else:
     return redirect('/login',302)
+
+@post_api.route("/comment/add",methods=['POST'])
+def create_comment():
+  if check_session(session):
+    id_post = request.form['post']
+    content = request.form['content']
+    db.create_comment(session.get('id'),id_post,content)
+    return "success"
+  else:
+    return redirect("/login",302)
+
+@post_api.route("/comment/get",methods=['GET'])
+def get_comments():
+  id_user = None
+  if check_session(session):
+    id_user = session.get('id')
+  id_post = request.args.get('id_post')
+  if id_post is not None:
+    data = db.get_comments(id_post,id_user)
+    data["code"] = "success"
+    return data
+  else:
+    return redirect('/home',302)
+
+@post_api.route("/comment/delete",methods=["DELETE"])
+def delete_comment():
+  if check_session(session):
+    comment = request.args.get("id_comment")
+    if comment is not None:
+      res = db.delete_comment(session.get('id'),comment)
+      return res
+    else:
+      return "no_comment_specified"
+  else:
+    return redirect('/login',302)

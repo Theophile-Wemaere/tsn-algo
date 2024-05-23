@@ -901,7 +901,6 @@ function loadPost(id_post) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res)
       if (res.code === "success") {
         document.title = res.title
         document.getElementById("post-title").textContent = res.title
@@ -1007,6 +1006,73 @@ function deletePost(id_post) {
       .then((res) => {
         if (res === "success") {
           redirect("/home")
+        } else {
+          console.log(res);
+        }
+      });
+  }
+}
+
+function loadComments(id_post) {
+  fetch(`/api/post/comment/get?id_post=${id_post}`, {
+    method: "GET"
+  }).then((res) => res.json())
+    .then((res) => {
+      if(res.code === "success") {
+        comments = document.getElementById("comments")
+        comments.innerHTML = "";
+        res.comments.forEach(comment => {
+          content = `
+          <div class="comment">
+            <div id="comment-author" onclick="event.preventDefault();redirect('/profile?id_user=${comment.id_author}')">
+              <img src="/static/pictures/${comment.author_picture}.png">
+              <h3>By ${comment.author}, on ${comment.created_at}</h3>
+            </div>
+            ${comment.content}`
+          if(comment.is_author === "yes") {
+            content += `</br><button id="remove-comment" onclick="deleteComment(${comment.id_comment},${id_post})">remove</button>`
+          }
+          content += "</div>"
+          comments.innerHTML += content
+        });
+      } else {
+        console.log(res);
+      }
+    });
+}
+
+function sendComment(id_post) {
+
+  inp = document.getElementById("comment-input");
+  content = inp.value;
+  inp.value = "";
+
+  data = new FormData();
+  data.append("post",id_post);
+  data.append("content",content);
+
+  fetch("/api/post/comment/add", {
+    method: "POST",
+    body: data
+  }).then((res) => res.text())
+    .then((res) => {
+      if(res === "success") {
+        loadComments(id_post);
+      } else {
+        console.log(res);
+      }
+    });
+}
+
+function deleteComment(id_comment,id_post) {
+  if (confirm("Are you sure you want to delete your comment ?\nThis action cannot be undone")) {
+    fetch(`/api/post/comment/delete?id_comment=${id_comment}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.text())
+      .then((res) => {
+        if (res === "success") {
+          loadComments(id_post);
         } else {
           console.log(res);
         }
