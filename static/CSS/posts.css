@@ -1,11 +1,11 @@
-.post {
-    flex-grow: 1;
-    height: 100%;
+.post { 
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     padding-left: 30px;
     color: #FFFFFF;
     max-width: 70%;
+    max-height: 100%;
 }
 
 .row {
@@ -56,10 +56,13 @@
 }
 
 .post .cell {
-    background-color: transparent;
+    background-color: #646464;
+    border-radius: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    max-width: 50%;
+    max-width: 90%;
+    max-height: 600px;
 }
 
 .post .cell .row {

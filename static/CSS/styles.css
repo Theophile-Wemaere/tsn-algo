@@ -227,7 +227,6 @@ a {
     border-color: #ffffff;
     align-items: center;
     color: #FFFFFF;
-    max-height: 850px;
 }
 
 .recommandations h2 {
@@ -247,7 +246,7 @@ a {
 }
 
 .recommandations .users-recommandations {
-    height: 400px;
+    min-height: 40%;
     width: 100%;
     overflow-y: scroll;
 }
@@ -260,7 +259,6 @@ a {
     width: 100%;
     flex-grow: 1;
     overflow-y: scroll;
-    max-height: 40%;
 }
 
 .recommandations .users-recommandations .user-row {
@@ -325,7 +323,7 @@ select#filter {
 
 div#posts-feed {
     overflow-y: scroll;
-    max-height: 800px;
+    height: 90%;
     display: flex;
     flex-direction: column;
     align-items: center;
