@@ -1,0 +1,120 @@
+.menu {
+    min-width: 250px;
+}
+.messages {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.conversations {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    padding-top: 10px;
+    border-right:solid 1px #646464;
+}
+
+.conversations .row {
+    background-color: #646464;
+    border-radius: 20px;
+    margin: 0 5px 10px 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: white;
+    padding: 10px;
+}
+
+.conversations .focused {
+    background-color: #d9d9d9;
+    color: #646464;
+}
+
+.conversations .row:hover {
+    background-color: #d9d9d9;
+    color: #646464;
+    cursor: pointer;
+}
+
+.conversations .row img {
+    height: 50px;
+    width: auto;
+    border: solid 1px #d9d8d8;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.conversations .row h3 {
+    margin: 0;
+}
+
+.conversation-block {
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px 10px 10px;
+    color:white;
+    flex-grow: 1;
+    overflow-y: scroll;
+}
+
+.message .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 5px;
+} 
+
+.message .row img {
+    height: 50px;
+    width: auto;
+    border: solid 1px #d9d8d8;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.message .row h3 {
+    margin: 0;
+}
+
+.conversation-block form.input-area {
+    height: 100px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border-top: solid 1px #646464;
+    padding-top: 10px;
+}
+
+.conversation-block form.input-area textarea {
+    width: 80%;
+    outline: none;
+    border: solid 1px white;
+    color: #646464;
+    border-radius: 15px 0 0 15px;
+    resize: none;
+    padding: 10px;
+}
+
+.conversation-block form.input-area input[type=submit] {
+    border: solid 1px white;
+    outline: none;
+    border-radius: 0 15px 15px 0;
+    padding: 0 5px 0 5px;
+    background-color: #646464;
+}
+
+.conversation-block form.input-area input[type=submit]:hover {
+    background-color: #d9d9d9;
+    color: #646464;
+    cursor: pointer;
+}

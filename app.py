@@ -24,6 +24,8 @@ from functions.user import user_api
 app.register_blueprint(user_api, url_prefix='/api/user')
 from functions.posts import post_api
 app.register_blueprint(post_api, url_prefix='/api/post')
+from functions.messages import message_api
+app.register_blueprint(message_api, url_prefix='/api/messages')
 
 @app.route("/home")
 @app.route("/")
@@ -101,6 +103,13 @@ def edit_post():
 def view_post(id_post):
     if id_post is not None:
         return render_template("post-view.html",id_post=id_post)
+
+@app.route("/messages")
+def view_messages():
+    if check_session(session):
+        return render_template("messages.html")
+    else:
+        return redirect("/login",302)
 
 if __name__ == '__main__':
     try:

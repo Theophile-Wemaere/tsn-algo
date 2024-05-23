@@ -66,6 +66,19 @@ CREATE TABLE `comments` (
   `dislike` text
 );
 
+CREATE TABLE `messages` (
+  `id_conversation` INTEGER PRIMARY KEY,
+  `from` INTEGER,
+  `to` INTEGER,
+  `time` timestamp,
+  `message` text,
+  `isread` char
+);
+
+ALTER TABLE `messages` ADD FOREIGN KEY (`from`) REFERENCES `users` (`id_user`);
+
+ALTER TABLE `messages` ADD FOREIGN KEY (`to`) REFERENCES `users` (`id_user`);
+
 ALTER TABLE `sessions` ADD FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`);
 
 ALTER TABLE `user_tags` ADD FOREIGN KEY (`tag`) REFERENCES `tags` (`id_tag`);

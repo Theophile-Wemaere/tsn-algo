@@ -50,7 +50,6 @@ def generate_hashname(id_user):
 
 # region users create & login
 
-
 def check_existing(column, value):
     """
     check if a user already exist (email and username)
@@ -148,7 +147,6 @@ def check_login(input, password):
 # endregion
 
 # region sessions
-
 
 def generate_token(id_user):
     """
@@ -973,6 +971,104 @@ def delete_comment(id_user, id_comment):
     db.commit()
     db.close()
     return "success"
+
+#endregion
+
+#region messages
+
+def get_conversations(id_user):
+    """
+    return all existing conversations for a user
+    """
+
+    db = sqlite3.connect("database.db")
+    cursor = db.cursor()
+
+    # get all contacts
+    cursor.execute("""
+    SELECT contact, MAX(time) AS last_entry_time
+    FROM (
+        SELECT "to" AS contact, time
+        FROM messages
+        WHERE "from" = ?
+        
+        UNION
+        
+        SELECT "from" AS contact, time
+        FROM messages
+        WHERE "to" = ?
+    ) AS combined_contacts
+    GROUP BY contact
+    ORDER BY last_entry_time DESC""", (id_user, id_user))
+    contacts = cursor.fetchall()
+
+    conv = {
+        "conv":[]
+    }
+    for contact,last_time in contacts:
+        data = {
+            "id_contact":contact,
+            "last_time":last_time
+        }
+        contact_info = get_user_data(contact)
+        data["contact"] = contact_info["displayname"]
+        data["contact_picture"] = contact_info["picture"]
+        conv["conv"].append(data)
+
+    db.close()                                                                   
+    return conv
+
+def get_conversation(id_user,id_contact):
+    """
+    get all messages between two users
+    """
+
+    db = sqlite3.connect("database.db")
+    cursor = db.cursor()
+    user_info = get_user_data(id_user)
+    contact_info = get_user_data(id_contact)
+    data = {
+        "id_user":id_user,
+        "user": user_info["displayname"],
+        "user_picture":user_info["picture"],
+        "id_contact":id_contact,
+        "contact": contact_info["displayname"],
+        "contact_picture":contact_info["picture"],
+        "messages": []
+    }
+
+    cursor.execute("""
+    SELECT "from", "to", message, time
+    FROM messages
+    WHERE ("from" = ? AND "to" = ?)
+    OR ("from" = ? AND "to" = ?)
+    ORDER BY time""",(id_user,id_contact,id_contact,id_user));
+    rows = cursor.fetchall()
+    for row in rows:
+        message = {
+            "from": row[0],
+            "to": row[1],
+            "message": row[2],
+            "time": row[3]
+        }
+        data["messages"].append(message)
+
+    db.close()
+    return data
+
+def add_message(id_user,id_contact,message):
+    """
+    add a message in the database
+    """
+
+    db = sqlite3.connect("database.db")
+    cursor = db.cursor()
+    cursor.execute("""
+    INSERT INTO messages("from","to",time,message)
+    VALUES(?,?,datetime(),?)
+    """,(id_user,id_contact,message))
+    db.commit()
+    db.close()
 
 #endregion
 

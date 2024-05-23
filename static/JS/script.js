@@ -851,9 +851,9 @@ function loadFeed(offset) {
         <button id="load-more" onclick="loadFeed(${offset + 10})">See more</button>
         `
         document.querySelectorAll("pre").forEach(block => {
-          console.log(block); 
-          hljs.highlightElement(block);                               
-        })   
+          console.log(block);
+          hljs.highlightElement(block);
+        })
       } else {
         console.log(res);
       }
@@ -929,9 +929,9 @@ function loadPost(id_post) {
           `
         }
 
-        document.querySelectorAll("pre").forEach(block => { 
-          hljs.highlightElement(block);                               
-        })    
+        document.querySelectorAll("pre").forEach(block => {
+          hljs.highlightElement(block);
+        })
       }
     });
 }
@@ -949,42 +949,42 @@ function actionPost(id_post, action) {
           switch (action) {
             case "L+":
               e = document.getElementById(`like-button-${id_post}`)
-              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'L-')`)
+              e.setAttribute("onclick", `event.preventDefault();actionPost(${id_post},'L-')`)
               e.style.color = 'green';
               count = document.getElementById(`count-like-${id_post}`)
               count.textContent = Number(count.textContent) + 1
               break;
             case "L-":
               e = document.getElementById(`like-button-${id_post}`)
-              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'L+')`)
+              e.setAttribute("onclick", `event.preventDefault();actionPost(${id_post},'L+')`)
               e.style.color = 'white';
               count = document.getElementById(`count-like-${id_post}`)
               count.textContent = Number(count.textContent) - 1
               break;
             case "D+":
               e = document.getElementById(`dislike-button-${id_post}`)
-              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'D-')`)
+              e.setAttribute("onclick", `event.preventDefault();actionPost(${id_post},'D-')`)
               e.style.color = 'red';
               count = document.getElementById(`count-dislike-${id_post}`)
               count.textContent = Number(count.textContent) + 1
               break;
             case "D-":
               e = document.getElementById(`dislike-button-${id_post}`)
-              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'D+')`)
+              e.setAttribute("onclick", `event.preventDefault();actionPost(${id_post},'D+')`)
               e.style.color = 'white';
               count = document.getElementById(`count-dislike-${id_post}`)
               count.textContent = Number(count.textContent) - 1
               break;
             case "S+":
               e = document.getElementById(`save-button-${id_post}`)
-              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'S-')`)
+              e.setAttribute("onclick", `event.preventDefault();actionPost(${id_post},'S-')`)
               e.style.color = 'blue';
               count = document.getElementById(`count-saved-${id_post}`)
               count.textContent = Number(count.textContent) + 1
               break;
             case "S-":
               e = document.getElementById(`save-button-${id_post}`)
-              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'S+')`)
+              e.setAttribute("onclick", `event.preventDefault();actionPost(${id_post},'S+')`)
               e.style.color = 'white';
               count = document.getElementById(`count-saved-${id_post}`)
               count.textContent = Number(count.textContent) - 1
@@ -1018,7 +1018,7 @@ function loadComments(id_post) {
     method: "GET"
   }).then((res) => res.json())
     .then((res) => {
-      if(res.code === "success") {
+      if (res.code === "success") {
         comments = document.getElementById("comments")
         comments.innerHTML = "";
         res.comments.forEach(comment => {
@@ -1029,7 +1029,7 @@ function loadComments(id_post) {
               <h3>By ${comment.author}, on ${comment.created_at}</h3>
             </div>
             ${comment.content}`
-          if(comment.is_author === "yes") {
+          if (comment.is_author === "yes") {
             content += `</br><button id="remove-comment" onclick="deleteComment(${comment.id_comment},${id_post})">remove</button>`
           }
           content += "</div>"
@@ -1048,15 +1048,15 @@ function sendComment(id_post) {
   inp.value = "";
 
   data = new FormData();
-  data.append("post",id_post);
-  data.append("content",content);
+  data.append("post", id_post);
+  data.append("content", content);
 
   fetch("/api/post/comment/add", {
     method: "POST",
     body: data
   }).then((res) => res.text())
     .then((res) => {
-      if(res === "success") {
+      if (res === "success") {
         loadComments(id_post);
       } else {
         console.log(res);
@@ -1064,7 +1064,7 @@ function sendComment(id_post) {
     });
 }
 
-function deleteComment(id_comment,id_post) {
+function deleteComment(id_comment, id_post) {
   if (confirm("Are you sure you want to delete your comment ?\nThis action cannot be undone")) {
     fetch(`/api/post/comment/delete?id_comment=${id_comment}`, {
       method: "DELETE",
@@ -1078,4 +1078,114 @@ function deleteComment(id_comment,id_post) {
         }
       });
   }
+}
+
+function loadConversations() {
+  fetch('/api/messages/get/all', {
+    method: "GET"
+  }).then((res) => res.json())
+    .then((res) => {
+      if (res.code === "success") {
+        conv = document.getElementById("conversations");
+        isfirst = true;
+        first_id = 0;
+        res.conv.forEach(contact => {
+          time = contact.last_time.split(' ')
+          row = ""
+          if (isfirst) {
+            isfirst = false;
+            first_id = contact.id_contact
+            row = `<div id="contact-${contact.id_contact}" class="row focused" onclick="loadConversation(${contact.id_contact})">`
+          } else {
+            row = `<div id="contact-${contact.id_contact}" class="row" onclick="loadConversation(${contact.id_contact})">`
+          }
+          row += `
+            <img src="/static/pictures/${contact.contact_picture}.png">
+            <div class="cell">
+              <h3>${contact.contact}</h3>
+              <i>Last on ${time[0]}<br>at ${time[1]}</i>
+            </div>
+          </div>
+          `
+          conv.innerHTML += row
+        });
+        conv.innerHTML += '<div style="flex-grow:1"></div>'
+        //loadConversation(first_id);
+      } else {
+        console.log(res);
+      }
+    });
+}
+
+function loadConversation(contact) {
+
+  document.querySelectorAll('.focused').forEach(div => {
+    div.classList.remove('focused');
+  });
+  newFocus = document.getElementById(`contact-${contact}`);
+  newFocus.classList.add("focused");
+
+
+  fetch(`/api/messages/get?contact=${contact}`, {
+    method: "GET"
+  }).then((res) => res.json())
+    .then((res) => {
+      if (res.code === "success") {
+        container = document.getElementById("message");
+        container.innerHTML = ""
+        messages = res.messages
+        for(i=0;i<messages.length;i++) {
+
+          row = '';
+          from = messages[i].from
+
+          next = i+1 < messages.length ? messages[i+1].from : false
+          previous = i-1 >= 0 ? messages[i-1].from : false
+
+          if((previous !== from && previous) || (from !== next && next && !previous)) {
+            
+            picture = from === res.id_user ? res.user_picture : res.contact_picture;
+            username = from === res.id_user ? res.user : res.contact;
+            row = `
+            <div class="row">
+              <img src="/static/pictures/${picture}.png" onclick="redirect('/profile?id_user=${from}')">
+              <div class="name-date">
+              <h3>${username}</h3>
+              <i>on ${messages[i].time}</i>
+              </div>
+            </div>`
+          }
+          row += "> " + messages[i].message + '</br>'
+          container.innerHTML += row
+        }
+      } else {
+        console.log(res);
+      }
+    });
+}
+
+function sendMessage() {
+  // get current contact id
+  id = document.querySelectorAll('.focused')[0].getAttribute("id");
+  contact = id.replace('contact-','');
+
+  input = document.getElementById('message-input');
+  message = input.value;
+  message = message.replace(/\r?\n/g, '<br />');
+  input.value = '';
+
+  data = new FormData();
+  data.append("contact",contact);
+  data.append("message",message);
+  fetch(`/api/messages/send`, {
+    method: "POST",
+    body: data
+  }).then((res) => res.text())
+    .then((res) => {
+      if (res === "success") {
+        loadConversation(contact);
+      } else {
+        console.log(res);
+      }
+    });
 }
