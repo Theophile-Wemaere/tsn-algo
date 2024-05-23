@@ -182,7 +182,7 @@ div#post-content img {
     max-width: 600px;
 }
 
-div#stats {
+div.stats {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -191,32 +191,32 @@ div#stats {
     border-top: solid 2px #FFFFFF;
 }
 
-div#stats .row {
+div.stats .row {
     margin-top: 10px;
     margin-right: 20px;
     font-size: 20px;
 }
 
-div#stats .row i {
+div.stats .row i {
     margin-right: 10px;
 }
 
-div#stats .fa-thumbs-up:hover {
+div.stats .fa-thumbs-up:hover {
     color: green;
     cursor: pointer;
 }
 
-div#stats .fa-thumbs-down:hover {
+div.stats .fa-thumbs-down:hover {
     color: red;
     cursor: pointer;
 }
 
-div#stats .fa-bookmark:hover {
+div.stats .fa-bookmark:hover {
     color: blue;
     cursor: pointer;
 }
 
-div#stats button {
+div.stats button {
     border-radius: 20px;
     margin-right: 10px;
     height: 80%;
@@ -225,13 +225,13 @@ div#stats button {
     outline: none;
 }
 
-div#stats button:hover {
+div.stats button:hover {
     cursor: pointer;
     background-color: #FFFFFF;
     font-weight: bolder;
 }
 
-div#stats button#remove-post:hover {
+div.stats button#remove-post:hover {
     background-color: #AA2D2D;
     color: #FFFFFF;
 }
@@ -258,4 +258,22 @@ div#post-author a img {
 
 h2#post-title {
     margin-top: 10px;
+}
+
+div.stats .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+div.stats .liked {
+    color: green;
+}
+
+div.stats .disliked {
+    color: red;
+}
+
+div.stats .saved {
+    color: blue;
 }

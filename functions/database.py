@@ -879,7 +879,7 @@ def get_feed_new(id_user=None, offset=0):
         "posts" : []
     }
     for post in posts:
-        post_info = get_post_info(post)
+        post_info = get_post_info(post,id_user)
         data["posts"].append(post_info)
 
     db.close()

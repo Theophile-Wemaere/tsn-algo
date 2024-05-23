@@ -432,3 +432,24 @@ button#load-more:hover {
     max-height: 200px;
     width: auto;
 }
+
+div#stats .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+div#stats .fa-thumbs-up:hover {
+    color: green;
+    cursor: pointer;
+}
+
+div#stats .fa-thumbs-down:hover {
+    color: red;
+    cursor: pointer;
+}
+
+div#stats .fa-bookmark:hover {
+    color: blue;
+    cursor: pointer;
+}

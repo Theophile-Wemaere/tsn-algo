@@ -65,7 +65,7 @@ function loadPostRecommandations() {
     .then((res) => res.json())
     .then((res) => {
       if (res.code === "success") {
-        
+
         reco = document.getElementById("posts");
         res.posts.forEach(function (post) {
           row = `
@@ -772,7 +772,7 @@ function sendNewPost(id_post) {
   data.append("id_post", id_post)
 
   url = null
-  if(window.location.pathname.startsWith("/post/new")) {
+  if (window.location.pathname.startsWith("/post/new")) {
     url = '/api/post/create';
   } else {
     url = `/api/post/edit?id_post=${id_post}`
@@ -816,7 +816,7 @@ function loadPostEdition(id_post) {
 function loadFeed(offset) {
 
   button = document.getElementById("load-more");
-  if(button !== null) {
+  if (button !== null) {
     button.remove()
   }
 
@@ -826,9 +826,9 @@ function loadFeed(offset) {
   })
     .then((res) => res.json())
     .then((res) => {
-      if(res.code == "success") {
+      if (res.code == "success") {
         feed = document.getElementById("posts-feed");
-        res.posts.forEach( post => {
+        res.posts.forEach(post => {
           feed.innerHTML += `
           <a href="/post/view/${post.id_post}">
               <div class="post-block">
@@ -841,9 +841,7 @@ function loadFeed(offset) {
                   ${post.content}
                   </div>
                 <div id="stats">
-                  <div class="row"><i class="fa-solid fa-thumbs-up"></i>${post.like}</div>
-                  <div class="row"><i class="fa-solid fa-thumbs-down"></i>${post.dislike}</div>
-                  <div class="row"><i class="fa-solid fa-bookmark"></i>${post.saved}</div>
+                  ${getStatsBar(post)}
                 </div>
               </div>
           </a>
@@ -856,6 +854,41 @@ function loadFeed(offset) {
         console.log(res);
       }
     });
+}
+
+function getStatsBar(res) {
+  // likes
+  likes = '<div class="row">'
+  if (res.is_liked === true) {
+    likes += `<i id="like-button-${res.id_post}" onclick="event.preventDefault();actionPost(${res.id_post},'L-')" class="fa-solid fa-thumbs-up" style="color:green"></i>`
+  }
+  else {
+    likes += `<i id="like-button-${res.id_post}" onclick="event.preventDefault();actionPost(${res.id_post},'L+')" class="fa-solid fa-thumbs-up"></i>`
+  }
+  likes += `<p id='count-like-${res.id_post}'>${res.like}</p></div>`
+
+  // dislikes
+  dislikes = '<div class="row">'
+  if (res.is_disliked === true) {
+    dislikes += `<i id="dislike-button-${res.id_post}" onclick="event.preventDefault();actionPost(${res.id_post},'D-')" class="fa-solid fa-thumbs-down" style="color:red"></i>`
+  }
+  else {
+    dislikes += `<i id="dislike-button-${res.id_post}" onclick="event.preventDefault();actionPost(${res.id_post},'D+')" class="fa-solid fa-thumbs-down"></i> `
+  }
+  dislikes += `<p id='count-dislike-${res.id_post}'>${res.dislike}</p></div>`
+
+  // saved
+  saved = '<div class="row">'
+  if (res.is_saved === true) {
+    saved += `<i id="save-button-${res.id_post}" onclick="event.preventDefault();actionPost(${res.id_post},'S-')" class="fa-solid fa-bookmark" style="color:blue"></i>`
+  }
+  else {
+    saved += `<i id="save-button-${res.id_post}" onclick="event.preventDefault();actionPost(${res.id_post},'S+')" class="fa-solid fa-bookmark"></i> `
+  }
+  saved += `<p id='count-saved-${res.id_post}'>${res.saved}</p></div>
+  <div style="flex-grow:1;"></div>`
+
+  return likes + dislikes + saved
 }
 
 function loadPost(id_post) {
@@ -874,40 +907,9 @@ function loadPost(id_post) {
           <h3>By ${res.author}, on ${res.created_at}</h3>
         </a>`
         document.getElementById("post-content").innerHTML = res.content;
-        stats = document.getElementById("stats")
+        stats = document.getElementById(`stats-${id_post}`)
 
-        // likes
-        likes = '<div class="row">'
-        if (res.is_liked === true) {
-          likes += `<i id="like-button" onclick="actionPost(${id_post},'L-')" class="fa-solid fa-thumbs-up" style="color:green"></i>`
-        }
-        else {
-          likes += `<i id="like-button" onclick="actionPost(${id_post},'L+')" class="fa-solid fa-thumbs-up"></i>`
-        }
-        likes += `${res.like}</div>`
-
-        // dislikes
-        dislikes = '<div class="row">'
-        if (res.is_disliked === true) {
-          dislikes += `<i id="dislike-button" onclick="actionPost(${id_post},'D-')" class="fa-solid fa-thumbs-down" style="color:red"></i>`
-        }
-        else {
-          dislikes += `<i id="dislike-button" onclick="actionPost(${id_post},'D+')" class="fa-solid fa-thumbs-down"></i> `
-        }
-        dislikes += `${res.dislike}</div>`
-
-        // saved
-        saved = '<div class="row">'
-        if (res.is_saved === true) {
-          saved += `<i id="save-button" onclick="actionPost(${id_post},'S-')" class="fa-solid fa-bookmark" style="color:blue"></i>`
-        }
-        else {
-          saved += `<i id="save-button" onclick="actionPost(${id_post},'S+')" class="fa-solid fa-bookmark"></i> `
-        }
-        saved += `${res.saved}</div>
-        <div style="flex-grow:1;"></div>`
-
-        stats.innerHTML = likes + dislikes + saved
+        stats.innerHTML = getStatsBar(res)
         tagsDiv = document.getElementById("tag-list")
         tagsDiv.innerHTML = "";
         res.tags.forEach(tag => {
@@ -917,7 +919,7 @@ function loadPost(id_post) {
         ${tag}
         </div>`});
 
-        if(res.is_logged == "yes" && window.location.pathname.startsWith("/post/view")) {
+        if (res.is_logged == "yes" && window.location.pathname.startsWith("/post/view")) {
           stats.innerHTML += `
           <button class="edit-post-button" onclick="redirect('/post/edit?id_post=${id_post}')">Edit your post</button>
           <button id="remove-post" class="edit-post-button" onclick="deletePost('${id_post}')">Delete your post</button>
@@ -935,7 +937,57 @@ function actionPost(id_post, action) {
     .then((res) => res.text())
     .then((res) => {
       if (res === "success") {
-        loadPost(id_post)
+        if (window / location.pathname.startsWith("/post/view")) {
+          loadPost(id_post)
+        } else {
+          console.log("going to reload stats");
+          console.log(action);
+          switch (action) {
+            case "L+":
+              e = document.getElementById(`like-button-${id_post}`)
+              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'L-')`)
+              e.style.color = 'green';
+              count = document.getElementById(`count-like-${id_post}`)
+              console.log(count)
+              count.textContent = Number(count.textContent) + 1
+              break;
+            case "L-":
+              e = document.getElementById(`like-button-${id_post}`)
+              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'L+')`)
+              e.style.color = 'white';
+              count = document.getElementById(`count-like-${id_post}`)
+              count.textContent = Number(count.textContent) - 1
+              break;
+            case "D+":
+              e = document.getElementById(`dislike-button-${id_post}`)
+              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'D-')`)
+              e.style.color = 'red';
+              count = document.getElementById(`count-dislike-${id_post}`)
+              count.textContent = Number(count.textContent) + 1
+              break;
+            case "D-":
+              e = document.getElementById(`dislike-button-${id_post}`)
+              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'D+')`)
+              e.style.color = 'white';
+              count = document.getElementById(`count-dislike-${id_post}`)
+              count.textContent = Number(count.textContent) - 1
+              break;
+            case "S+":
+              e = document.getElementById(`save-button-${id_post}`)
+              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'S-')`)
+              e.style.color = 'blue';
+              count = document.getElementById(`count-saved-${id_post}`)
+              count.textContent = Number(count.textContent) + 1
+              break;
+            case "S-":
+              e = document.getElementById(`save-button-${id_post}`)
+              e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'S+')`)
+              e.style.color = 'white';
+              count = document.getElementById(`count-saved-${id_post}`)
+              count.textContent = Number(count.textContent) - 1
+              break;
+          }
+        }
       } else {
         console.log(res);
       }
@@ -943,7 +995,7 @@ function actionPost(id_post, action) {
 }
 
 function deletePost(id_post) {
-  if(confirm("Are you sure you want to delete your post ?\nThis action cannot be undone")) {
+  if (confirm("Are you sure you want to delete your post ?\nThis action cannot be undone")) {
     fetch(`/api/post/delete?id_post=${id_post}`, {
       method: "DELETE",
     })
