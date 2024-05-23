@@ -57,6 +57,7 @@
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
             </div>
             <div style="flex-grow: 1;"></div>
+            <button id="toggle-button" onclick="toggleRefresh()">Auto-Refresh off</button>
             <div class="post-button" id="post-button">
                 <a href="/post/new">
                     <i class="fa-solid fa-plus"></i> Create
@@ -76,12 +77,6 @@
         <script>
             loadUserMenu();
             loadConversations();
-            /*interval = setInterval(function() {
-                id = document.querySelectorAll('.focused')[0].getAttribute("id");
-                contact = id.replace('contact-','');
-                loadConversation(contact);
-            }, 1000);
-*/
         </script>
 </body>
 <script>

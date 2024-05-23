@@ -1087,6 +1087,7 @@ function loadConversations() {
     .then((res) => {
       if (res.code === "success") {
         conv = document.getElementById("conversations");
+        conv.innerHTML = "";
         isfirst = true;
         first_id = 0;
         res.conv.forEach(contact => {
@@ -1110,7 +1111,7 @@ function loadConversations() {
           conv.innerHTML += row
         });
         conv.innerHTML += '<div style="flex-grow:1"></div>'
-        //loadConversation(first_id);
+        loadConversation(first_id);
       } else {
         console.log(res);
       }
@@ -1134,6 +1135,7 @@ function loadConversation(contact) {
         container = document.getElementById("message");
         container.innerHTML = ""
         messages = res.messages
+        isFirst = true
         for(i=0;i<messages.length;i++) {
 
           row = '';
@@ -1142,8 +1144,8 @@ function loadConversation(contact) {
           next = i+1 < messages.length ? messages[i+1].from : false
           previous = i-1 >= 0 ? messages[i-1].from : false
 
-          if((previous !== from && previous) || (from !== next && next && !previous)) {
-            
+          if((previous !== from && previous) || (from !== next && next && !previous) || isFirst) {
+            isFirst = false
             picture = from === res.id_user ? res.user_picture : res.contact_picture;
             username = from === res.id_user ? res.user : res.contact;
             row = `
@@ -1158,6 +1160,7 @@ function loadConversation(contact) {
           row += "> " + messages[i].message + '</br>'
           container.innerHTML += row
         }
+        container.scrollTop = container.scrollHeight;
       } else {
         console.log(res);
       }
@@ -1165,7 +1168,6 @@ function loadConversation(contact) {
 }
 
 function sendMessage() {
-  // get current contact id
   id = document.querySelectorAll('.focused')[0].getAttribute("id");
   contact = id.replace('contact-','');
 
@@ -1183,9 +1185,28 @@ function sendMessage() {
   }).then((res) => res.text())
     .then((res) => {
       if (res === "success") {
-        loadConversation(contact);
+        loadConversations();
       } else {
         console.log(res);
       }
     });
+}
+
+function toggleRefresh(interval = null) {
+  button = document.getElementById("toggle-button")
+  if(interval !== null) {
+    clearInterval(interval)
+    button.setAttribute("onclick",`toggleRefresh()`)
+    button.textContent = "Auto-Refresh off"
+    button.style.backgroundColor = "#aa2d2d"
+  } else {
+      interval = setInterval(function() {
+        id = document.querySelectorAll('.focused')[0].getAttribute("id");
+        contact = id.replace('contact-','');
+        loadConversation(contact);
+      }, 1000);
+      button.setAttribute("onclick",`toggleRefresh(${interval})`)
+      button.textContent = "Auto-Refresh on"
+      button.style.backgroundColor = "green"
+  }
 }
