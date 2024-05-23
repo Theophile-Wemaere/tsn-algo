@@ -837,7 +837,7 @@ function loadFeed(offset) {
                       <img src="/static/pictures/${post.author_picture}.png">
                       <h3>${post.author}, on ${post.created_at}</h3>
                   </div>
-                  <div class="post-content">
+                  <div class="post-content ql-editor">
                   ${post.content}
                   </div>
                 <div id="stats">
@@ -850,6 +850,10 @@ function loadFeed(offset) {
         feed.innerHTML += `
         <button id="load-more" onclick="loadFeed(${offset + 10})">See more</button>
         `
+        document.querySelectorAll("pre").forEach(block => {
+          console.log(block); 
+          hljs.highlightElement(block);                               
+        })   
       } else {
         console.log(res);
       }
@@ -926,6 +930,9 @@ function loadPost(id_post) {
           `
         }
 
+        document.querySelectorAll("pre").forEach(block => { 
+          hljs.highlightElement(block);                               
+        })    
       }
     });
 }
@@ -940,15 +947,12 @@ function actionPost(id_post, action) {
         if (window / location.pathname.startsWith("/post/view")) {
           loadPost(id_post)
         } else {
-          console.log("going to reload stats");
-          console.log(action);
           switch (action) {
             case "L+":
               e = document.getElementById(`like-button-${id_post}`)
               e.setAttribute("onclick",`event.preventDefault();actionPost(${id_post},'L-')`)
               e.style.color = 'green';
               count = document.getElementById(`count-like-${id_post}`)
-              console.log(count)
               count.textContent = Number(count.textContent) + 1
               break;
             case "L-":

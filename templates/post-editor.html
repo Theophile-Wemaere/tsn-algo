@@ -139,7 +139,7 @@
                                 return quill.getSemanticHTML();
                             }
                             function setPostContent(content) {
-                                quill.container.firstChild.innerHTML = content;
+                                quill.clipboard.dangerouslyPasteHTML(0, content);
                             }
                         </script>
                     </div>
@@ -158,12 +158,12 @@
             </script>
         </div>
         <div class="recommandations" id="recommandations">
+            <h3>Users with the same interests as you</h3>
             <div class="users-recommandations" id="users">
-                <h3>Users with the same interests as you</h3>
             </div>
             <hr>
+            <h3>Top posts at the moment</h3>
             <div class="posts-top" id="posts">
-                <h3>Top posts at the moment</h3>
             </div>
         </div>
         <script>

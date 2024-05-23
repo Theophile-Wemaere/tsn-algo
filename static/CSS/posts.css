@@ -277,3 +277,8 @@ div.stats .disliked {
 div.stats .saved {
     color: blue;
 }
+
+pre {
+    padding: 5px;
+    border-radius: 5px;
+}

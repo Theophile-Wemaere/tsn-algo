@@ -8,16 +8,15 @@
     <meta name="description" content='the best social network to talk about electronic'>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
-    <link rel="stylesheet" href="/static/CSS/styles.css">
-    <link rel="stylesheet" href="/static/CSS/posts.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+        rel="stylesheet">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://kit.fontawesome.com/bc424452bc.js" crossorigin="anonymous"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
-        rel="stylesheet">
-    <!-- Include the highlight.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="/static/CSS/styles.css">
+    <link rel="stylesheet" href="/static/CSS/posts.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="/static/JS/script.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,7 +66,7 @@
             <div id="post-author"></div>
             <h2 id="post-title"></h2>
             <div class="cell">
-                <div id="post-content">
+                <div id="post-content" class="ql-editor">
                 </div>
             </div>
             <hr>
@@ -80,12 +79,12 @@
             loadPost("{{ id_post }}");
         </script>
         <div class="recommandations" id="recommandations">
+            <h3>Users with the same interests as you</h3>
             <div class="users-recommandations" id="users">
-                <h3>Users with the same interests as you</h3>
             </div>
             <hr>
+            <h3>Top posts at the moment</h3>
             <div class="posts-top" id="posts">
-                <h3>Top posts at the moment</h3>
             </div>
         </div>
         <script>
