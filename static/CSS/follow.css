@@ -90,6 +90,10 @@
     cursor: pointer;
     background-color: #D9D9D9;
     h2 {
-        color: black;
+        color: #646464;
     }
+}
+
+.profile .row .other-tab:hover h2 {
+    color: #646464;
 }

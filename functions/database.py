@@ -492,6 +492,8 @@ def get_user_recommandations(id_user):
                           users_same_interets +
                           user_liking_same_posts +
                           followers)
+    
+    potential_users = [user for user in potential_users if user != id_user]
 
     # check if we are not already following the user
     users = []

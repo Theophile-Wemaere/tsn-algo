@@ -724,6 +724,7 @@ function updatePicture() {
 }
 
 function loadUserFollowers(id_user) {
+  document.getElementById("row3").remove()
   fetch(`/api/user/followers/${id_user}`, {
     method: "GET",
   })
@@ -755,6 +756,7 @@ function loadUserFollowers(id_user) {
         row2.innerHTML += `<div class="cell" id="follows"></div>`;
         follows = document.getElementById("follows");
         res.data.forEach(function (user) {
+          desc = user.description === null ? "" : user.description
           row = `
           <a href="/profile?id_user=${user.id}">
             <div class="user-row" id="follower-user-${user.id}">
@@ -763,7 +765,7 @@ function loadUserFollowers(id_user) {
                 <b>${user.displayname}</b>
                 <i>@${user.username}</i>
                 <div class="row" id="description">
-                ${user.description}
+                ${desc}
                 </div>
               </div>
               <div style="flex-grow:1"></div>
@@ -778,6 +780,7 @@ function loadUserFollowers(id_user) {
 }
 
 function loadUserFollowing(id_user) {
+  document.getElementById("row3").remove()
   fetch(`/api/user/following/${id_user}`, {
     method: "GET",
   })
@@ -809,6 +812,7 @@ function loadUserFollowing(id_user) {
         row2.innerHTML += `<div class="cell" id="follows"></div>`;
         follows = document.getElementById("follows");
         res.data.forEach(function (user) {
+          desc = user.description === null ? "" : user.description
           row = `
           <a href="/profile?id_user=${user.id}">
             <div class="user-row" id="following-user-${user.id}">
@@ -817,7 +821,7 @@ function loadUserFollowing(id_user) {
                 <b>${user.displayname}</b>
                 <i>@${user.username}</i>
                 <div class="row" id="description">
-                ${user.description}
+                ${desc}
                 </div>
               </div>
               <div style="flex-grow:1"></div>`;
@@ -894,6 +898,7 @@ function loadPostEdition(id_post) {
 }
 
 function loadFeed(offset) {
+
   button = document.getElementById("load-more");
   if (button !== null) {
     button.remove();
