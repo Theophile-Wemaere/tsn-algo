@@ -265,7 +265,8 @@ def get_user_profile(id_user):
         "creation": row[3],
         "description": row[4],
         "location": row[5],
-        "picture": row[6]
+        "picture": row[6],
+        "relations": None
     }
 
     cursor.execute(
@@ -285,6 +286,33 @@ def get_user_profile(id_user):
     data["tags"] = [row[0] for row in cursor.fetchall()]
 
     return data
+
+def get_user_relation(id_user1,id_user2):
+    """
+    check the relation of the user1 toward the user2
+    """
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    is_follower,is_followed = False,False
+
+    cursor.execute("""
+    SELECT * FROM relations
+    WHERE followed = ? AND follower = ?
+    """,(id_user1,id_user2))
+    if cursor.fetchone() is not None:
+        is_followed = True
+
+    cursor.execute("""
+    SELECT * FROM relations
+    WHERE follower = ? AND followed = ?
+    """,(id_user1,id_user2))
+    if cursor.fetchone() is not None:
+        is_follower = True
+
+    db.close()
+    return is_follower,is_followed
+
 
 def get_user_activity(id_user,activity_type):
     """

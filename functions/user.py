@@ -81,6 +81,14 @@ def get_user_profile(id_user):
     data = db.get_user_profile(id_user)
     if id_user == session.get('id'):
         data["is_logged"] = "yes"
+    else:
+        # check if user is a follower / user follow it
+        if check_session(session):
+            is_follower,is_followed = db.get_user_relation(id_user,session.get('id'))
+            data["is_followed"] = is_followed
+            data["is_follower"] = is_follower
+            data["session_ok"] = "yes"
+
     return data
 
 @user_api.route('/activity/<int:id_user>')

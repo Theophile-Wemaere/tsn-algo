@@ -21,9 +21,12 @@ function searchBar(event) {
   }
 }
 
-function highlightWord(text,word) {
-  return text.replace(word,`
-  <b style="color:black;background-color:yellow;">${word}</b>`)
+function highlightWord(text, word) {
+  return text.replace(
+    word,
+    `
+  <b style="color:black;background-color:yellow;">${word}</b>`
+  );
 }
 
 function searchQuery(range, query) {
@@ -60,17 +63,17 @@ function searchQuery(range, query) {
                     </div>
                 </div>
               </a>`;
-            } else if(range === "users") {
+            } else if (range === "users") {
               desc = data.description === null ? "" : data.description;
               row = `
               <a class="a-user" href="/profile?id_user=${data.id}">
                 <div class="user-row" id="following-user-${data.id}">
                   <img src="/static/pictures/${data.picture}.png">
                   <div class="user-names">
-                    <b>${highlightWord(data.displayname,query)}</b>
-                    <i>@${highlightWord(data.username,query)}</i>
+                    <b>${highlightWord(data.displayname, query)}</b>
+                    <i>@${highlightWord(data.username, query)}</i>
                     <div class="row" id="description">
-                    ${highlightWord(desc,query)}
+                    ${highlightWord(desc, query)}
                     </div>
                   </div>
                   <div style="flex-grow:1"></div>
@@ -162,16 +165,20 @@ function loadPostRecommandations() {
     });
 }
 
-function followUser(id_user) {
+function followUser(id_user, from = undefined) {
   fetch(`/api/user/relation?id_user=${id_user}&action=follow`, {
     method: "PATCH",
   })
     .then((res) => res.text())
     .then((res) => {
       if (res === "success") {
-        userRow = document.getElementById(`recommandation-user-${id_user}`);
-        if (userRow !== undefined) {
-          userRow.remove();
+        if (from !== undefined) {
+          loadUserProfile(from);
+        } else {
+          userRow = document.getElementById(`recommandation-user-${id_user}`);
+          if (userRow !== undefined) {
+            userRow.remove();
+          }
         }
       } else {
         console.log(res);
@@ -179,18 +186,22 @@ function followUser(id_user) {
     });
 }
 
-function unfollowUser(id_user) {
+function unfollowUser(id_user, from = undefined) {
   fetch(`/api/user/relation?id_user=${id_user}&action=unfollow`, {
     method: "PATCH",
   })
     .then((res) => res.text())
     .then((res) => {
       if (res === "success") {
-        userRow = document.getElementById(`following-user-${id_user}`);
-        hr = document.getElementById(`hr-${id_user}`);
-        if (userRow !== undefined && hr !== undefined) {
-          userRow.remove();
-          hr.remove();
+        if (from !== undefined) {
+          loadUserProfile(from);
+        } else {
+          userRow = document.getElementById(`following-user-${id_user}`);
+          hr = document.getElementById(`hr-${id_user}`);
+          if (userRow !== undefined && hr !== undefined) {
+            userRow.remove();
+            hr.remove();
+          }
         }
       } else {
         console.log(res);
@@ -332,6 +343,7 @@ function loadUserProfile(id_user) {
   })
     .then((res) => res.json())
     .then((res) => {
+      console.log(res);
       const picture = document.getElementById("picture");
       const name = document.getElementById("name");
       const at = document.getElementById("at");
@@ -356,6 +368,7 @@ function loadUserProfile(id_user) {
 
       const tagsDiv = document.getElementById("preference-tags");
       tagsDiv.innerHTML = "";
+
       res.tags.forEach((tag) => {
         tagsDiv.innerHTML += `
         <div class="row">
@@ -380,7 +393,7 @@ function loadUserProfile(id_user) {
         button.setAttribute("self", "no");
       }
 
-      if (res.is_logged !== "yes") {
+      if (res.is_logged !== "yes" && res.session_ok === "yes") {
         // display "send messages" button
         buttonMessage = document.getElementById("send-message");
         buttonMessage.style.display = "block";
@@ -388,6 +401,34 @@ function loadUserProfile(id_user) {
           "onclick",
           `redirect('/messages?conv=${id_user}')`
         );
+
+        buttonFollow = document.getElementById("follow-profile-button");
+        if (!res.is_followed) {
+          buttonFollow.style.display = "block";
+          buttonFollow.setAttribute(
+            "onclick",
+            `followUser('${id_user}','${id_user}')`
+          );
+        } else if (res.is_followed) {
+          buttonFollow.innerHTML = 'UnFollow <i class="fa-solid fa-xmark"></i>';
+          buttonFollow.style.display = "block";
+          buttonFollow.classList.add("unfollow-button");
+          buttonFollow.setAttribute(
+            "onclick",
+            `unfollowUser('${id_user}','${id_user}')`
+          );
+        }
+
+        if (res.is_follower && res.is_followed) {
+          console.log("dual");
+          name.innerHTML += "<p>You follow each other</p>";
+        } else if (res.is_follower && !res.is_followed) {
+          console.log("incoming");
+          name.innerHTML += "<p>Follows you</p>";
+        } else if (!res.is_follower && res.is_followed) {
+          console.log("outcoming");
+          name.innerHTML += "<p>Following</p>";
+        }
       }
     });
 }
