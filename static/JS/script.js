@@ -11,6 +11,84 @@ function autoGrow(element) {
   element.style.height = element.scrollHeight + "px";
 }
 
+function searchBar(event) {
+  if (event.key == "Enter") {
+    inputBar = document.getElementById("search-input");
+    search = inputBar.value;
+    inputBar.value = "";
+    range = document.getElementById("search-range").value;
+    redirect(`/search?range=${range}&q=${search}`);
+  }
+}
+
+function highlightWord(text,word) {
+  return text.replace(word,`
+  <b style="color:black;background-color:yellow;">${word}</b>`)
+}
+
+function searchQuery(range, query) {
+  document.getElementById("search-input").value = query;
+  document.getElementById("search-range").value = range;
+  url = "";
+  if (range === "posts") {
+    url = `/api/post/search?q=${query}`;
+  } else if (range === "users") {
+    url = `/api/user/search?q=${query}`;
+  }
+  fetch(url, {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.code === "success") {
+        container = document.getElementById("search-container");
+        if (res.data.length > 0) {
+          console.log(res.data);
+          res.data.forEach((data) => {
+            row = "";
+            if (range === "posts") {
+              row = `
+              <a href="/post/view/${data.id_post}">
+                <div class="post-block">
+                    <h2 id="post-title">${data.title}</h2>
+                    <div id="post-author" onclick="event.preventDefault();redirect('/profile?id_user=${data.id_author}')">
+                        <img src="/static/pictures/${data.author_picture}.png">
+                        <h3>${data.author}, on ${data.created_at}</h3>
+                    </div>
+                    <div class="post-content ql-editor">
+                    ${data.content}
+                    </div>
+                </div>
+              </a>`;
+            } else if(range === "users") {
+              desc = data.description === null ? "" : data.description;
+              row = `
+              <a class="a-user" href="/profile?id_user=${data.id}">
+                <div class="user-row" id="following-user-${data.id}">
+                  <img src="/static/pictures/${data.picture}.png">
+                  <div class="user-names">
+                    <b>${highlightWord(data.displayname,query)}</b>
+                    <i>@${highlightWord(data.username,query)}</i>
+                    <div class="row" id="description">
+                    ${highlightWord(desc,query)}
+                    </div>
+                  </div>
+                  <div style="flex-grow:1"></div>
+                </div>
+              </a>`;
+            }
+
+            container.innerHTML += row;
+          });
+        } else {
+          alert("No results found :(");
+        }
+      } else {
+        console.log(res);
+      }
+    });
+}
+
 function loadRecommandations() {
   fetch("/api/user/is_logged", {
     method: "GET",
@@ -269,7 +347,7 @@ function loadUserProfile(id_user) {
       picture.src = `/static/pictures/${res.picture}.png`;
       name.textContent = res.displayname;
       at.textContent = `@${res.username}`;
-      description.textContent = res.description;
+      description.innerHTML = res.description;
       date.innerHTML = `<i class="fa-solid fa-cake-candles"></i> Joined on ${res.creation}`;
       gender.innerHTML = `<i class="fa-solid fa-venus-mars"></i> ${res.gender}`;
       location.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${res.location}`;
@@ -314,31 +392,33 @@ function loadUserProfile(id_user) {
     });
 }
 
-function loadUserActivity(id_user,activity = "posts") {
-
+function loadUserActivity(id_user, activity = "posts") {
   fetch(`/api/user/activity/${id_user}?type=${activity}`, {
     method: "GET",
   })
     .then((res) => res.json())
     .then((res) => {
-      if(res.code === "success") {
-        
+      if (res.code === "success") {
         document.querySelectorAll(".focused").forEach((div) => {
           div.classList.remove("focused");
         });
         tab = document.getElementById(`tab-${activity}`);
-        tab.classList.add("focused")
+        tab.classList.add("focused");
 
-        if(res.is_logged !== "yes") {
-          dislikes = document.getElementById("tab-dislikes")
-          if(dislikes) {dislikes.remove()}
-          saved = document.getElementById("tab-saved")
-          if(saved) {saved.remove()}
+        if (res.is_logged !== "yes") {
+          dislikes = document.getElementById("tab-dislikes");
+          if (dislikes) {
+            dislikes.remove();
+          }
+          saved = document.getElementById("tab-saved");
+          if (saved) {
+            saved.remove();
+          }
         }
 
         container = document.getElementById(`container`);
 
-        container.innerHTML = '';
+        container.innerHTML = "";
         if (res.posts.length > 0) {
           res.posts.forEach(function (post) {
             row = `
@@ -363,10 +443,10 @@ function loadUserActivity(id_user,activity = "posts") {
             container.innerHTML += row;
           });
         } else {
-          container.innerHTML += `<h1>No activity for this category</h1>`
+          container.innerHTML += `<h1>No activity for this category</h1>`;
         }
       } else {
-        console.log(res)
+        console.log(res);
       }
     });
 }
@@ -656,7 +736,7 @@ function removeEditor() {
 
 function updateProfile() {
   const name = document.getElementById("displayname-edit").value;
-  const description = document.getElementById("description-edit").value;
+  let description = document.getElementById("description-edit").value;
   const location = document.getElementById("location-edit").value;
   const M = document.getElementById("male").checked;
   const F = document.getElementById("female").checked;
@@ -666,6 +746,9 @@ function updateProfile() {
   } else if (F) {
     gender = "F";
   }
+
+  description = description.replace(/\r?\n/g, "<br />");
+
   const data = new FormData();
   data.append("displayname", name);
   data.append("description", description);
@@ -724,7 +807,7 @@ function updatePicture() {
 }
 
 function loadUserFollowers(id_user) {
-  document.getElementById("row3").remove()
+  document.getElementById("row3").remove();
   fetch(`/api/user/followers/${id_user}`, {
     method: "GET",
   })
@@ -756,7 +839,7 @@ function loadUserFollowers(id_user) {
         row2.innerHTML += `<div class="cell" id="follows"></div>`;
         follows = document.getElementById("follows");
         res.data.forEach(function (user) {
-          desc = user.description === null ? "" : user.description
+          desc = user.description === null ? "" : user.description;
           row = `
           <a href="/profile?id_user=${user.id}">
             <div class="user-row" id="follower-user-${user.id}">
@@ -780,7 +863,7 @@ function loadUserFollowers(id_user) {
 }
 
 function loadUserFollowing(id_user) {
-  document.getElementById("row3").remove()
+  document.getElementById("row3").remove();
   fetch(`/api/user/following/${id_user}`, {
     method: "GET",
   })
@@ -812,7 +895,7 @@ function loadUserFollowing(id_user) {
         row2.innerHTML += `<div class="cell" id="follows"></div>`;
         follows = document.getElementById("follows");
         res.data.forEach(function (user) {
-          desc = user.description === null ? "" : user.description
+          desc = user.description === null ? "" : user.description;
           row = `
           <a href="/profile?id_user=${user.id}">
             <div class="user-row" id="following-user-${user.id}">
@@ -898,7 +981,6 @@ function loadPostEdition(id_post) {
 }
 
 function loadFeed(offset) {
-
   button = document.getElementById("load-more");
   if (button !== null) {
     button.remove();

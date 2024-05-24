@@ -33,7 +33,11 @@
         <div id="search">
             <div class="search-bar">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" placeholder="Search on 𝕐">
+                <input type="text" id="search-input" onkeypress="searchBar(event)" placeholder="Search on 𝕐">
+                <select id="search-range">
+                    <option value="posts">Posts</option>
+                    <option value="users">Users</option>
+                </select>
             </div>
         </div>
         <div id="user">

@@ -369,6 +369,39 @@ def get_user_following(id_user):
 
     return users_info
 
+def search_user(query):
+    """
+    search for user based on username, displayname and description
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    data = {
+        "data":[]
+    }
+
+    query = f"%{query}%"
+
+    # search in titles and contents:
+    cursor.execute("""
+    SELECT id_user
+    FROM users
+    WHERE username LIKE ?
+    OR displayname LIKE ?
+    OR description LIKE ?
+    """,(query,query,query))
+    users = [row[0] for row in cursor.fetchall()]
+
+    users = list(set(users))
+    for user in users:
+        user_info = get_user_data(user)
+        del user_info["email"]
+        data["data"].append(user_info)
+
+    db.close()
+    return data
+
 # endregion
 
 # region update user info
@@ -413,7 +446,6 @@ def update_picture(id_user, hash):
 # endregion
 
 # region recommandations
-
 
 def get_user_recommandations(id_user):
     """
@@ -775,6 +807,45 @@ def get_post_info(id_post, id_user=None):
     db.close()
     return data
 
+
+def search_post(query):
+    """
+    search for post based on title, content and comments
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    data = {
+        "data":[]
+    }
+
+    query = f"%{query}%"
+
+    # search in titles and contents:
+    cursor.execute("""
+    SELECT id_post
+    FROM posts
+    WHERE title LIKE ?
+    OR content LIKE ?
+    """,(query,query))
+    posts = [row[0] for row in cursor.fetchall()]
+
+    # search in comments
+    cursor.execute("""
+    SELECT DISTINCT(parent)
+    FROM comments
+    WHERE content LIKE ?
+    """,(query,))
+    posts = posts + [row[0] for row in cursor.fetchall()]
+
+    posts = list(set(posts))
+    for post in posts:
+        post_info = get_post_info(post)
+        data["data"].append(post_info)
+
+    db.close()
+    return data
 
 def update_post_interaction(id_user, id_post, action):
     """

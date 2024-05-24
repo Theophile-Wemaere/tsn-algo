@@ -150,3 +150,12 @@ def delete_comment():
       return "no_comment_specified"
   else:
     return redirect('/login',302)
+
+@post_api.route("/search",methods=['GET'])
+def search_post():
+  query = request.args.get('q')
+  if query is None:
+    return {"code":"no_query"}
+  data = db.search_post(query)
+  data["code"] = "success"
+  return data

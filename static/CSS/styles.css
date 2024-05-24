@@ -70,6 +70,10 @@ a {
     height: 60px;
 }
 
+.search-bar select {
+    border-radius: 0 20px 20px 0;
+}
+
 .search-bar:hover {
     background-color: #FFFFFF;
 }

@@ -115,6 +115,12 @@ def view_messages():
     else:
         return redirect("/login",302)
 
+@app.route("/search")
+def search():
+    search_range = request.args.get('range')
+    search_query = request.args.get('q')
+    return render_template("search.html",range=search_range,query=search_query)
+
 if __name__ == '__main__':
     try:
         app.run()

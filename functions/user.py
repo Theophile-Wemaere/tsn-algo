@@ -223,3 +223,12 @@ def api_tags_update():
     else:
         return redirect('/login',302)
 #endregion
+
+@user_api.route("/search",methods=['GET'])
+def search_user():
+  query = request.args.get('q')
+  if query is None:
+    return {"code":"no_query"}
+  data = db.search_user(query)
+  data["code"] = "success"
+  return data

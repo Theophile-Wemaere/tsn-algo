@@ -46,7 +46,6 @@ CREATE TABLE `posts` (
   `visibility` INTEGER,
   `title` text,
   `content` text,
-  `comments` INTEGER,
   `created_at` timestamp
 );
 
