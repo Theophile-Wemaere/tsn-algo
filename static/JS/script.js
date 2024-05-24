@@ -314,6 +314,63 @@ function loadUserProfile(id_user) {
     });
 }
 
+function loadUserActivity(id_user,activity = "posts") {
+
+  fetch(`/api/user/activity/${id_user}?type=${activity}`, {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.code === "success") {
+        
+        document.querySelectorAll(".focused").forEach((div) => {
+          div.classList.remove("focused");
+        });
+        tab = document.getElementById(`tab-${activity}`);
+        tab.classList.add("focused")
+
+        if(res.is_logged !== "yes") {
+          dislikes = document.getElementById("tab-dislikes")
+          if(dislikes) {dislikes.remove()}
+          saved = document.getElementById("tab-saved")
+          if(saved) {saved.remove()}
+        }
+
+        container = document.getElementById(`container`);
+
+        container.innerHTML = '';
+        if (res.posts.length > 0) {
+          res.posts.forEach(function (post) {
+            row = `
+            <a href="/post/view/${post.id_post}">
+                <div class="post-block">
+                    <h2 id="post-title">${post.title}</h2>
+                    <div id="post-author" onclick="event.preventDefault();redirect('/profile?id_user=${
+                      post.id_author
+                    }')">
+                        <img src="/static/pictures/${post.author_picture}.png">
+                        <h3>${post.author}, on ${post.created_at}</h3>
+                    </div>
+                    <div class="post-content ql-editor">
+                    ${post.content}
+                    </div>
+                  <div id="stats">
+                    ${getStatsBar(post)}
+                  </div>
+                </div>
+            </a>
+            `;
+            container.innerHTML += row;
+          });
+        } else {
+          container.innerHTML += `<h1>No activity for this category</h1>`
+        }
+      } else {
+        console.log(res)
+      }
+    });
+}
+
 function profileEditor() {
   fetch("/api/user/editor", {
     method: "GET",
@@ -868,8 +925,7 @@ function loadFeed(offset) {
                   ${getStatsBar(post)}
                 </div>
               </div>
-          </a>
-          `;
+          </a>`;
         });
         feed.innerHTML += `
         <button id="load-more" onclick="loadFeed(${

@@ -286,6 +286,51 @@ def get_user_profile(id_user):
 
     return data
 
+def get_user_activity(id_user,activity_type):
+    """
+    get activity (posts, liked, disliked and saved posts) for a user
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    posts = []
+
+    if activity_type == "posts":
+        # posts
+        cursor.execute("""
+        SELECT id_post FROM posts
+        WHERE author = ?""",(id_user,))
+        posts = [row[0] for row in cursor.fetchall()]
+    elif activity_type == "likes":
+        # likes
+        cursor.execute("""
+        SELECT post FROM posts_interaction
+        WHERE user = ? AND action = 'L'""",(id_user,))
+        posts = [row[0] for row in cursor.fetchall()]
+    elif activity_type ==  "dislikes":
+        # dislikes
+        cursor.execute("""
+        SELECT post FROM posts_interaction
+        WHERE user = ? AND action = 'D'""",(id_user,))
+        posts = [row[0] for row in cursor.fetchall()]
+    elif activity_type == "saved":
+        # saved
+        cursor.execute("""
+        SELECT post FROM posts_interaction
+        WHERE user = ? AND action = 'S'""",(id_user,))
+        posts = [row[0] for row in cursor.fetchall()]
+
+    data = {
+        "posts":  []
+    }
+    for post in posts:
+        post_info = get_post_info(post,id_user)
+        data["posts"].append(post_info)
+
+    return data
+    
+
 
 def get_user_followers(id_user):
     """"

@@ -108,11 +108,22 @@
                     });
                 </script>
             </div>
+            <div class="cell" id="row3">
+                <h2>User activity :</h2>
+                <div class="row" id="tab-row">
+                    <h3 id="tab-posts" onclick="loadUserActivity('{{ id_user }}','posts')" class="focused">Posts</h3>
+                    <h3 id="tab-likes" onclick="loadUserActivity('{{ id_user }}','likes')">Liked</h3>
+                    <h3 id="tab-dislikes" onclick="loadUserActivity('{{ id_user }}','dislikes')">Disliked</h3>
+                    <h3 id="tab-saved" onclick="loadUserActivity('{{ id_user }}','saved')">Saved</h3>
+                </div>
+                <div id="container"></div>
+            </div>
         </div>
         <script>
             switch("{{ action }}") {
                 case "load_profile":
                     loadUserProfile("{{ id_user }}")
+                    loadUserActivity("{{ id_user }}")
                     break;
                 case "load_followers":
                     loadUserFollowers("{{ id_user }}")
