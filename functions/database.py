@@ -224,6 +224,7 @@ def get_user_data(id_user):
     """
 
     if not check_existing("id_user", id_user):
+        print(f"user with id {id_user} doesn't exist")
         return -1
 
     db = sqlite3.connect('database.db')

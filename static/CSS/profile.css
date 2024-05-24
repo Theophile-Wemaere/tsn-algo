@@ -126,3 +126,21 @@ button#edit {
 .row i#preference-show.rotated {
     transform: rotate(180deg);
 }
+
+button#send-message {
+    color: #646464;
+    background-color: #D9D9D9;
+    padding: 5px;
+    display: none;
+}
+
+button#send-message i {
+    margin-left: 5px;
+}
+
+button#send-message:hover {
+    background-color: #646464;
+    color: #D9D9D9;
+    border: solid 1px #D9D9D9;
+    cursor: pointer;
+}

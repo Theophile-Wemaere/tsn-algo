@@ -107,7 +107,11 @@ def view_post(id_post):
 @app.route("/messages")
 def view_messages():
     if check_session(session):
-        return render_template("messages.html")
+        conv = request.args.get('conv')
+        if conv is not None:
+            return render_template("messages.html",conv=conv)
+        else:
+            return render_template("messages.html",conv="none")
     else:
         return redirect("/login",302)
 
