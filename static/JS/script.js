@@ -1157,7 +1157,21 @@ function loadConversation(contact) {
               </div>
             </div>`
           }
-          row += "> " + messages[i].message + '</br>'
+          if(messages[i].owner === "yes") {
+            row += 
+            `<div id="message-${messages[i].id_message}" onmouseenter="showDeleteMessage('${messages[i].id_message}')" onmouseleave="hideDeleteMessage('${messages[i].id_message}')" >
+                <p>> ${messages[i].message}</p>
+                <div id="delete-${messages[i].id_message}" class="delete-row" onclick="deleteMessage(${messages[i].id_message})">
+                  <i class="fa-solid fa-trash"></i>
+                  Delete message ?
+                </div>
+              </div>
+            `
+          } else {
+            row += `
+            <p>> ${messages[i].message}</p>
+            `
+          }
           container.innerHTML += row
         }
         container.scrollTop = container.scrollHeight;
@@ -1208,5 +1222,31 @@ function toggleRefresh(interval = null) {
       button.setAttribute("onclick",`toggleRefresh(${interval})`)
       button.textContent = "Auto-Refresh on"
       button.style.backgroundColor = "green"
+  }
+}
+
+function showDeleteMessage(id_message) {
+  deleteElement = document.getElementById(`delete-${id_message}`);
+  deleteElement.style.display = "block";
+}
+
+function hideDeleteMessage(id_message) {
+  deleteElement = document.getElementById(`delete-${id_message}`);
+  deleteElement.style.display = "none";
+}
+
+function deleteMessage(id_message) {
+  if (confirm("Are you sure you want to delete your message ?\nThis action cannot be undone")) {
+    fetch(`/api/messages/delete?id_message=${id_message}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.text())
+      .then((res) => {
+        if (res === "success") {
+          document.getElementById(`message-${id_message}`).remove();
+        } else {
+          console.log(res);
+        }
+      });
   }
 }

@@ -619,26 +619,6 @@ def check_post_owner(id_user, id_post):
             return True
     return False
 
-def check_comment_owner(id_user, id_comment):
-    """
-    check if a user is the given comment owner
-    """
-
-    db = sqlite3.connect('database.db')
-    cursor = db.cursor()
-    author = cursor.execute(
-        "SELECT author FROM comments WHERE id_comment = ?", (id_comment,)).fetchone()
-    db.close()
-    if author is not None:
-        if author[0] != id_user:
-            return False
-        else:
-            print("User is owner")
-            return True
-    return False
-
-
-
 def edit_post(id_user, id_post, title, content, tags):
     """
     edit post in database
@@ -917,6 +897,24 @@ def create_comment(id_user,id_post,content):
     db.commit()
     db.close()
 
+def check_comment_owner(id_user, id_comment):
+    """
+    check if a user is the given comment owner
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    author = cursor.execute(
+        "SELECT author FROM comments WHERE id_comment = ?", (id_comment,)).fetchone()
+    db.close()
+    if author is not None:
+        if author[0] != id_user:
+            return False
+        else:
+            print("User is owner")
+            return True
+    return False
+
 def get_comments(id_post,id_user):
     """
     get all comments for a post
@@ -1018,6 +1016,25 @@ def get_conversations(id_user):
     db.close()                                                                   
     return conv
 
+def check_message_owner(id_user, id_message):
+    """
+    check if a user is the given message owner
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    user = cursor.execute("""
+    SELECT "from"
+    FROM messages WHERE id_conversation = ?""", (id_message,)).fetchone()
+    db.close()
+    if user is not None:
+        if user[0] != id_user:
+            return False
+        else:
+            print("User is owner")
+            return True
+    return False
+
 def get_conversation(id_user,id_contact):
     """
     get all messages between two users
@@ -1038,7 +1055,7 @@ def get_conversation(id_user,id_contact):
     }
 
     cursor.execute("""
-    SELECT "from", "to", message, time
+    SELECT "from", "to", message, time, id_conversation
     FROM messages
     WHERE ("from" = ? AND "to" = ?)
     OR ("from" = ? AND "to" = ?)
@@ -1046,11 +1063,16 @@ def get_conversation(id_user,id_contact):
     rows = cursor.fetchall()
     for row in rows:
         message = {
+            "id_message": row[4],
             "from": row[0],
             "to": row[1],
             "message": row[2],
-            "time": row[3]
+            "time": row[3],
+            "owner": False
         }
+        # is owner of message
+        if message["from"] == id_user:
+            message["owner"] = "yes"
         data["messages"].append(message)
 
     db.close()
@@ -1069,6 +1091,21 @@ def add_message(id_user,id_contact,message):
     """,(id_user,id_contact,message))
     db.commit()
     db.close()
+
+def delete_message(id_user, id_message):
+    """
+    delete a message from the database
+    """
+
+    if not check_message_owner(id_user, id_message):
+        return "not_message_owner"
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM messages WHERE id_conversation = ?", (id_message,))
+    db.commit()
+    db.close()
+    return "success"
 
 #endregion
 

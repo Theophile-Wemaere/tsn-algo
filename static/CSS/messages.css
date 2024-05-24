@@ -86,6 +86,10 @@
     margin: 0;
 }
 
+.message p {
+    margin: 0;
+}
+
 .conversation-block form.input-area {
     height: 100px;
     margin-bottom: 20px;
@@ -100,10 +104,19 @@
     width: 80%;
     outline: none;
     border: solid 1px white;
-    color: #646464;
+    background-color: #D9D9D9;
     border-radius: 15px 0 0 15px;
     resize: none;
     padding: 10px;
+}
+
+.conversation-block form.input-area textarea:hover {
+    background-color: #FFFFFF;
+    cursor: pointer;
+}
+
+.conversation-block form.input-area textarea:focus {
+    background-color: #FFFFFF;
 }
 
 .conversation-block form.input-area input[type=submit] {
@@ -134,4 +147,15 @@ button#toggle-button:hover {
     color: white;
     font-weight: bolder;
     border: solid 1px white;
+}
+
+.delete-row {
+    color: #aa2d2d;
+    font-weight: bold;
+    display: none;
+}
+
+.delete-row:hover {
+    color: #d84f4f;
+    cursor: pointer;
 }

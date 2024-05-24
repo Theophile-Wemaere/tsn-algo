@@ -46,3 +46,15 @@ def send_message():
         return "success"
     else:
         return redirect("/login",302)
+
+@message_api.route("/delete",methods=["DELETE"])
+def delete_message():
+  if check_session(session):
+    message = request.args.get("id_message")
+    if message is not None:
+      res = db.delete_message(session.get('id'),message)
+      return res
+    else:
+      return "no_message_specified"
+  else:
+    return redirect('/login',302)
