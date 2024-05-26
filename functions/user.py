@@ -107,10 +107,19 @@ def get_user_activity(id_user):
     data["code"] = "success"
     return data
 
+@user_api.route('/settings', methods=['GET'])
+def api_user_settings():
+    if check_session(session):
+        return render_template("settings.html")
+    else:
+        return "login"
+
 @user_api.route('/editor', methods=['GET'])
 def api_user_editor():
     if check_session(session):
         return render_template("profile-editor.html")
+    else:
+        return "login"
 
 @user_api.route('/profile/update', methods=['PATCH'])
 def api_profile_update():

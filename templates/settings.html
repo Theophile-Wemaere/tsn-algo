@@ -1,0 +1,49 @@
+<body>
+    <link rel="stylesheet" href="/static/CSS/settings.css">
+    <script src="https://kit.fontawesome.com/bc424452bc.js" crossorigin="anonymous"></script>
+    <script src="/static/JS/script.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <div class="layer" id="layer">
+        <div class="square" id="square">
+            <div class="cell">
+                <h2 id="title-edit">User settings</h2>
+                <form onsubmit="event.preventDefault();updateSettings()">
+                    <fieldset>
+                        <legend>Change email address</legend>
+                        <div class="row">
+                            <label for="email"><i class="fa-solid fa-envelope"></i>Change email :</label>
+                            <input type="text" name="email" id="email-edit">
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Change password</legend>
+                        <div class="row">
+                            <label for="cpassword"><i class="fa-solid fa-key"></i>Current password :</label>
+                            <input type="text" name="cpassword" id="cpassword">
+                        </div>
+                        <div class="row">
+                            <label for="npassword"><i class="fa-solid fa-key"></i>New password :</label>
+                            <input type="text" name="npassword" id="npassword">
+                        </div>
+                        <div class="row">
+                            <label for="npassword-conf"><i class="fa-solid fa-key"></i>Confirm password:</label>
+                            <input type="text" name="npassword-conf" id="npassword-conf">
+                        </div>
+                    </fieldset>
+                    <input class="input-button" type="submit" value="Save my info">
+                    <div style="flex-grow:1"></div>
+                    <button class="exit-button" id="exit-button" onclick="removeEditor()">Cancel</button>
+                </form>
+            </div>
+            <div class="cell" id="danger-zone">
+                <h1>/!\ Danger zone /!\</h1>
+                <img id="advice" src="/static/images/robot-advice.png">
+                <button class="delete-button">Delete my account</button>
+            </div>
+        </div>
+    </div>
+</body>

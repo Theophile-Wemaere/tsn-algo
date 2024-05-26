@@ -1014,13 +1014,15 @@ def get_feed_new(id_user=None, offset=0):
         cursor.execute("""
         SELECT id_post
         FROM posts
-        ORDER BY DESC created_at
+        ORDER BY created_at DESC
         LIMIT ?,10""",(offset,))
+        posts = [row[0] for row in cursor.fetchall()]
 
     data = {
         "posts" : []
     }
     for post in posts:
+        print(post)
         post_info = get_post_info(post,id_user)
         data["posts"].append(post_info)
 
