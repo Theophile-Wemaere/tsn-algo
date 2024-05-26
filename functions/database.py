@@ -37,16 +37,16 @@ def generate_hashname(id_user):
             db.close()
             return hash
 
-# def get_id(email):
-#     db = sqlite3.connect('database.db')
-#     cursor = db.cursor()
-#     cursor.execute("SELECT id_user FROM users WHERE email = ?",(email,))
-#     row = cursor.fetchone()
-#     db.close()
-#     if row is not None:
-#         return row[0]
-#     else:
-#         return False
+def get_email(id_user):
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("SELECT email FROM users WHERE id_user = ?",(id_user,))
+    row = cursor.fetchone()
+    db.close()
+    if row is not None:
+        return row[0]
+    else:
+        return False
 
 # region users create & login
 
@@ -433,6 +433,47 @@ def search_user(query):
 # endregion
 
 # region update user info
+
+def update_settings(id_user, email, current_password, new_password):
+    """
+    update a user profile
+    """
+
+    print(id_user,email,current_password,new_password)
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    cursor.execute("""
+    SELECT password
+    FROM users
+    WHERE id_user = ?""", (id_user,))
+    existing_password = cursor.fetchone()
+    if existing_password is not None:
+        existing_password = existing_password[0]
+        if argon2.check_password_hash(existing_password,current_password) or existing_password == "default":
+            pass
+        else:
+            db.close()
+            return "bad_password"
+    else:
+        db.close()
+        return "login"
+    
+    cursor.execute("""
+    UPDATE users SET 
+    email = ?
+    WHERE id_user = ?""",(email,id_user))
+
+    if new_password != "":
+        hashed_password = hash(new_password)
+        cursor.execute("""
+        UPDATE users
+        SET password = ?
+        WHERE id_user = ?""",(hashed_password,id_user))
+
+    db.commit()
+    db.close()
+    return "success"
 
 
 def update_profile(id_user, displayname, description, location, gender):

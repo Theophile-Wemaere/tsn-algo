@@ -16,33 +16,34 @@
                         <legend>Change email address</legend>
                         <div class="row">
                             <label for="email"><i class="fa-solid fa-envelope"></i>Change email :</label>
-                            <input type="text" name="email" id="email-edit">
+                            <input type="text" name="email" id="email-edit" value="{{ email }}" required>
                         </div>
                     </fieldset>
                     <fieldset>
                         <legend>Change password</legend>
                         <div class="row">
-                            <label for="cpassword"><i class="fa-solid fa-key"></i>Current password :</label>
-                            <input type="text" name="cpassword" id="cpassword">
+                            <label for="currentpassword"><i class="fa-solid fa-key"></i>Current password :</label>
+                            <input type="password" name="currentpassword" id="currentpassword" required>
                         </div>
                         <div class="row">
-                            <label for="npassword"><i class="fa-solid fa-key"></i>New password :</label>
-                            <input type="text" name="npassword" id="npassword">
+                            <label for="password"><i class="fa-solid fa-key"></i>New password :</label>
+                            <input type="password" name="password" id="password" onchange="passwordCheck()">
                         </div>
                         <div class="row">
-                            <label for="npassword-conf"><i class="fa-solid fa-key"></i>Confirm password:</label>
-                            <input type="text" name="npassword-conf" id="npassword-conf">
+                            <label for="cpassword"><i class="fa-solid fa-key"></i>Confirm password:</label>
+                            <input type="password" name="cpassword" id="cpassword" onchange="passwordCheck()">
                         </div>
                     </fieldset>
-                    <input class="input-button" type="submit" value="Save my info">
+                    <input class="input-button" type="submit" id="btn-user" value="Save my info">
+                    <div class="error-match" id="error-password">Please make sure the passwords matchs</div>
                     <div style="flex-grow:1"></div>
                     <button class="exit-button" id="exit-button" onclick="removeEditor()">Cancel</button>
                 </form>
             </div>
             <div class="cell" id="danger-zone">
-                <h1>/!\ Danger zone /!\</h1>
-                <img id="advice" src="/static/images/robot-advice.png">
-                <button class="delete-button">Delete my account</button>
+                <h1><i class="fa-solid fa-triangle-exclamation"></i> Danger zone <i class="fa-solid fa-triangle-exclamation"></i></h1>
+                <img id="advice" src="/static/images/robot-delete.png">
+                <button class="delete-button" onclick="deleteAccount()">Delete my account</button>
             </div>
         </div>
     </div>

@@ -110,7 +110,18 @@ def get_user_activity(id_user):
 @user_api.route('/settings', methods=['GET'])
 def api_user_settings():
     if check_session(session):
-        return render_template("settings.html")
+        return render_template("settings.html",email=db.get_email(session.get('id')))
+    else:
+        return "login"
+
+@user_api.route('/settings/update', methods=['PATCH'])
+def api_settings_update():
+    if check_session(session):
+        email = request.form["email"]
+        cpassword = request.form["cpassword"]
+        npassword = request.form["npassword"]
+        res = db.update_settings(session.get('id'),email,cpassword,npassword)
+        return res
     else:
         return "login"
 

@@ -145,15 +145,40 @@ fieldset textarea {
 }
 
 .cell#danger-zone {
-    border: solid 10px #AA2D2D;
     border-radius: 20px;
+    background-color: #AA2D2D;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .cell#danger-zone:hover {
-    border-color: #d84f4f;
+    background-color: #d84f4f;
 }
 
+.cell#danger-zone img {
+    width: 90%;
+}
 .cell#danger-zone h1 {
     text-align: center;
+    color: black;
+}
+
+.delete-button {
+    width: 50%;
+    border: 0;
+    outline: 0;
+    border-radius: 10px;
+    background-color: black;
     color: #AA2D2D;
+    font-weight: bold;
+    font-size:large;
+    margin-bottom: 100px;
+}
+
+.delete-button:hover {
+    background-color: #363333;
+    cursor: pointer;
+    border: solid 3px white;
 }

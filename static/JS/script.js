@@ -466,9 +466,8 @@ function loadUserActivity(id_user, activity = "posts") {
             <a href="/post/view/${post.id_post}">
                 <div class="post-block">
                     <h2 id="post-title">${post.title}</h2>
-                    <div id="post-author" onclick="event.preventDefault();redirect('/profile?id_user=${
-                      post.id_author
-                    }')">
+                    <div id="post-author" onclick="event.preventDefault();redirect('/profile?id_user=${post.id_author
+              }')">
                         <img src="/static/pictures/${post.author_picture}.png">
                         <h3>${post.author}, on ${post.created_at}</h3>
                     </div>
@@ -660,15 +659,13 @@ function loadPreferencesEditor() {
                 select: function (event, ui) {
                   ui.item.value = ui.item.label;
                   $("#selected-tags").append(`
-                        <span class="subject-tag" id="tag-${
-                          res.tags[ui.item.label]
-                        }">
+                        <span class="subject-tag" id="tag-${res.tags[ui.item.label]
+                    }">
                           <i class="fa-solid fa-hashtag"></i>
                           ${ui.item.label}
                           <div id="e"></div>
-                          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${
-                            res.tags[ui.item.label]
-                          })"></i>
+                          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${res.tags[ui.item.label]
+                    })"></i>
                         </span>`);
                   $(this).val("");
 
@@ -735,15 +732,13 @@ function selectTag() {
                 select: function (event, ui) {
                   ui.item.value = ui.item.label;
                   $("#selected-tags").append(`
-                        <span class="subject-tag" id="tag-${
-                          res.tags[ui.item.label]
-                        }">
+                        <span class="subject-tag" id="tag-${res.tags[ui.item.label]
+                    }">
                           <i class="fa-solid fa-hashtag"></i>
                           ${ui.item.label}
                           <div id="e"></div>
-                          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${
-                            res.tags[ui.item.label]
-                          })"></i>
+                          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${res.tags[ui.item.label]
+                    })"></i>
                         </span>`);
                   $(this).val("");
 
@@ -797,6 +792,44 @@ function removeEditor() {
   const layer = document.getElementById("layer");
   if (layer) {
     layer.remove();
+  }
+}
+
+function updateSettings() {
+  const email = document.getElementById("email-edit").value;
+  const currentPassword = document.getElementById("currentpassword").value;
+  const newPassword = document.getElementById("password").value;
+  const newPasswordConfirm = document.getElementById("cpassword").value;
+
+  if (email === "") {
+    alert("Please enter an email adress to continue")
+  } else if ((newPassword !== "" && newPasswordConfirm === "") || newPassword !== newPasswordConfirm) {
+    alert("Please enter a new password to continue")
+  } else {
+    
+    const data = new FormData();
+    data.append("email",email)
+    data.append("cpassword",currentPassword)
+    data.append("npassword",newPasswordConfirm)
+
+    fetch("/api/user/settings/update", {
+      method: "PATCH",
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        switch(data.trim()) {
+          case "success":
+            removeEditor();
+            break;
+          case "bad_password":
+            alert("Wrong password entered")
+            break;
+          case "login":
+            redirect("/login");
+            break;
+        }
+      });
   }
 }
 
@@ -1065,9 +1098,8 @@ function loadFeed(offset) {
           <a href="/post/view/${post.id_post}">
               <div class="post-block">
                   <h2 id="post-title">${post.title}</h2>
-                  <div id="post-author" onclick="event.preventDefault();redirect('/profile?id_user=${
-                    post.id_author
-                  }')">
+                  <div id="post-author" onclick="event.preventDefault();redirect('/profile?id_user=${post.id_author
+            }')">
                       <img src="/static/pictures/${post.author_picture}.png">
                       <h3>${post.author}, on ${post.created_at}</h3>
                   </div>
@@ -1081,9 +1113,8 @@ function loadFeed(offset) {
           </a>`;
         });
         feed.innerHTML += `
-        <button id="load-more" onclick="loadFeed(${
-          offset + 10
-        })">See more</button>
+        <button id="load-more" onclick="loadFeed(${offset + 10
+          })">See more</button>
         `;
         document.querySelectorAll("pre").forEach((block) => {
           console.log(block);
