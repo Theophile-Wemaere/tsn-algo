@@ -434,6 +434,59 @@ def search_user(query):
 
 # region update user info
 
+def delete_account(id_user, password):
+    """
+    delete a user profil
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    cursor.execute("""
+    SELECT password
+    FROM users
+    WHERE id_user = ?""", (id_user,))
+    existing_password = cursor.fetchone()
+    if existing_password is not None:
+        existing_password = existing_password[0]
+        if argon2.check_password_hash(existing_password,password) or existing_password == "default":
+            pass
+        else:
+            db.close()
+            return "bad_password"
+    else:
+        db.close()
+        return "login"
+    
+    cursor.execute("""
+    DELETE FROM users 
+    WHERE id_user = ?""",(id_user,))
+    cursor.execute("""
+    DELETE FROM posts 
+    WHERE author = ?""",(id_user,))
+    cursor.execute("""
+    DELETE FROM comments 
+    WHERE author = ?""",(id_user,))
+    cursor.execute("""
+    DELETE FROM posts_interaction
+    WHERE user = ?""",(id_user,))
+    cursor.execute("""
+    DELETE FROM relations 
+    WHERE followed = ? OR follower = ?""",(id_user,id_user))
+    cursor.execute("""
+    DELETE FROM user_tags 
+    WHERE user = ?""",(id_user,))
+    cursor.execute("""
+    DELETE FROM sessions 
+    WHERE id_user = ?""",(id_user,))
+    cursor.execute("""
+    DELETE FROM messages
+    WHERE 'from' = ?""",(id_user,))
+
+    db.commit()
+    db.close()
+    return "success"
+
 def update_settings(id_user, email, current_password, new_password):
     """
     update a user profile

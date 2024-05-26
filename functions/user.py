@@ -147,6 +147,15 @@ def api_profile_update():
     else:
         return "login"
 
+@user_api.route('/delete', methods=['DELETE'])
+def api_delete_account():
+    if check_session(session):
+        password = request.form["password"]
+        res = db.delete_account(session.get('id'),password)
+        return res
+    else:
+        return "login"
+
 @user_api.route('/profile/picture', methods=['PATCH'])
 def api_picture_update():
     if check_session(session):

@@ -833,6 +833,37 @@ function updateSettings() {
   }
 }
 
+function deleteAccount() {
+  if (
+    confirm(
+      "Are you sure you want to delete your account ?\nThis action cannot be undone"
+    ) && confirm("Last chance...")
+  ) {
+    password = prompt("Please enter your password to confirm")
+    data = new FormData()
+    data.append('password',password)
+    fetch(`/api/user/delete`, {
+      method: "DELETE",
+      body: data
+    })
+      .then((res) => res.text())
+      .then((res) => {
+        switch(res.trim()) {
+          case "success":
+            alert("All your data has been deleted, you will now be redirected to the homepage")
+            redirect("/home");
+            break;
+          case "bad_password":
+            alert("Wrong password entered")
+            break;
+          case "login":
+            redirect("/login");
+            break;
+        }
+      });
+  }
+}
+
 function updateProfile() {
   const name = document.getElementById("displayname-edit").value;
   let description = document.getElementById("description-edit").value;
