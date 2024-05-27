@@ -93,6 +93,9 @@ def get_user_profile(id_user):
 
 @user_api.route('/activity/<int:id_user>')
 def get_user_activity(id_user):
+    id_self = None
+    if check_session(session):
+        id_self = session.get('id')
     if id_user is 0:
         if check_session(session):
             id_user = session.get('id')
@@ -101,7 +104,7 @@ def get_user_activity(id_user):
     activity_type = request.args.get('type')
     if activity_type in ["dislikes","saved"] and id_user != session.get('id'):
         return {"code":"not_visible"}
-    data = db.get_user_activity(id_user,activity_type)
+    data = db.get_user_activity(id_self,id_user,activity_type)
     if id_user == session.get('id'):
         data["is_logged"] = "yes"
     data["code"] = "success"

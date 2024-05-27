@@ -208,6 +208,23 @@ function unfollowUser(id_user, from = undefined) {
     });
 }
 
+function blockUser(id_user) {
+  if(!confirm("Are you sure you want to remove this user from your followers ?")) {
+    return;
+  }
+  fetch(`/api/user/relation?id_user=${id_user}&action=block`, {
+    method: "PATCH",
+  })
+    .then((res) => res.text())
+    .then((res) => {
+      if (res === "success") {
+        loadUserProfile(id_user);
+      } else {
+        console.log(res);
+      }
+    });
+}
+
 function loadUserMenu() {
   fetch("/api/user/is_logged", {
     method: "GET",
@@ -221,7 +238,10 @@ function loadUserMenu() {
         content = `@${res.username} <img src="${imageUrl}" alt="${res.username}'s profile picture">`;
         reco.innerHTML = content;
         reco.style.paddingLeft = "10px";
-        document.getElementById("notifications").style.display = "flex";
+
+        if(!window.location.pathname.startsWith('/messages')) {
+          document.getElementById("notifications").style.display = "flex";
+        }
 
         // set redirect to profile
         link = document.getElementById("login-link");
@@ -235,7 +255,7 @@ function loadUserMenu() {
 
         // display post buttons
         if (
-          !window.location.pathname.startsWith("/post/create") &&
+          !window.location.pathname.startsWith("/post/new") &&
           !window.location.pathname.startsWith("/post/edit")
         ) {
           button = document.getElementById("post-button");
@@ -248,7 +268,6 @@ function loadUserMenu() {
           counter.textContent = res.notread
           counter.classList.add("on")
         }
-
       }
     });
 }
@@ -429,10 +448,10 @@ function loadUserProfile(id_user) {
 
         if (res.is_follower && res.is_followed) {
           console.log("dual");
-          name.innerHTML += "<p>You follow each other</p>";
+          name.innerHTML += `<p>You follow each other</p><button onclick='blockUser(${id_user})'>block</button>`;
         } else if (res.is_follower && !res.is_followed) {
           console.log("incoming");
-          name.innerHTML += "<p>Follows you</p>";
+          name.innerHTML += `<p>Follows you</p><button onclick='blockUser(${id_user})'>block</button>`;
         } else if (!res.is_follower && res.is_followed) {
           console.log("outcoming");
           name.innerHTML += "<p>Following</p>";
@@ -745,8 +764,8 @@ function selectTag() {
                           <i class="fa-solid fa-hashtag"></i>
                           ${ui.item.label}
                           <div id="e"></div>
-                          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag(${res.tags[ui.item.label]
-                    })"></i>
+                          <i id="trash-remove" class="fa-solid fa-trash" onclick="removeTag('${res.tags[ui.item.label]
+                    }')"></i>
                         </span>`);
                   $(this).val("");
 
@@ -1062,6 +1081,11 @@ function loadUserFollowing(id_user) {
 
 function sendNewPost(id_post) {
   postContent = getPostContent();
+  if(postContent.replace(/ /g,'') === "<p></p>") {
+    alert("Please do not let the post empty")
+    return;
+  }
+  visibility = document.getElementById("post-visibility").value
   title = document.getElementById("post-title").value;
   tagsElement = document.querySelectorAll('[id^="tag-"]');
   tags = [];
@@ -1071,13 +1095,14 @@ function sendNewPost(id_post) {
     }
   });
   if(tags.length < 3) {
-    alert("Please enter a minimum of 3 tags to better indentify your posts to other users")
+    alert("Please enter a minimum of 3 tags to better identify your posts to other users")
     return;
   }
   const data = new FormData();
   data.append("title", title);
   data.append("tags", tags);
   data.append("post", postContent);
+  data.append("visibility", visibility);
   data.append("id_post", id_post);
 
   url = null;
@@ -1112,7 +1137,7 @@ function loadPostEdition(id_post) {
         tagsRow = document.getElementById("tag-list");
         for (let i = 0; i < res.tags.length; i++) {
           tagsRow.innerHTML += `
-          <div class="row" id="${res.id_tags[i]}">
+          <div class="row" id="tag-${res.id_tags[i]}">
               <i class="fa-solid fa-hashtag"></i>
               ${res.tags[i]}
               <i id="trash-remove" onclick="removeTag('${res.id_tags[i]}')" class="fa-solid fa-trash"></i>
@@ -1136,6 +1161,7 @@ function loadFeed(offset) {
     .then((res) => {
       if (res.code == "success") {
         feed = document.getElementById("posts-feed");
+        feed.innerHTML = "";
         res.posts.forEach((post) => {
           feed.innerHTML += `
           <a href="/post/view/${post.id_post}">
@@ -1456,9 +1482,9 @@ function loadConversations(conversation = "none") {
         });
         conv.innerHTML += '<div style="flex-grow:1"></div>';
         if (conversation !== "none") {
-          loadConversation(conversation);
+          loadConversation(conversation,true);
         } else {
-          loadConversation(first_id);
+          loadConversation(first_id,true);
         }
       } else {
         console.log(res);
@@ -1466,7 +1492,8 @@ function loadConversations(conversation = "none") {
     });
 }
 
-function loadConversation(contact) {
+function loadConversation(contact,first = false) {
+  document.getElementById("message-input").value = '';
   fetch(`/api/messages/get?contact=${contact}`, {
     method: "GET",
   })
@@ -1474,7 +1501,9 @@ function loadConversation(contact) {
     .then((res) => {
       if (res.code === "success") {
         container = document.getElementById("message");
-        container.innerHTML = "";
+        if(first) {
+          container.innerHTML = "";
+        }        
         messages = res.messages;
         isFirst = true;
         notReadLimit = false;
@@ -1500,6 +1529,7 @@ function loadConversation(contact) {
         }
 
         for (i = 0; i < messages.length; i++) {
+
           row = "";
           from = messages[i].from;
 
@@ -1559,7 +1589,6 @@ function loadConversation(contact) {
 }
 
 function detectSend(event) {
-  console.log(event.keyCode)
   if (event.keyCode == 13 && !event.shiftKey) {
     sendMessage();
 }
@@ -1573,7 +1602,6 @@ function sendMessage() {
   input = document.getElementById("message-input");
   message = input.value;
   message = message.replace(/\r?\n/g, "<br />");
-  input.value = "";
 
   data = new FormData();
   data.append("contact", contact);
@@ -1590,6 +1618,8 @@ function sendMessage() {
         console.log(res);
       }
     });
+
+  input.value = '';
 }
 
 function toggleRefresh(interval = null) {

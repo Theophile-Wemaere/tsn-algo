@@ -255,7 +255,6 @@ def get_user_data(id_user):
     db.close()
     return user_data
 
-
 def get_user_profile(id_user):
     """
     return the user profile info
@@ -322,8 +321,7 @@ def get_user_relation(id_user1,id_user2):
     db.close()
     return is_follower,is_followed
 
-
-def get_user_activity(id_user,activity_type):
+def get_user_activity(id_self,id_user,activity_type):
     """
     get activity (posts, liked, disliked and saved posts) for a user
     """
@@ -363,7 +361,9 @@ def get_user_activity(id_user,activity_type):
     }
     for post in posts:
         post_info = get_post_info(post,id_user)
-        data["posts"].append(post_info)
+        if check_post_visibility(id_self,post_info["id_author"],post_info["visibility"]):
+            data["posts"].append(post_info)
+
 
     return data
     
@@ -490,7 +490,7 @@ def delete_account(id_user, password):
     WHERE id_user = ?""",(id_user,))
     cursor.execute("""
     DELETE FROM messages
-    WHERE 'from' = ?""",(id_user,))
+    WHERE 'from' = ? OR 'to' = ?""",(id_user,id_user))
 
     db.commit()
     db.close()
@@ -537,7 +537,6 @@ def update_settings(id_user, email, current_password, new_password):
     db.close()
     return "success"
 
-
 def update_profile(id_user, displayname, description, location, gender):
     """
     update a user profile
@@ -557,7 +556,6 @@ def update_profile(id_user, displayname, description, location, gender):
     cursor.execute(sql, data)
     db.commit()
     db.close()
-
 
 def update_picture(id_user, hash):
     """
@@ -676,7 +674,6 @@ def get_user_recommandations(id_user):
 
     return users_info
 
-
 def get_post_recommandations():
     """
     return the top post of the current week
@@ -709,7 +706,6 @@ def get_post_recommandations():
     db.close()
     return data
 
-
 def update_relation(id_user, id_target, action):
     """
     update a relation (follow, unfollow)
@@ -737,9 +733,15 @@ def update_relation(id_user, id_target, action):
             cursor.execute(
                 "DELETE FROM relations WHERE followed = ? and follower = ?", (id_target, id_user))
             db.commit()
+    elif action == "block":
+        cursor.execute("""
+        DELETE FROM relations 
+        WHERE followed = ? AND follower = ? 
+        """,(id_user,id_target))
+        db.commit()
+
     db.close()
     return "success"
-
 
 def get_tags(id_user=None):
     """
@@ -764,7 +766,6 @@ def get_tags(id_user=None):
         data["tags"][row[1]] = row[0]
     db.close()
     return data
-
 
 def update_tags(id_user, tags):
     """
@@ -795,6 +796,8 @@ def save_post(id_user, visibility, title, content, tags):
 
     title = escape(title)
 
+    visibility = 1 if visibility == "private" else 0
+
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
     cursor.execute("""
@@ -810,7 +813,6 @@ def save_post(id_user, visibility, title, content, tags):
 
     db.close()
     return id_post
-
 
 def check_post_owner(id_user, id_post):
     """
@@ -830,12 +832,14 @@ def check_post_owner(id_user, id_post):
             return True
     return False
 
-def edit_post(id_user, id_post, title, content, tags):
+def edit_post(id_user, id_post, visibility,title, content, tags):
     """
     edit post in database
     """
 
     title = escape(title)
+
+    visibility = 1 if visibility == "private" else 0
 
     # check if user is owner
     if not check_post_owner(id_user, id_post):
@@ -846,10 +850,12 @@ def edit_post(id_user, id_post, title, content, tags):
 
     cursor.execute("""
     UPDATE posts 
-    SET title = ?, content = ?
-    WHERE id_post = ?""", (title, content, id_post))
+    SET title = ?, content = ?, visibility = ?
+    WHERE id_post = ?""", (title, content, visibility, id_post))
     db.commit()
 
+    cursor.execute("DELETE FROM post_tags WHERE post = ?",(id_post,))
+    db.commit()
     for tag in tags:
         cursor.execute("SELECT * FROM tags WHERE id_tag = ?", (tag,))
         if cursor.fetchone() is not None:
@@ -858,7 +864,6 @@ def edit_post(id_user, id_post, title, content, tags):
 
     db.close()
     return "success"
-
 
 def get_post_info(id_post, id_user=None):
     """
@@ -870,7 +875,7 @@ def get_post_info(id_post, id_user=None):
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
     cursor.execute("""
-    SELECT p.title, p.content, p.author, u.displayname, u.picture ,p.created_at
+    SELECT p.title, p.content, p.author, u.displayname, u.picture ,p.created_at, p.visibility
     FROM posts p
     INNER JOIN users u
     ON u.id_user = p.author
@@ -886,6 +891,7 @@ def get_post_info(id_post, id_user=None):
             "author": row[3],
             "author_picture": row[4],
             "created_at": row[5],
+            "visibility": row[6],
             "is_liked": False,
             "is_disliked": False,
             "is_saved": False
@@ -911,8 +917,10 @@ def get_post_info(id_post, id_user=None):
         INNER JOIN post_tags pt
         ON pt.tag = t.id_tag
         WHERE pt.post = ?""", (id_post,))
-        tags = [row[0] for row in cursor.fetchall()]
-        id_tags = [row[1] for row in cursor.fetchall()]
+        tags, id_tags = [], []
+        for tag,id_tag in cursor.fetchall():
+            tags.append(tag)
+            id_tags.append(id_tag)
         data["tags"] = tags
         data["id_tags"] = id_tags
     else:
@@ -936,7 +944,6 @@ def get_post_info(id_post, id_user=None):
 
     db.close()
     return data
-
 
 def search_post(query):
     """
@@ -1012,7 +1019,6 @@ def update_post_interaction(id_user, id_post, action):
     db.close()
     return "success"
 
-
 def delete_post(id_user, id_post):
     """
     delete a post from the database
@@ -1023,13 +1029,48 @@ def delete_post(id_user, id_post):
 
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
-    author = cursor.execute(
-        "SELECT author FROM posts WHERE id_post = ?", (id_post,)).fetchone()[0]
     cursor.execute("DELETE FROM posts WHERE id_post = ?", (id_post,))
+    cursor.execute("DELETE FROM posts_interaction WHERE post = ?", (id_post,))
+    cursor.execute("DELETE FROM post_tags WHERE post = ?", (id_post,))
+    cursor.execute("DELETE FROM comments WHERE parent = ?", (id_post,))
     db.commit()
     db.close()
     return "success"
 
+def check_post_visibility(id_user,author,visibility):
+    """
+    check if a post can be show to a user depending of the visibility
+    """
+
+    print(id_user,author,visibility)
+
+    if id_user == author:
+        return True
+
+    if id_user is None:
+        print("Id user is none")
+        if visibility == 1:
+            return False
+        else:
+            return True
+
+    if visibility == 1 :
+        # post is private
+        db = sqlite3.connect('database.db')
+        cursor = db.cursor()
+        cursor.execute("""
+        SELECT * 
+        FROM relations 
+        WHERE followed = ? AND follower = ?""",(author,id_user))
+        res = cursor.fetchone()
+        db.close()
+        if res is not None:
+            # follow is true
+            return True
+        else:
+            return False
+    else:
+        return True
 
 def sort_post_by_tag(id_user, posts):
     """
@@ -1101,7 +1142,8 @@ def get_feed_new(id_user=None, offset=0):
     }
     for post in posts:
         post_info = get_post_info(post,id_user)
-        data["posts"].append(post_info)
+        if check_post_visibility(id_user,post_info["id_author"],post_info["visibility"]):
+            data["posts"].append(post_info)
 
     db.close()
     return data
@@ -1134,7 +1176,8 @@ def get_feed_best(id_user=None, offset=0):
     }
     for post in posts:
         post_info = get_post_info(post,id_user)
-        data["posts"].append(post_info)
+        if check_post_visibility(id_user,post_info["author"],post_info["visibility"]):
+            data["posts"].append(post_info)
 
     db.close()
     return data
@@ -1203,7 +1246,8 @@ def get_feed_forme(id_user=None, offset=0):
     }
     for post in posts:
         post_info = get_post_info(post,id_user)
-        data["posts"].append(post_info)
+        if check_post_visibility(id_user,post_info["author"],post_info["visibility"]):
+            data["posts"].append(post_info)
 
     db.close()
     return data

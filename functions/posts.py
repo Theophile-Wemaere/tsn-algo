@@ -21,10 +21,11 @@ def create_post():
     title = request.form["title"]
     tags = request.form["tags"]
     post = request.form["post"]
+    visibility = request.form["visibility"]
     new_tags = []
     for tag in tags.split(','):
       new_tags.append(tag.replace('tag-',''))
-    id_post = db.save_post(session.get('id'),0,title,post,new_tags)
+    id_post = db.save_post(session.get('id'),visibility,title,post,new_tags)
     return {"code":"success","post":id_post}
   else:
     return redirect("/login",302)
@@ -36,10 +37,11 @@ def edit_post():
     tags = request.form["tags"]
     post = request.form["post"]
     id_post = request.form["id_post"]
+    visibility = request.form["visibility"]
     new_tags = []
     for tag in tags.split(','):
       new_tags.append(tag.replace('tag-',''))
-    code = db.edit_post(session.get('id'),id_post,title,post,new_tags)
+    code = db.edit_post(session.get('id'),id_post,visibility,title,post,new_tags)
     return {"code":code,"post":id_post}
   else:
     return redirect("/login",302)
@@ -56,7 +58,7 @@ def get_post_info(id_post):
     data = db.get_post_info(id_post,id_user)
 
     if data == -1:
-      return {"code":"tag_not_found"}
+      return {"code":"post_not_found"}
 
     data["code"] = "success"
     if id_user == data["id_author"]:

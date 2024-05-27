@@ -91,6 +91,20 @@ button#edit {
     display: none;
 }
 
+.row h1#name button {
+    display: block;
+    margin-left: 5px;
+    outline: 0;
+    border: 0;
+    background-color: #AA2D2D;
+    padding: 5px;
+}
+
+.row h1#name button:hover {
+    background-color: #d84f4f;
+    cursor: pointer;
+}
+
 .row#row2 {
     background-color: #646464;
     height: auto;

@@ -34,7 +34,11 @@
         <div id="search">
             <div class="search-bar">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" placeholder="Search on 𝕐">
+                <input type="text" id="search-input" onkeypress="searchBar(event)" placeholder="Search on 𝕐">
+                <select id="search-range">
+                    <option value="posts">Posts</option>
+                    <option value="users">Users</option>
+                </select>
             </div>
         </div>
         <div class="notifications" id="notifications" onclick="redirect('/messages')">
@@ -66,6 +70,11 @@
             <form onsubmit="event.preventDefault();sendNewPost('{{ id_post}}')">
                 <label for="title"><i class="fa-solid fa-star-of-life"></i> Title</label>
                 <textarea name="title" oninput="autoGrow(this)" maxlength="240" id="post-title" required></textarea>
+                <label><i class="fa-solid fa-star-of-life"></i> Post visibility</label>
+                <select id="post-visibility">
+                    <option value="public">Public (everyone)</option>
+                    <option value="private">Private (only your followers)</option>
+                </select>
                 <label><i class="fa-solid fa-star-of-life"></i> Body</label>
                 <div class="cell">
                     <div id="toolbar-container">
