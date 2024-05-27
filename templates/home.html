@@ -69,7 +69,8 @@
         <div class="feed">
             <div class="row" id="filters">
                 Show posts with the following filter :
-                <select name="filter" id="filter">
+                <select name="filter" id="filter" onchange="loadFeed(0)">
+                    <option value="forme">For me</option>
                     <option value="best">Best</option>
                     <option value="new">New</option>
                 </select>

@@ -328,26 +328,26 @@ def get_user_activity(id_user,activity_type):
         # posts
         cursor.execute("""
         SELECT id_post FROM posts
-        WHERE author = ?""",(id_user,))
+        WHERE author = ? ORDER BY created_at DESC""",(id_user,))
         posts = [row[0] for row in cursor.fetchall()]
     elif activity_type == "likes":
         # likes
         cursor.execute("""
         SELECT post FROM posts_interaction
         WHERE user = ? AND action = 'L'""",(id_user,))
-        posts = [row[0] for row in cursor.fetchall()]
+        posts = tools.reverse_list([row[0] for row in cursor.fetchall()])
     elif activity_type ==  "dislikes":
         # dislikes
         cursor.execute("""
         SELECT post FROM posts_interaction
         WHERE user = ? AND action = 'D'""",(id_user,))
-        posts = [row[0] for row in cursor.fetchall()]
+        posts = tools.reverse_list([row[0] for row in cursor.fetchall()])
     elif activity_type == "saved":
         # saved
         cursor.execute("""
         SELECT post FROM posts_interaction
         WHERE user = ? AND action = 'S'""",(id_user,))
-        posts = [row[0] for row in cursor.fetchall()]
+        posts = tools.reverse_list([row[0] for row in cursor.fetchall()])
 
     data = {
         "posts":  []
@@ -913,7 +913,6 @@ def get_post_info(id_post, id_user=None):
         is_liked = cursor.execute("""
         SELECT count(*) FROM posts_interaction
         WHERE action = 'L' AND post = ? AND user = ?""", (id_post, id_user)).fetchone()[0]
-        print("is liked", is_liked)
         data["is_liked"] = True if is_liked > 0 else False
 
         is_disliked = cursor.execute("""
@@ -1048,13 +1047,91 @@ def sort_post_by_tag(id_user, posts):
         for tag in posts_w_tags[post]["tags"]:
             if tag in user_tags:
                 score += 1
+        print("Score :",(score, post))
         to_sort.append((score, post))
 
     sorted_posts = tools.merge_sort_recursive(to_sort)
+    # set from highest score to lowest
+    sorted_posts = tools.reverse_list(sorted_posts)
     return [post[1] for post in sorted_posts]
 
+def get_feed_new(id_user=None, offset=0):
+    """
+    generate a feed of post sorted by time
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    # first get post in relation with user preferences
+    posts = []
+    if id_user is not None:
+        if not check_existing("id_user", id_user):
+            return "unknow_id"
+
+        cursor.execute("""
+        SELECT p.id_post
+        FROM posts p
+        INNER JOIN relations r ON r.followed = p.author
+        WHERE r.follower = ?
+        ORDER BY p.created_at DESC LIMIT ?,10""", id_user, offset)
+
+        rows = cursor.fetchall()
+        if rows is not None:
+            posts = [post[0] for post in rows]
+    
+    if len(posts) == 0:
+        cursor.execute("""
+        SELECT id_post
+        FROM posts
+        ORDER BY created_at DESC
+        LIMIT ?,10""",(offset,))
+        posts = [row[0] for row in cursor.fetchall()]
+
+    data = {
+        "posts" : []
+    }
+    for post in posts:
+        post_info = get_post_info(post,id_user)
+        data["posts"].append(post_info)
+
+    db.close()
+    return data
 
 def get_feed_best(id_user=None, offset=0):
+    """
+    generate a feed of post sorted by like count
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    posts = []
+
+    cursor.execute(f"""
+    SELECT p.id_post, 
+    COUNT(CASE WHEN pi.action = 'L' THEN 1 END) AS like_count
+    FROM posts p
+    LEFT JOIN posts_interaction pi 
+    ON p.id_post = pi.post
+    GROUP BY p.id_post 
+    ORDER BY like_count DESC
+    LIMIT ?,10""", offset)
+    rows = cursor.fetchall()
+    if rows is not None:
+        posts = [post[0] for post in rows]
+
+    data = {
+        "posts" : []
+    }
+    for post in posts:
+        post_info = get_post_info(post,id_user)
+        data["posts"].append(post_info)
+
+    db.close()
+    return data
+
+def get_feed_forme(id_user=None, offset=0):
     """
     generate a feed of post sorted by time
     if a user id is supplied, the post will be in relation with the user tags
@@ -1063,7 +1140,6 @@ def get_feed_best(id_user=None, offset=0):
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
 
-    # first get post in relation with user preferences
     posts = []
     if id_user is not None:
         if not check_existing("id_user", id_user):
@@ -1101,8 +1177,10 @@ def get_feed_best(id_user=None, offset=0):
         rows = cursor.fetchall()
         if rows is not None:
             posts = [post[0] for post in rows]
+        print("before:",posts)
         # sort posts by scoring post tags with user tags
         posts = sort_post_by_tag(id_user, posts)
+        print("after:",posts)
     
     if len(posts) == 0:
         cursor.execute("""
@@ -1116,7 +1194,6 @@ def get_feed_best(id_user=None, offset=0):
         "posts" : []
     }
     for post in posts:
-        print(post)
         post_info = get_post_info(post,id_user)
         data["posts"].append(post_info)
 

@@ -18,6 +18,13 @@ def is_int(s):
         return False
 
 # ALGORITHM USED TO SORT POST AND USERS RECOMMANDATIONS
+def reverse_list(array):
+
+    new_array = []
+    for _ in range(len(array)):
+        new_array.append(array.pop(-1))
+    return new_array
+
 def merge(left_array, right_array):
     merged_array = []
 

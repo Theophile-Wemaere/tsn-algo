@@ -70,7 +70,7 @@ def get_post_feed():
 
   feed_filter = request.args.get('f')
   offset = request.args.get('offset')
-  if feed_filter is None or feed_filter not in ['new','best']:
+  if feed_filter is None or feed_filter not in ['new','best','forme']:
     feed_filter = "new"
 
   if not tools.is_int(offset):
@@ -85,6 +85,8 @@ def get_post_feed():
     data = db.get_feed_new(id_user,offset)
   elif feed_filter == "best":
     data = db.get_feed_best(id_user,offset) # add filter in time (best week, best month, best year,...)
+  elif feed_filter == "forme":
+    data = db.get_feed_forme(id_user,offset)
   
   data["code"] = "success"
   return data
