@@ -22,10 +22,9 @@ function searchBar(event) {
 }
 
 function highlightWord(text, word) {
-  return text.replace(
-    word,
-    `
-  <b style="color:black;background-color:yellow;">${word}</b>`
+  var regEx = new RegExp(word, "ig");
+  return text.replace(regEx,
+    `<b style="color:black;background-color:yellow;">${word}</b>`
   );
 }
 
@@ -53,10 +52,10 @@ function searchQuery(range, query) {
               row = `
               <a href="/post/view/${data.id_post}">
                 <div class="post-block">
-                    <h2 id="post-title">${data.title}</h2>
+                    <h2 id="post-title">${highlightWord(data.title,query)}</h2>
                     <div id="post-author" onclick="event.preventDefault();redirect('/profile?id_user=${data.id_author}')">
                         <img src="/static/pictures/${data.author_picture}.png">
-                        <h3>${data.author}, on ${data.created_at}</h3>
+                        <h3>${highlightWord(data.author,query)}, on ${data.created_at}</h3>
                     </div>
                     <div class="post-content ql-editor">
                     ${data.content}

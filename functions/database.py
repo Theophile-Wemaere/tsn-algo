@@ -1054,7 +1054,7 @@ def sort_post_by_tag(id_user, posts):
     return [post[1] for post in sorted_posts]
 
 
-def get_feed_new(id_user=None, offset=0):
+def get_feed_best(id_user=None, offset=0):
     """
     generate a feed of post sorted by time
     if a user id is supplied, the post will be in relation with the user tags
