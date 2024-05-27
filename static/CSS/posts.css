@@ -305,7 +305,7 @@ pre {
     transform: rotate(180deg);
 }
 
-.row#tag-list {
+.hiddenrow#tag-list {
     height: fit-content;
     display: none;
 }

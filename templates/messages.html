@@ -74,7 +74,7 @@
         <div class="conversation-block">
             <div class="message" id="message"></div>
             <form class="input-area" onsubmit="event.preventDefault();sendMessage()">
-                <textarea id="message-input" required></textarea>
+                <textarea id="message-input"  onkeypress="detectSend(event)"></textarea>
                 <input type="submit" value="Send">
             </form>
         </div>

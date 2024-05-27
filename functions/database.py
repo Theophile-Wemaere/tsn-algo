@@ -241,8 +241,17 @@ def get_user_data(id_user):
         "displayname": row[2],
         "picture": row[3],
         "description": row[4],
-        "id": id_user
+        "id": id_user,
+        "notread": 0
     }
+
+    cursor.execute("""
+    SELECT count(isread) 
+    FROM messages
+    WHERE "to" = ? AND isread = 'N'
+    """,(id_user,))
+    user_data["notread"] = cursor.fetchone()[0]
+    
     db.close()
     return user_data
 
@@ -1047,7 +1056,6 @@ def sort_post_by_tag(id_user, posts):
         for tag in posts_w_tags[post]["tags"]:
             if tag in user_tags:
                 score += 1
-        print("Score :",(score, post))
         to_sort.append((score, post))
 
     sorted_posts = tools.merge_sort_recursive(to_sort)
@@ -1074,7 +1082,7 @@ def get_feed_new(id_user=None, offset=0):
         FROM posts p
         INNER JOIN relations r ON r.followed = p.author
         WHERE r.follower = ?
-        ORDER BY p.created_at DESC LIMIT ?,10""", id_user, offset)
+        ORDER BY p.created_at DESC LIMIT ?,10""", (id_user, offset))
 
         rows = cursor.fetchall()
         if rows is not None:
@@ -1304,15 +1312,15 @@ def get_conversations(id_user):
 
     # get all contacts
     cursor.execute("""
-    SELECT contact, MAX(time) AS last_entry_time
+    SELECT contact, "from", isread, MAX(time) AS last_entry_time
     FROM (
-        SELECT "to" AS contact, time
+        SELECT "to" AS contact, "from", isread, time
         FROM messages
         WHERE "from" = ?
         
         UNION
         
-        SELECT "from" AS contact, time
+        SELECT "from" AS contact, "from", isread ,time
         FROM messages
         WHERE "to" = ?
     ) AS combined_contacts
@@ -1323,10 +1331,17 @@ def get_conversations(id_user):
     conv = {
         "conv":[]
     }
-    for contact,last_time in contacts:
+    for contact,msg_from,isread,last_time in contacts:
+
+        if isread == "N" and msg_from != id_user:
+            isread = "N"
+        else:
+            isread = "Y"
+
         data = {
             "id_contact":contact,
-            "last_time":last_time
+            "last_time":last_time,
+            "isread": isread
         }
         contact_info = get_user_data(contact)
         data["contact"] = contact_info["displayname"]
@@ -1375,7 +1390,7 @@ def get_conversation(id_user,id_contact):
     }
 
     cursor.execute("""
-    SELECT "from", "to", message, time, id_conversation
+    SELECT "from", "to", message, time, id_conversation, isread
     FROM messages
     WHERE ("from" = ? AND "to" = ?)
     OR ("from" = ? AND "to" = ?)
@@ -1388,12 +1403,27 @@ def get_conversation(id_user,id_contact):
             "to": row[1],
             "message": row[2],
             "time": row[3],
+            "isread": row[5],
             "owner": False
         }
+
+        if message["isread"] == "N" and message["from"] != id_user:
+            message["isread"] = "N"
+        else:
+            message["isread"] = "Y"
+
         # is owner of message
         if message["from"] == id_user:
             message["owner"] = "yes"
         data["messages"].append(message)
+
+    # set messages as read in this conv
+    cursor.execute("""
+    UPDATE messages
+    SET isread = 'Y'
+    WHERE "from" = ? AND "to" = ?
+    """,(id_contact,id_user))
+    db.commit()
 
     db.close()
     return data
@@ -1406,8 +1436,8 @@ def add_message(id_user,id_contact,message):
     db = sqlite3.connect("database.db")
     cursor = db.cursor()
     cursor.execute("""
-    INSERT INTO messages("from","to",time,message)
-    VALUES(?,?,datetime(),?)
+    INSERT INTO messages("from","to",time,message,isread)
+    VALUES(?,?,datetime(),?,'N')
     """,(id_user,id_contact,message))
     db.commit()
     db.close()

@@ -221,6 +221,7 @@ function loadUserMenu() {
         content = `@${res.username} <img src="${imageUrl}" alt="${res.username}'s profile picture">`;
         reco.innerHTML = content;
         reco.style.paddingLeft = "10px";
+        document.getElementById("notifications").style.display = "flex";
 
         // set redirect to profile
         link = document.getElementById("login-link");
@@ -240,6 +241,14 @@ function loadUserMenu() {
           button = document.getElementById("post-button");
           button.style.display = "flex";
         }
+
+        if(res.notread > 0) {
+          document.getElementById("bell").style.color = "#AA2D2D";
+          counter = document.getElementById("notif-counter")
+          counter.textContent = res.notread
+          counter.classList.add("on")
+        }
+
       }
     });
 }
@@ -1061,6 +1070,10 @@ function sendNewPost(id_post) {
       tags.push(tag.id);
     }
   });
+  if(tags.length < 3) {
+    alert("Please enter a minimum of 3 tags to better indentify your posts to other users")
+    return;
+  }
   const data = new FormData();
   data.append("title", title);
   data.append("tags", tags);
@@ -1428,6 +1441,9 @@ function loadConversations(conversation = "none") {
           } else {
             row = `<div id="contact-${contact.id_contact}" class="row" onclick="loadConversation(${contact.id_contact})">`;
           }
+          if (contact.isread === "N") {
+            row += '<div class="notread">!</div>'
+          }
           row += `
             <img src="/static/pictures/${contact.contact_picture}.png">
             <div class="cell">
@@ -1461,6 +1477,7 @@ function loadConversation(contact) {
         container.innerHTML = "";
         messages = res.messages;
         isFirst = true;
+        notReadLimit = false;
 
         document.querySelectorAll(".focused").forEach((div) => {
           div.classList.remove("focused");
@@ -1488,6 +1505,17 @@ function loadConversation(contact) {
 
           next = i + 1 < messages.length ? messages[i + 1].from : false;
           previous = i - 1 >= 0 ? messages[i - 1].from : false;
+          
+          if(messages[i].isread === "N" && !notReadLimit) {
+
+            notReadLimit = true
+            row += `
+            <div id="notread">
+              <hr>
+              <p>New messages</p>
+            </div>
+            `;
+          }
 
           if (
             (previous !== from && previous) ||
@@ -1498,7 +1526,7 @@ function loadConversation(contact) {
             picture =
               from === res.id_user ? res.user_picture : res.contact_picture;
             username = from === res.id_user ? res.user : res.contact;
-            row = `
+            row += `
             <div class="row">
               <img src="/static/pictures/${picture}.png" onclick="redirect('/profile?id_user=${from}')">
               <div class="name-date">
@@ -1530,7 +1558,15 @@ function loadConversation(contact) {
     });
 }
 
+function detectSend(event) {
+  console.log(event.keyCode)
+  if (event.keyCode == 13 && !event.shiftKey) {
+    sendMessage();
+}
+}
+
 function sendMessage() {
+
   id = document.querySelectorAll(".focused")[0].getAttribute("id");
   contact = id.replace("contact-", "");
 

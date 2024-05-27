@@ -67,7 +67,7 @@ def api_logout():
     session.pop('email', None)
     session.pop('token', None)
     session.clear()
-    return flask.redirect('/login')
+    return flask.redirect('/home')
 #endregion
 
 #region user profile
