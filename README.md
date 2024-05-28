@@ -14,13 +14,15 @@ It use Flask as a backend and API, sqlite3 for the database and plain HTML,CSS a
 There are 2 (easy) ways to deploy this application :
 
 **1. Docker**
-Simply install docker ([](https://docs.docker.com/get-docker/)) and then type :
+
+Simply install docker (https://docs.docker.com/get-docker/) and then type :
 ```shell
 $ docker-compose up --build
 ```
 This should install all components of the app and have it running [](http://localhost:5000/)
 
 **2. Manually**
+
 This can also be done manually :
 ```shell
 $ python3 -m virtualenv venv
