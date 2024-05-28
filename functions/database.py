@@ -576,15 +576,47 @@ def update_picture(id_user, hash):
 
 # region recommandations
 
+def sort_users_by_tag(id_user,users):
+    """
+    sort given users by scoring them in relation with the user tags
+    for exemple, a user with 3 common tags will have a better score than a user with 1 common tag 
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    cursor.execute("SELECT tag FROM user_tags WHERE user = ?", (id_user,))
+    user_tags = [row[0] for row in cursor.fetchall()]
+
+    users_w_tags = {}
+    for user in users:
+        cursor.execute("SELECT tag FROM user_tags WHERE user = ?", (user,))
+        tags = [row[0] for row in cursor.fetchall()]
+        users_w_tags[user] = {}
+        users_w_tags[user]["tags"] = tags
+
+    to_sort = []
+    for user in users_w_tags:
+        score = 0
+        for tag in users_w_tags[user]["tags"]:
+            if tag in user_tags:
+                score += 1
+        to_sort.append((score, user))
+
+    sorted_users = tools.merge_sort_recursive(to_sort)
+    # set from highest score to lowest
+    sorted_users = tools.reverse_list(sorted_users)
+    return [post[1] for post in sorted_users]
+
 def get_user_recommandations(id_user):
     """
     return a dictionnary of users with a profile interesting to the current user
     """
     # let John be the current user
     # how it works -> the users potentially interesting for John are thoses :
-    #    - users who posted something liked by john
     #    - users friends with friends of john
     #       (friend is when the follow is in both way)
+    #    - users who posted something liked by john
     #    - users followed by users that John follow
     #    - users with the same interests as John (tags)
     #    - users liking the same posts than John
@@ -598,6 +630,25 @@ def get_user_recommandations(id_user):
     cursor.execute("SELECT tag FROM user_tags WHERE user = ?", (id_user,))
     user_tags = [row[0] for row in cursor.fetchall()]
 
+    # get friends of current user friends
+    cursor.execute("""
+    WITH friends AS (
+        SELECT DISTINCT r1.follower as friend_id
+        FROM relations r1
+        INNER JOIN relations r2 
+        ON r1.follower = r2.followed WHERE r2.follower=?
+    ),
+    FoF AS (
+        SELECT DISTINCT r1.follower  as fof_id
+        FROM relations r1
+        INNER JOIN relations r2 
+        ON r1.follower = r2.followed WHERE r2.follower in (select friend_id from friends)
+        AND r1.follower != ?
+    )
+    SELECT DISTINCT fof_id from FoF
+    """, (id_user,id_user))
+    friends_of_friends = [row[0] for row in cursor.fetchall()]
+
     # get users who posted something liked by current user
     cursor.execute("""
     SELECT DISTINCT p.author
@@ -607,14 +658,14 @@ def get_user_recommandations(id_user):
     """, (id_user,))
     author_liked = [row[0] for row in cursor.fetchall()]
 
-    # get friends of current user friends
-    cursor.execute("""
-    SELECT r1.follower 
-    FROM relations r1 
-    INNER JOIN relations r2 
-    ON r1.follower = r2.followed WHERE r2.follower=?
-    """, (id_user,))
-    friends_of_friends = [row[0] for row in cursor.fetchall()]
+    # get users with the same interets as current user (with tags matching)
+    cursor.execute(f"""
+    SELECT user FROM user_tags 
+    WHERE tag IN ({",".join(["?"]*len(user_tags))})
+    AND user != ?
+    """, user_tags + [id_user])
+    users_same_interets = [row[0] for row in cursor.fetchall()]
+    users_same_interets = sort_users_by_tag(id_user,users_same_interets)
 
     # get users followed by users that the current users follow
     cursor.execute("""
@@ -623,14 +674,6 @@ def get_user_recommandations(id_user):
     AND followed NOT IN (SELECT followed FROM relations WHERE follower = ?)
     """, (id_user, id_user))
     followed_by_followed = [row[0] for row in cursor.fetchall()]
-
-    # get users with the same interets as current user (with tags matching)
-    cursor.execute(f"""
-    SELECT user FROM user_tags 
-    WHERE tag IN ({",".join(["?"]*len(user_tags))})
-    AND user != ?
-    """, user_tags + [id_user])
-    users_same_interets = [row[0] for row in cursor.fetchall()]
 
     # get users liking the same posts as current user
     cursor.execute("""
@@ -647,12 +690,11 @@ def get_user_recommandations(id_user):
     """, (id_user,))
     followers = [row[0] for row in cursor.fetchall()]
 
-    potential_users = set(author_liked +
-                          friends_of_friends +
-                          followed_by_followed +
-                          users_same_interets +
-                          user_liking_same_posts +
-                          followers)
+    all_users = friends_of_friends + author_liked + users_same_interets + followed_by_followed + user_liking_same_posts + followers
+    potential_users = []
+    for user in all_users:
+        if user not in potential_users:
+            potential_users.append(user)
     
     potential_users = [user for user in potential_users if user != id_user]
 
@@ -1002,7 +1044,7 @@ def update_post_interaction(id_user, id_post, action):
     WHERE post = ? AND action = ? AND user = ?""", (id_post, action_type, id_user))
     if cursor.fetchone() is not None:
         if action == "+":
-            return  # cannot add to something already added
+            return "nothing" # cannot add to something already added
         elif action == "-":
             cursor.execute("""
             DELETE FROM posts_interaction 
@@ -1010,7 +1052,7 @@ def update_post_interaction(id_user, id_post, action):
             db.commit()
     else:
         if action == "-":
-            return  # cannot remove something not existing
+            return "nothing"# cannot remove something not existing
         elif action == "+":
             cursor.execute("""
             INSERT INTO posts_interaction VALUES(?,?,?)""", (id_post, id_user, action_type))
@@ -1075,7 +1117,7 @@ def check_post_visibility(id_user,author,visibility):
 def sort_post_by_tag(id_user, posts):
     """
     sort given posts by scoring them in relation with the user tags
-    for exemple, a post with 3 common tags will have a better score than a score with 1 common tag 
+    for exemple, a post with 3 common tags will have a better score than a user with 1 common tag 
     """
 
     db = sqlite3.connect('database.db')
