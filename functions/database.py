@@ -572,6 +572,58 @@ def update_picture(id_user, hash):
     db.commit()
     db.close()
 
+def update_tags(id_user, tags):
+    """
+    set a user tags
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM user_tags WHERE user = ?", (id_user,))
+    db.commit()
+    for tag in tags:
+        cursor.execute("SELECT * FROM tags WHERE id_tag = ?", (tag,))
+        if cursor.fetchone() is not None:
+            cursor.execute("INSERT INTO user_tags VALUES(?,?)", (id_user, tag))
+            db.commit()
+    db.close()
+
+def check_user_tags(id_user):
+    """
+    get all liked tags by a user to enhance it's preference
+    """
+
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+
+    cursor.execute("SELECT tag FROM user_tags WHERE user = ?", (id_user,))
+    user_tags = [row[0] for row in cursor.fetchall()]
+
+    cursor.execute("SELECT post from posts_interaction WHERE user = ? AND action = 'L'",(id_user,))
+    liked_posts = [row[0] for row in cursor.fetchall()]
+
+    liked_tags = {}
+    for post in liked_posts:
+        cursor.execute("SELECT tag FROM post_tags WHERE post = ?",(post,))
+        tags = [row[0] for row in cursor.fetchall()]
+        for tag in tags:
+            if tag in liked_tags:
+                liked_tags[tag] += 1
+            else:
+                liked_tags[tag] = 1
+    
+    db.close()
+
+    updated = False
+    for tag in liked_tags:
+        if liked_tags[tag] >= 3 and liked_tags[tag] not in user_tags:
+            user_tags.append(liked_tags[tag])
+            print(f"Tag {liked_tags[tag]} added !")
+            updated = True
+
+    if updated:
+        update_tags(id_user,user_tags)
+
 # endregion
 
 # region recommandations
@@ -809,22 +861,6 @@ def get_tags(id_user=None):
     db.close()
     return data
 
-def update_tags(id_user, tags):
-    """
-    set a user tags
-    """
-
-    db = sqlite3.connect('database.db')
-    cursor = db.cursor()
-    cursor.execute("DELETE FROM user_tags WHERE user = ?", (id_user,))
-    db.commit()
-    for tag in tags:
-        cursor.execute("SELECT * FROM tags WHERE id_tag = ?", (tag,))
-        if cursor.fetchone() is not None:
-            cursor.execute("INSERT INTO user_tags VALUES(?,?)", (id_user, tag))
-            db.commit()
-    db.close()
-
 # endregion
 
 # region posts
@@ -1059,6 +1095,10 @@ def update_post_interaction(id_user, id_post, action):
             db.commit()
 
     db.close()
+    if action_type == "L" and action == "+":
+        # if a user like a post, update it's interest tags
+        check_user_tags(id_user)
+
     return "success"
 
 def delete_post(id_user, id_post):
