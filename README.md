@@ -29,5 +29,6 @@ $ python3 -m virtualenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 $ bash scripts/init.sh
+$ echo "FLASK_SECRET=<your_secret_key>" >> .env
 $ python app.py
 ```
