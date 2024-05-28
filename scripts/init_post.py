@@ -30,7 +30,7 @@ def save_post(id_user,visibility,title,content,tags):
 db = sqlite3.connect('database.db')
 cursor = db.cursor()
 
-with open("init/all.txt","r") as file:
+with open("scripts/all.txt","r") as file:
     for line in file:
         title, url = line.split('[;]')
         body = f"""

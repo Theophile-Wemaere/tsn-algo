@@ -45,6 +45,9 @@ import random, requests
 db = sqlite3.connect('database.db')
 cursor = db.cursor()
 
+with open('scripts/create.sql') as f:
+    db.executescript(f.read())
+
 # create default tags
 for word in words:
     data = (word,)

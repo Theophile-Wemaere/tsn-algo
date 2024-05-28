@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/usr/src/app
+    environment:
+      FLASK_ENV: development
+      FLASK_SECRET: 'NEFIKJ9234U3895TYH4UGNBRT4785HBUYGER' 
+    command: python app.py

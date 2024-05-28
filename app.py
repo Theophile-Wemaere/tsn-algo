@@ -16,8 +16,8 @@ app.permanent_session_lifetime = timedelta(weeks=4)
 db.init(app)
 
 if not os.path.exists("database.db"):
-    print("Not database found, exiting")
-    exit(1)
+    print("Not database found")
+    os.system("scripts/init.sh")
 
 
 from functions.user import user_api
@@ -123,7 +123,7 @@ def search():
 
 if __name__ == '__main__':
     try:
-        app.run()
+        app.run(host="0.0.0.0",port=5000)
     except KeyboardInterrupt:
         print("\nCtrl + C pressed, exiting...")
         exit(1)

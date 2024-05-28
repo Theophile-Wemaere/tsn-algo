@@ -73,33 +73,3 @@ CREATE TABLE `messages` (
   `message` text,
   `isread` char
 );
-
-ALTER TABLE `messages` ADD FOREIGN KEY (`from`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `messages` ADD FOREIGN KEY (`to`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `sessions` ADD FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `user_tags` ADD FOREIGN KEY (`tag`) REFERENCES `tags` (`id_tag`);
-
-ALTER TABLE `user_tags` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `post_tags` ADD FOREIGN KEY (`post`) REFERENCES `posts` (`id_post`);
-
-ALTER TABLE `post_tags` ADD FOREIGN KEY (`tag`) REFERENCES `tags` (`id_tag`);
-
-ALTER TABLE `relations` ADD FOREIGN KEY (`followed`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `relations` ADD FOREIGN KEY (`follower`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `posts` ADD FOREIGN KEY (`author`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `comments` ADD FOREIGN KEY (`parent`) REFERENCES `posts` (`id_post`);
-
-ALTER TABLE `comments` ADD FOREIGN KEY (`parent`) REFERENCES `comments` (`id_comment`);
-
-ALTER TABLE `comments` ADD FOREIGN KEY (`author`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `posts_interaction` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id_user`);
-
-ALTER TABLE `posts_interaction` ADD FOREIGN KEY (`post`) REFERENCES `posts` (`id_post`);

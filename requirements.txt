@@ -5,6 +5,7 @@ flask
 flask-argon2
 flask_login
 python-dotenv
+alive_progress
 networkx
 pyvis
 numpy
