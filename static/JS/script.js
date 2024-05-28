@@ -1493,7 +1493,6 @@ function loadConversations(conversation = "none") {
 }
 
 function loadConversation(contact,first = false) {
-  document.getElementById("message-input").value = '';
   fetch(`/api/messages/get?contact=${contact}`, {
     method: "GET",
   })
@@ -1600,6 +1599,8 @@ function sendMessage() {
   input = document.getElementById("message-input");
   message = input.value;
   message = message.replace(/\r?\n/g, "<br />");
+
+  document.getElementById("message-input").value = '';
 
   data = new FormData();
   data.append("contact", contact);
