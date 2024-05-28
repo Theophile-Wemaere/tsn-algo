@@ -19,7 +19,7 @@ if not os.path.exists("static/pictures"):
     os.mkdir("static/pictures/")
 
 if not os.path.exists("database.db"):
-    print("Not database found")
+    print("No database found")
     os.system("scripts/init.sh")
 
 
