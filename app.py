@@ -15,6 +15,9 @@ app.secret_key = os.getenv("FLASK_SECRET")
 app.permanent_session_lifetime = timedelta(weeks=4)
 db.init(app)
 
+if not os.path.exists("static/pictures"):
+    os.mkdir("static/pictures/")
+
 if not os.path.exists("database.db"):
     print("Not database found")
     os.system("scripts/init.sh")
