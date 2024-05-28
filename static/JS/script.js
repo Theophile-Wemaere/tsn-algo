@@ -1501,9 +1501,7 @@ function loadConversation(contact,first = false) {
     .then((res) => {
       if (res.code === "success") {
         container = document.getElementById("message");
-        if(first) {
-          container.innerHTML = "";
-        }        
+        container.innerHTML = "";     
         messages = res.messages;
         isFirst = true;
         notReadLimit = false;

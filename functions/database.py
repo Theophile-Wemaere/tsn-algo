@@ -673,7 +673,6 @@ def get_user_recommandations(id_user):
     #    - users with the same interests as John (tags)
     #    - users liking the same posts than John
     #    - users that follow john
-    # to be modified with a scoring system depending on likes, dislike (pattern matching)
 
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
@@ -795,7 +794,8 @@ def get_post_recommandations():
     }
     for post in posts:
         post_info = get_post_info(post)
-        data["posts"].append(post_info)
+        if check_post_visibility(None,post_info["id_author"],post_info["visibility"]):
+            data["posts"].append(post_info)
 
     db.close()
     return data

@@ -60,6 +60,9 @@ def get_post_info(id_post):
     if data == -1:
       return {"code":"post_not_found"}
 
+    if not db.check_post_visibility(id_user,data["id_author"],data["visibility"]):
+      return redirect("/home")
+
     data["code"] = "success"
     if id_user == data["id_author"]:
       data["is_logged"] = "yes"
